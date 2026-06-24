@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { fmtDay, fmtTime } from "@/lib/format";
 import { createShow, addEvent, deleteEvent, deleteShow } from "@/app/admin/actions";
+import ShowFormFields from "@/app/admin/ShowFormFields";
 import styles from "../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +20,7 @@ type Row = {
 
 const OK: Record<string, string> = {
   show: "Show created.",
+  updated: "Show updated.",
   event: "Event added to the calendar.",
   deleted: "Deleted.",
 };
@@ -67,100 +70,7 @@ export default async function AdminDashboard({
         <section className={styles.card}>
           <h2 className={styles.h2}>Create a show</h2>
           <form action={createShow} className={styles.form}>
-            <label className={styles.label}>
-              Title *
-              <input className={styles.input} name="title" required />
-            </label>
-
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Program *</legend>
-              <label className={styles.radio}>
-                <input type="radio" name="program" value="theatre" defaultChecked />
-                Theatre
-              </label>
-              <label className={styles.radio}>
-                <input type="radio" name="program" value="choir" />
-                Choir / Chorus
-              </label>
-            </fieldset>
-
-            <div className={styles.row2}>
-              <label className={styles.label}>
-                Slug <span className={styles.hint}>(optional)</span>
-                <input className={styles.input} name="slug" placeholder="auto from title" />
-              </label>
-              <label className={styles.label}>
-                Type
-                <input className={styles.input} name="type" placeholder="Mainstage Musical" />
-              </label>
-            </div>
-
-            <div className={styles.row2}>
-              <label className={styles.label}>
-                Tag text
-                <input className={styles.input} name="tag_text" placeholder="On Sale" />
-              </label>
-              <label className={styles.label}>
-                Tag style
-                <select className={styles.input} name="tag_class" defaultValue="onsale">
-                  <option value="onsale">On Sale (gold)</option>
-                  <option value="upcoming">Upcoming (pink)</option>
-                  <option value="camp">Camp (teal)</option>
-                  <option value="past">Past (grey)</option>
-                </select>
-              </label>
-            </div>
-
-            <div className={styles.row2}>
-              <label className={styles.label}>
-                Accent color
-                <input className={styles.input} type="color" name="accent" defaultValue="#b11e37" />
-              </label>
-              <label className={styles.label}>
-                Sort order
-                <input className={styles.input} type="number" name="sort_order" defaultValue={0} />
-              </label>
-            </div>
-
-            <label className={styles.label}>
-              Venue
-              <input className={styles.input} name="venue" placeholder="Cuthbertson High School Auditorium" />
-            </label>
-            <label className={styles.label}>
-              Address
-              <input className={styles.input} name="address" placeholder="1520 Cuthbertson Rd, Waxhaw, NC 28173" />
-            </label>
-            <label className={styles.label}>
-              Date range <span className={styles.hint}>(display label)</span>
-              <input className={styles.input} name="date_range" placeholder="April 16–18, 2026" />
-            </label>
-            <label className={styles.label}>
-              Tagline
-              <input className={styles.input} name="tagline" />
-            </label>
-            <label className={styles.label}>
-              Synopsis
-              <textarea className={styles.textarea} name="synopsis" rows={4} />
-            </label>
-
-            <div className={styles.row2}>
-              <label className={styles.label}>
-                Ticket URL
-                <input className={styles.input} name="ticket_url" placeholder="https://…" />
-              </label>
-              <label className={styles.label}>
-                Poster URL
-                <input className={styles.input} name="poster_url" placeholder="https://…" />
-              </label>
-            </div>
-
-            <label className={styles.check}>
-              <input type="checkbox" name="has_microsite" /> Has a microsite
-            </label>
-            <label className={styles.check}>
-              <input type="checkbox" name="cast_is_sample" /> Cast list is a sample
-            </label>
-
+            <ShowFormFields />
             <button className={styles.btn} type="submit">
               Create show
             </button>
@@ -219,12 +129,17 @@ export default async function AdminDashboard({
                       <strong>{s.title}</strong>{" "}
                       <span className={styles.badge}>{s.program}</span>
                     </div>
-                    <form action={deleteShow}>
-                      <input type="hidden" name="id" value={s.id} />
-                      <button className={styles.del} type="submit" title="Delete show">
-                        Delete
-                      </button>
-                    </form>
+                    <div className={styles.rowActions}>
+                      <Link className={styles.editLink} href={`/admin/shows/${s.id}`}>
+                        Edit
+                      </Link>
+                      <form action={deleteShow}>
+                        <input type="hidden" name="id" value={s.id} />
+                        <button className={styles.del} type="submit" title="Delete show">
+                          Delete
+                        </button>
+                      </form>
+                    </div>
                   </div>
                   {s.showtimes.length > 0 && (
                     <ul className={styles.eventList}>

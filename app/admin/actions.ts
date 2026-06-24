@@ -38,22 +38,12 @@ export async function logout() {
   redirect("/admin/login");
 }
 
-export async function createShow(formData: FormData) {
-  await requireAdmin();
-  const admin = createAdminClient();
-  if (!admin) redirect("/admin?error=nodb");
-
+/** Parse every editable show field from a submitted form (shared by create/update). */
+function showFieldsFrom(formData: FormData) {
   const title = str(formData.get("title"));
-  const program = (formData.get("program") ?? "").toString();
-  if (!title) redirect("/admin?error=title");
-  if (program !== "theatre" && program !== "choir")
-    redirect("/admin?error=program");
-
-  const slug = slugify(str(formData.get("slug")) || title);
-
-  const { error } = await admin.from("productions").insert({
-    slug,
-    program,
+  return {
+    slug: slugify(str(formData.get("slug")) || title || ""),
+    program: (formData.get("program") ?? "").toString(),
     title,
     type: str(formData.get("type")),
     tag_text: str(formData.get("tag_text")),
@@ -69,14 +59,49 @@ export async function createShow(formData: FormData) {
     has_microsite: formData.get("has_microsite") === "on",
     cast_is_sample: formData.get("cast_is_sample") === "on",
     sort_order: Number(formData.get("sort_order") || 0),
-  });
+  };
+}
 
+export async function createShow(formData: FormData) {
+  await requireAdmin();
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin?error=nodb");
+
+  const fields = showFieldsFrom(formData);
+  if (!fields.title) redirect("/admin?error=title");
+  if (fields.program !== "theatre" && fields.program !== "choir")
+    redirect("/admin?error=program");
+
+  const { error } = await admin.from("productions").insert(fields);
   if (error) {
     const code = error.code === "23505" ? "dupe" : "show";
     redirect(`/admin?error=${code}`);
   }
   revalidatePath("/");
   redirect("/admin?ok=show");
+}
+
+export async function updateShow(formData: FormData) {
+  await requireAdmin();
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin?error=nodb");
+
+  const id = str(formData.get("id"));
+  if (!id) redirect("/admin?error=show");
+
+  const fields = showFieldsFrom(formData);
+  if (!fields.title) redirect(`/admin/shows/${id}?error=title`);
+  if (fields.program !== "theatre" && fields.program !== "choir")
+    redirect(`/admin/shows/${id}?error=program`);
+
+  const { error } = await admin.from("productions").update(fields).eq("id", id);
+  if (error) {
+    const code = error.code === "23505" ? "dupe" : "show";
+    redirect(`/admin/shows/${id}?error=${code}`);
+  }
+  revalidatePath("/");
+  revalidatePath(`/shows/${fields.slug}`);
+  redirect("/admin?ok=updated");
 }
 
 export async function addEvent(formData: FormData) {

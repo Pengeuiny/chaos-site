@@ -213,6 +213,23 @@
   font-size: 13.5px;
   color: #e3d9c6;
 }
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.editLink {
+  border: 1px solid rgba(233, 185, 73, 0.4);
+  color: #f0c66b;
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.editLink:hover {
+  background: #e9b949;
+  color: #1f0810;
+}
 .del,
 .delSmall {
   background: none;
