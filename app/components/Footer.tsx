@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer>
@@ -21,6 +23,11 @@ export default function Footer() {
             </a>
           </small>
         </div>
+      </div>
+      <div className="wrap" style={{ textAlign: "center", marginTop: 26 }}>
+        <Link className="btn btn-ghost" href="/admin/login">
+          Admin Login
+        </Link>
       </div>
     </footer>
   );
