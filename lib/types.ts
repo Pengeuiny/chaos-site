@@ -1,8 +1,11 @@
 // Row shapes mirroring supabase/schema.sql
 
+export type Program = "theatre" | "choir";
+
 export type Production = {
   id: string;
   slug: string;
+  program: Program;
   title: string;
   title_note: boolean;
   type: string | null;

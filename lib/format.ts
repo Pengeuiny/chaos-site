@@ -58,6 +58,42 @@ export function initials(name: string) {
     .toUpperCase();
 }
 
+/**
+ * Convert an admin's `datetime-local` value ("YYYY-MM-DDTHH:MM"), interpreted
+ * as Eastern wall-clock time, into a UTC ISO string for storage. Display code
+ * formats it back in America/New_York, so the entered time round-trips exactly.
+ */
+export function easternWallToUtcIso(local: string): string {
+  const [datePart, timePart] = local.split("T");
+  const [y, mo, d] = datePart.split("-").map(Number);
+  const [h, mi] = (timePart || "00:00").split(":").map(Number);
+
+  const offsetMinutes = (instant: number) => {
+    const f = new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const p: Record<string, string> = {};
+    for (const part of f.formatToParts(new Date(instant))) p[part.type] = part.value;
+    const asUTC = Date.UTC(
+      +p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second,
+    );
+    return (asUTC - instant) / 60000;
+  };
+
+  const wall = Date.UTC(y, mo - 1, d, h, mi);
+  // Two passes settle the offset correctly even across DST boundaries.
+  let off = offsetMinutes(wall);
+  off = offsetMinutes(wall - off * 60000);
+  return new Date(wall - off * 60000).toISOString();
+}
+
 export function rangeFrom(showtimes: { starts_at: string }[]) {
   if (!showtimes.length) return "TBA";
   const a = parts(showtimes[0].starts_at);
