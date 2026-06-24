@@ -1,0 +1,69 @@
+:root {
+  --velvet: #140409;
+  --velvet-2: #1f0810;
+  --crimson: #b11e37;
+  --crimson-deep: #7c1326;
+  --brass: #e9b949;
+  --brass-soft: #f0c66b;
+  --gel: #e83a82;
+  --ivory: #f6efe2;
+  --ivory-dim: #e3d9c6;
+  --ink: #221016;
+  --paper-line: #cdbfa6;
+  --maxw: 1180px;
+  --r: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--velvet);
+  color: var(--ivory);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.05;
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+.display {
+  font-family: var(--font-anton), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.serif {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+.eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  color: var(--brass-soft);
+}

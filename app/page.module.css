@@ -1,0 +1,95 @@
+.hero {
+  position: relative;
+  padding: 96px 0 72px;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(177, 30, 55, 0.4), transparent 60%),
+    linear-gradient(180deg, var(--velvet-2), var(--velvet));
+  border-bottom: 1px solid rgba(233, 185, 73, 0.18);
+}
+.eyebrow {
+  margin-bottom: 18px;
+}
+.title {
+  font-size: clamp(44px, 9vw, 104px);
+  color: var(--ivory);
+}
+.title span {
+  color: var(--brass);
+}
+.lede {
+  margin-top: 18px;
+  max-width: 640px;
+  color: var(--ivory-dim);
+  font-size: 19px;
+}
+
+.section {
+  padding: 64px 0;
+}
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.sectionTitle {
+  font-size: clamp(28px, 4vw, 44px);
+  color: var(--ivory);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.card {
+  border: 1px solid rgba(233, 185, 73, 0.2);
+  border-radius: var(--r);
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(31, 8, 16, 0.8), rgba(20, 4, 9, 0.8));
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.card:hover {
+  border-color: var(--brass);
+  transform: translateY(-2px);
+}
+.tag {
+  display: inline-block;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  margin-bottom: 14px;
+}
+.cardTitle {
+  font-size: 26px;
+  color: var(--ivory);
+}
+.cardType {
+  color: var(--brass-soft);
+  font-size: 13px;
+  margin-top: 6px;
+}
+.cardText {
+  color: var(--ivory-dim);
+  font-size: 15px;
+  margin-top: 12px;
+}
+
+.notice {
+  margin: 0 auto;
+  max-width: var(--maxw);
+  border: 1px dashed rgba(233, 185, 73, 0.5);
+  border-radius: var(--r);
+  padding: 22px 24px;
+  background: rgba(31, 8, 16, 0.6);
+  color: var(--ivory-dim);
+}
+.notice code {
+  font-family: var(--font-space-mono), monospace;
+  color: var(--brass-soft);
+}
