@@ -59,11 +59,12 @@ header.bar{
 .bar .row{display:flex;align-items:center;gap:22px;height:70px}
 .brand{display:flex;align-items:center;gap:12px;cursor:pointer}
 .brand .mark{
-  width:42px;height:42px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,var(--brass-soft),var(--crimson) 75%);
-  display:grid;place-items:center;color:#1a0207;font-weight:800;
-  font-family:"Anton";font-size:20px;box-shadow:0 0 0 2px rgba(233,185,73,.35), 0 6px 18px rgba(177,30,55,.4);
+  height:46px;border-radius:10px;
+  background:#fff;
+  display:flex;align-items:center;padding:5px 7px;
+  box-shadow:0 0 0 2px rgba(233,185,73,.35), 0 6px 18px rgba(177,30,55,.4);
 }
+.brand .mark img{height:100%;width:auto;display:block}
 .brand b{font-family:"Anton";font-size:23px;letter-spacing:.06em;line-height:1}
 .brand small{display:block;font-family:"Space Mono";font-size:9.5px;letter-spacing:.32em;color:var(--brass-soft);text-transform:uppercase;margin-top:2px}
 nav.links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}

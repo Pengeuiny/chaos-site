@@ -23,7 +23,10 @@ export default function Header() {
     <header className="bar">
       <div className="wrap row">
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
-          <div className="mark">C</div>
+          <div className="mark">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/cuthbertson-mark.png" alt="Cuthbertson" />
+          </div>
           <div>
             <b>CHS&nbsp;CHAOS</b>
             <small>Cuthbertson Boosters</small>
