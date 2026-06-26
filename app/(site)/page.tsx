@@ -120,7 +120,7 @@ export default async function Home() {
               </Link>
             </div>
             <div className="mcard">
-              <div className="ic">⭐</div>
+              <div className="ic">💰</div>
               <h3>Sponsors</h3>
               <p>
                 Corporate and small-business supporters help us provide a level
