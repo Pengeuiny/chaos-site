@@ -13,37 +13,38 @@ delete from public.people;
 -- Productions
 -- ---------------------------------------------------------------------------
 insert into public.productions
-  (slug, title, title_note, type, tag_text, tag_class, poster_url, accent,
-   venue, address, tagline, synopsis, ticket_url, date_range, has_microsite,
-   cast_is_sample, sort_order)
+  (slug, title, title_note, type, poster_url, accent,
+   venue, address, tagline, synopsis, ticket_url, starts_on, ends_on,
+   dates_tbd, date_range, has_microsite, cast_is_sample, sort_order)
 values
   ('spring-mainstage-2026', 'Spring Mainstage Musical', true,
-   'Mainstage Musical', 'On Sale', 'onsale',
+   'Mainstage Musical',
    'https://static.wixstatic.com/media/020dca_7535fbc88b494e10b8629400c63b8dbf~mv2.jpg/v1/fill/w_600,h_800,al_c,q_85,enc_avif,quality_auto/020dca_7535fbc88b494e10b8629400c63b8dbf~mv2.jpg',
    '#2454a8',
    'Cuthbertson High School Auditorium', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'The whole company takes the stage for the spring main event.',
    'Our students close the season with the spring mainstage musical — months of rehearsal, a full pit, and a cast and crew that have poured everything into the show. Doors open 30 minutes before curtain. Reserved seating; CHAOS members get early access and discounted tickets.',
-   'https://cuthbertsontheatre.ludus.com/index.php?sections=events', null, false,
+   'https://cuthbertsontheatre.ludus.com/index.php?sections=events',
+   '2026-04-16', '2026-04-18', false, null, false,
    true, 1),
 
   ('summer-camp-revue-2026', 'One-Week Summer Camp', false,
-   'Revue-Style Camp · Grades K–8', 'Camp', 'camp',
+   'Revue-Style Camp · Grades K–8',
    null, '#2bb6a3',
    'Cuthbertson High School', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'Five days, one revue, a stage full of new performers.',
    'A fast, joyful introduction to musical theatre. Campers learn songs and staging across the week and perform a revue-style showcase for family and friends. No experience required — just bring the energy.',
    'https://cuthbertsontheatre.ludus.com/index.php?sections=payments',
-   'June 15–19, 2026', false, false, 2),
+   '2026-06-15', '2026-06-19', false, null, false, false, 2),
 
   ('finding-nemo-jr-2026', 'Finding Nemo Jr.', false,
-   'Two-Week Musical Intensive', 'Registration Open', 'upcoming',
+   'Two-Week Musical Intensive',
    '/finding-nemo-jr.png', '#2563c9',
    'Cuthbertson High School', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'Dive in. A two-week intensive that ends with a full Jr. production.',
    'Our summer flagship: a two-week musical intensive where campers build a complete production of Disney''s Finding Nemo Jr. from the ground up — music, choreography, staging, and tech — ending in a live performance. Has its own immersive microsite (link below).',
    'https://cuthbertsontheatre.ludus.com/index.php?sections=payments',
-   'July 13–17 & 20–24, 2026', true, false, 3);
+   '2026-07-24', '2026-07-25', false, null, true, false, 3);
 
 -- ---------------------------------------------------------------------------
 -- Showtimes

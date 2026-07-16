@@ -19,8 +19,6 @@ create table if not exists public.productions (
   title         text not null,
   title_note    boolean not null default false,   -- placeholder title flag
   type          text,                              -- "Mainstage Musical", etc.
-  tag_text      text,                              -- "On Sale", "Camp", ...
-  tag_class     text,                              -- styling hook
   poster_url    text,
   accent        text,                              -- hex accent color
   venue         text,
@@ -28,7 +26,10 @@ create table if not exists public.productions (
   tagline       text,
   synopsis      text,
   ticket_url    text,
-  date_range    text,                              -- human label, e.g. "July 13–24"
+  starts_on     date,                              -- required unless dates_tbd
+  ends_on       date,
+  dates_tbd     boolean not null default false,    -- opt-in: no real dates yet
+  date_range    text,                              -- free-text label, used only when dates_tbd
   has_microsite boolean not null default false,
   cast_is_sample boolean not null default false,   -- show "sample cast" note
 
@@ -39,8 +40,9 @@ create table if not exists public.productions (
 create table if not exists public.showtimes (
   id            uuid primary key default gen_random_uuid(),
   production_id uuid not null references public.productions(id) on delete cascade,
-  starts_at     timestamptz not null,
-  label         text,
+  starts_at     timestamptz,                       -- required unless starts_tbd
+  starts_tbd    boolean not null default false,    -- opt-in: no real date/time yet
+  label         text,                              -- also doubles as the display text when starts_tbd
   ticket_url    text,                              -- deep-link straight to this date's checkout
   sort_order    int not null default 0
 );

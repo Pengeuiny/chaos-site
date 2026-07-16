@@ -5,9 +5,11 @@ import type { ProductionWithDetails, Person } from "@/lib/types";
 function sortDetails(p: ProductionWithDetails): ProductionWithDetails {
   return {
     ...p,
-    showtimes: [...(p.showtimes ?? [])].sort((a, b) =>
-      a.starts_at < b.starts_at ? -1 : a.starts_at > b.starts_at ? 1 : 0,
-    ),
+    showtimes: [...(p.showtimes ?? [])].sort((a, b) => {
+      const av = a.starts_at ?? "9999";
+      const bv = b.starts_at ?? "9999";
+      return av < bv ? -1 : av > bv ? 1 : 0;
+    }),
     cast_members: [...(p.cast_members ?? [])].sort(
       (a, b) => a.sort_order - b.sort_order,
     ),

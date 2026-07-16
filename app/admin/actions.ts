@@ -42,13 +42,12 @@ export async function logout() {
 /** Parse every editable show field from a submitted form (shared by create/update). */
 function showFieldsFrom(formData: FormData) {
   const title = str(formData.get("title"));
+  const dates_tbd = formData.get("dates_tbd") === "on";
   return {
     slug: slugify(str(formData.get("slug")) || title || ""),
     program: (formData.get("program") ?? "").toString(),
     title,
     type: str(formData.get("type")),
-    tag_text: str(formData.get("tag_text")),
-    tag_class: str(formData.get("tag_class")),
     accent: str(formData.get("accent")),
     venue: str(formData.get("venue")),
     address: str(formData.get("address")),
@@ -56,7 +55,10 @@ function showFieldsFrom(formData: FormData) {
     synopsis: str(formData.get("synopsis")),
     ticket_url: str(formData.get("ticket_url")),
     poster_url: str(formData.get("poster_url")),
-    date_range: str(formData.get("date_range")),
+    starts_on: dates_tbd ? null : str(formData.get("starts_on")),
+    ends_on: dates_tbd ? null : str(formData.get("ends_on")),
+    dates_tbd,
+    date_range: dates_tbd ? str(formData.get("date_range")) : null,
     has_microsite: formData.get("has_microsite") === "on",
     cast_is_sample: formData.get("cast_is_sample") === "on",
     sort_order: Number(formData.get("sort_order") || 0),
@@ -72,6 +74,8 @@ export async function createShow(formData: FormData) {
   if (!fields.title) redirect("/admin?error=title");
   if (fields.program !== "theatre" && fields.program !== "choir")
     redirect("/admin?error=program");
+  if (!fields.dates_tbd && (!fields.starts_on || !fields.ends_on))
+    redirect("/admin?error=dates");
 
   const { error } = await admin.from("productions").insert(fields);
   if (error) {
@@ -94,6 +98,8 @@ export async function updateShow(formData: FormData) {
   if (!fields.title) redirect(`/admin/shows/${id}?error=title`);
   if (fields.program !== "theatre" && fields.program !== "choir")
     redirect(`/admin/shows/${id}?error=program`);
+  if (!fields.dates_tbd && (!fields.starts_on || !fields.ends_on))
+    redirect(`/admin/shows/${id}?error=dates`);
 
   const { error } = await admin.from("productions").update(fields).eq("id", id);
   if (error) {
@@ -111,14 +117,18 @@ export async function addEvent(formData: FormData) {
   if (!admin) redirect("/admin/events?error=nodb");
 
   const production_id = str(formData.get("production_id"));
+  const starts_tbd = formData.get("starts_tbd") === "on";
   const local = str(formData.get("starts_at")); // "YYYY-MM-DDTHH:MM"
+  const label = str(formData.get("label"));
   if (!production_id) redirect("/admin/events?error=prod");
-  if (!local) redirect("/admin/events?error=when");
+  if (!starts_tbd && !local) redirect("/admin/events?error=when");
+  if (starts_tbd && !label) redirect("/admin/events?error=label");
 
   const { error } = await admin.from("showtimes").insert({
     production_id,
-    starts_at: easternWallToUtcIso(local),
-    label: str(formData.get("label")),
+    starts_at: starts_tbd || !local ? null : easternWallToUtcIso(local),
+    starts_tbd,
+    label,
     ticket_url: str(formData.get("ticket_url")),
     sort_order: Number(formData.get("sort_order") || 0),
   });
@@ -171,15 +181,19 @@ export async function updateEvent(formData: FormData) {
   if (!admin) redirect("/admin/events?error=nodb");
 
   const id = str(formData.get("id"));
+  const starts_tbd = formData.get("starts_tbd") === "on";
   const local = str(formData.get("starts_at"));
+  const label = str(formData.get("label"));
   if (!id) redirect("/admin/events?error=event");
-  if (!local) redirect("/admin/events?error=when");
+  if (!starts_tbd && !local) redirect("/admin/events?error=when");
+  if (starts_tbd && !label) redirect("/admin/events?error=label");
 
   const { error } = await admin
     .from("showtimes")
     .update({
-      starts_at: easternWallToUtcIso(local),
-      label: str(formData.get("label")),
+      starts_at: starts_tbd || !local ? null : easternWallToUtcIso(local),
+      starts_tbd,
+      label,
       ticket_url: str(formData.get("ticket_url")),
       sort_order: Number(formData.get("sort_order") || 0),
     })

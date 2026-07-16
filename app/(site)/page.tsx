@@ -22,12 +22,14 @@ export default async function Home() {
 
   const events: CalEvent[] = productions
     .flatMap((p) =>
-      p.showtimes.map((st) => ({
-        slug: p.slug,
-        title: p.title,
-        starts_at: st.starts_at,
-        label: st.label,
-      })),
+      p.showtimes
+        .filter((st) => !st.starts_tbd && st.starts_at)
+        .map((st) => ({
+          slug: p.slug,
+          title: p.title,
+          starts_at: st.starts_at as string,
+          label: st.label,
+        })),
     )
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
 
@@ -36,7 +38,11 @@ export default async function Home() {
   let featuredNext: string | null = null;
   for (const p of productions) {
     for (const st of p.showtimes) {
-      if (st.starts_at >= now && (!featuredNext || st.starts_at < featuredNext)) {
+      if (
+        st.starts_at &&
+        st.starts_at >= now &&
+        (!featuredNext || st.starts_at < featuredNext)
+      ) {
         featured = p;
         featuredNext = st.starts_at;
       }

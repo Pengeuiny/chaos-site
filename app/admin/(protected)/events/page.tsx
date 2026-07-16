@@ -14,7 +14,8 @@ type Row = {
   title: string;
   showtimes: {
     id: string;
-    starts_at: string;
+    starts_at: string | null;
+    starts_tbd: boolean;
     label: string | null;
     ticket_url: string | null;
     sort_order: number;
@@ -29,6 +30,7 @@ const ERR: Record<string, string> = {
   nodb: "Supabase service-role key isn't configured (SUPABASE_SERVICE_ROLE_KEY).",
   prod: "Pick a show for the event.",
   when: "Pick a date & time for the event.",
+  label: "Add a label to show instead of a date (e.g. \"Coming Soon\").",
   event: "Could not save the event.",
 };
 
@@ -47,7 +49,7 @@ export default async function EventsTab({
     const { data } = await admin
       .from("productions")
       .select(
-        "id, title, showtimes(id, starts_at, label, ticket_url, sort_order)",
+        "id, title, showtimes(id, starts_at, starts_tbd, label, ticket_url, sort_order)",
       )
       .order("sort_order", { ascending: true });
     // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
@@ -114,12 +116,14 @@ export default async function EventsTab({
                 {s.showtimes.length > 0 ? (
                   <ul className={styles.eventList}>
                     {[...s.showtimes]
-                      .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1))
+                      .sort((a, b) =>
+                        (a.starts_at ?? "9999") < (b.starts_at ?? "9999") ? -1 : 1,
+                      )
                       .map((e) => (
                         <EventListItem
                           key={e.id}
                           event={e}
-                          localInput={toEasternLocalInput(e.starts_at)}
+                          localInput={e.starts_at ? toEasternLocalInput(e.starts_at) : ""}
                         />
                       ))}
                   </ul>

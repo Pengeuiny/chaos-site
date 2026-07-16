@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { updateEvent, deleteEvent } from "./actions";
 import { fmtDay, fmtTime } from "@/lib/format";
+import EventDateField from "./EventDateField";
 import styles from "./admin.module.css";
 
 type EventRow = {
   id: string;
-  starts_at: string;
+  starts_at: string | null;
+  starts_tbd: boolean;
   label: string | null;
   ticket_url: string | null;
   sort_order: number;
@@ -28,26 +30,11 @@ export default function EventListItem({
       <li className={styles.eventItem} style={{ display: "block" }}>
         <form action={updateEvent} className={styles.form} style={{ gap: 10 }}>
           <input type="hidden" name="id" value={event.id} />
-          <div className={styles.row2}>
-            <label className={styles.label}>
-              Date &amp; time <span className={styles.hint}>(Eastern)</span>
-              <input
-                className={styles.input}
-                type="datetime-local"
-                name="starts_at"
-                defaultValue={localInput}
-                required
-              />
-            </label>
-            <label className={styles.label}>
-              Label
-              <input
-                className={styles.input}
-                name="label"
-                defaultValue={event.label ?? ""}
-              />
-            </label>
-          </div>
+          <EventDateField
+            defaultLocalInput={localInput}
+            defaultStartsTbd={event.starts_tbd}
+            defaultLabel={event.label}
+          />
           <label className={styles.label}>
             Ticket URL
             <input
@@ -86,8 +73,14 @@ export default function EventListItem({
   return (
     <li className={styles.eventItem}>
       <span>
-        {fmtDay(event.starts_at)} · {fmtTime(event.starts_at)}
-        {event.label ? ` — ${event.label}` : ""}
+        {event.starts_tbd || !event.starts_at ? (
+          event.label || "Date TBA"
+        ) : (
+          <>
+            {fmtDay(event.starts_at)} · {fmtTime(event.starts_at)}
+            {event.label ? ` — ${event.label}` : ""}
+          </>
+        )}
         {event.ticket_url && (
           <a
             href={event.ticket_url}

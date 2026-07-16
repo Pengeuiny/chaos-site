@@ -13,6 +13,7 @@ export const metadata: Metadata = { title: "Edit show · CHS CHAOS" };
 const ERR: Record<string, string> = {
   title: "A title is required.",
   program: "Choose Theatre or Choir.",
+  dates: "Enter a start and end date, or mark dates as not yet planned.",
   dupe: "That slug is already used by another show — pick a different one.",
   show: "Could not save changes.",
   nodb: "Supabase service-role key isn't configured.",

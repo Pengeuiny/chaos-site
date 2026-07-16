@@ -1,4 +1,4 @@
-import { MON, parts, fmtTime, rangeFrom } from "@/lib/format";
+import { MON, parts, fmtTime, characterizeShow } from "@/lib/format";
 import type { ProductionWithDetails } from "@/lib/types";
 import SmartImg from "@/app/components/SmartImg";
 import EventCardBody from "@/app/components/EventCardBody";
@@ -16,7 +16,7 @@ export default function EventHero({
   production: ProductionWithDetails;
   eyebrow?: string;
 }) {
-  const dates = p.date_range || rangeFrom(p.showtimes);
+  const dates = characterizeShow(p).dateLabel;
   const accent = p.accent || "#173568";
 
   const titleArt = (
@@ -81,9 +81,14 @@ export default function EventHero({
             ) : null
           }
           chips={p.showtimes.map((st) => {
-            const t = parts(st.starts_at);
             const href = st.ticket_url || p.ticket_url;
-            const label = `${st.label ? `${st.label} — ` : ""}${MON[t.month]} ${t.day} · ${fmtTime(st.starts_at)}`;
+            let label: string;
+            if (st.starts_tbd || !st.starts_at) {
+              label = st.label || "Date TBA";
+            } else {
+              const t = parts(st.starts_at);
+              label = `${st.label ? `${st.label} — ` : ""}${MON[t.month]} ${t.day} · ${fmtTime(st.starts_at)}`;
+            }
             return href ? (
               <a
                 key={st.id}

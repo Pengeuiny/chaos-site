@@ -150,8 +150,8 @@ section{position:relative;padding:64px 0}
   padding:6px 10px;border-radius:6px;font-weight:700;z-index:2}
 .tag.onsale{background:var(--brass);color:var(--ink)}
 .tag.upcoming{background:var(--gel);color:#fff}
-.tag.camp{background:#2bb6a3;color:#04201d}
 .tag.past{background:rgba(246,239,226,.2);color:var(--ivory)}
+.tag.tbd{background:rgba(246,239,226,.12);color:var(--ivory-dim)}
 .show .body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
 .show .body .type{font-family:var(--font-space-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-soft)}
 .show .body h3{font-family:var(--font-fraunces);font-size:23px;font-weight:600;line-height:1.05}

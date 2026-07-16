@@ -9,8 +9,6 @@ export type Production = {
   title: string;
   title_note: boolean;
   type: string | null;
-  tag_text: string | null;
-  tag_class: string | null;
   poster_url: string | null;
   accent: string | null;
   venue: string | null;
@@ -18,6 +16,9 @@ export type Production = {
   tagline: string | null;
   synopsis: string | null;
   ticket_url: string | null;
+  starts_on: string | null;
+  ends_on: string | null;
+  dates_tbd: boolean;
   date_range: string | null;
   has_microsite: boolean;
   cast_is_sample: boolean;
@@ -28,7 +29,8 @@ export type Production = {
 export type Showtime = {
   id: string;
   production_id: string;
-  starts_at: string;
+  starts_at: string | null;
+  starts_tbd: boolean;
   label: string | null;
   ticket_url: string | null;
   sort_order: number;

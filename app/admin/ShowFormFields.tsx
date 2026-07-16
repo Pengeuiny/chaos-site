@@ -1,5 +1,6 @@
 import type { Production } from "@/lib/types";
 import PosterImageField from "./PosterImageField";
+import ShowDatesField from "./ShowDatesField";
 import styles from "./admin.module.css";
 
 /**
@@ -71,31 +72,6 @@ export default function ShowFormFields({
 
       <div className={styles.row2}>
         <label className={styles.label}>
-          Tag text
-          <input
-            className={styles.input}
-            name="tag_text"
-            placeholder="On Sale"
-            defaultValue={d?.tag_text ?? ""}
-          />
-        </label>
-        <label className={styles.label}>
-          Tag style
-          <select
-            className={styles.input}
-            name="tag_class"
-            defaultValue={d?.tag_class ?? "onsale"}
-          >
-            <option value="onsale">On Sale (gold)</option>
-            <option value="upcoming">Upcoming (pink)</option>
-            <option value="camp">Camp (teal)</option>
-            <option value="past">Past (grey)</option>
-          </select>
-        </label>
-      </div>
-
-      <div className={styles.row2}>
-        <label className={styles.label}>
           Accent color
           <input
             className={styles.input}
@@ -133,15 +109,13 @@ export default function ShowFormFields({
           defaultValue={d?.address ?? ""}
         />
       </label>
-      <label className={styles.label}>
-        Date range <span className={styles.hint}>(display label)</span>
-        <input
-          className={styles.input}
-          name="date_range"
-          placeholder="April 16–18, 2026"
-          defaultValue={d?.date_range ?? ""}
-        />
-      </label>
+      <ShowDatesField
+        defaultStartsOn={d?.starts_on}
+        defaultEndsOn={d?.ends_on}
+        defaultDatesTbd={d?.dates_tbd}
+        defaultDateRange={d?.date_range}
+      />
+
       <label className={styles.label}>
         Tagline
         <input

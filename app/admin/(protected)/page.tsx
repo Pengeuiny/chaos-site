@@ -26,6 +26,7 @@ const ERR: Record<string, string> = {
   nodb: "Supabase service-role key isn't configured (SUPABASE_SERVICE_ROLE_KEY).",
   title: "A title is required.",
   program: "Choose Theatre or Choir.",
+  dates: "Enter a start and end date, or mark dates as not yet planned.",
   dupe: "A show with that slug already exists — pick a different title/slug.",
   show: "Could not create the show.",
 };

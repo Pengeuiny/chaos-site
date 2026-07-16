@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { addEvent } from "./actions";
+import EventDateField from "./EventDateField";
 import styles from "./admin.module.css";
 
 export default function AddEventToggle({
@@ -49,14 +50,7 @@ export default function AddEventToggle({
               ))}
             </select>
           </label>
-          <label className={styles.label}>
-            Date &amp; time * <span className={styles.hint}>(Eastern)</span>
-            <input className={styles.input} type="datetime-local" name="starts_at" required />
-          </label>
-          <label className={styles.label}>
-            Label
-            <input className={styles.input} name="label" placeholder="Opening Night" />
-          </label>
+          <EventDateField />
           <label className={styles.label}>
             Ticket URL <span className={styles.hint}>(optional)</span>
             <input className={styles.input} name="ticket_url" placeholder="https://…" />

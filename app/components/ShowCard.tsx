@@ -2,20 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { fmtDay } from "@/lib/format";
+import { characterizeShow } from "@/lib/format";
 import type { ProductionWithDetails } from "@/lib/types";
 
 export default function ShowCard({ p }: { p: ProductionWithDetails }) {
   const [err, setErr] = useState(false);
-  const first =
-    p.date_range ||
-    (p.showtimes[0] ? fmtDay(p.showtimes[0].starts_at) : "");
+  const status = characterizeShow(p);
   const showImg = p.poster_url && !err;
 
   return (
     <Link className="show" href={`/shows/${p.slug}`}>
       <div className="poster">
-        <span className={`tag ${p.tag_class ?? ""}`}>{p.tag_text}</span>
+        <span className={`tag ${status.tagClass}`}>{status.tagText}</span>
         {showImg ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -45,7 +43,7 @@ export default function ShowCard({ p }: { p: ProductionWithDetails }) {
       <div className="body">
         <div className="type">{p.type}</div>
         <h3>{p.title}</h3>
-        <div className="when">{first}</div>
+        <div className="when">{status.dateLabel}</div>
         <div className="go">View show details →</div>
       </div>
     </Link>

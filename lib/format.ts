@@ -110,11 +110,91 @@ export function toEasternLocalInput(iso: string): string {
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
 }
 
-export function rangeFrom(showtimes: { starts_at: string }[]) {
-  if (!showtimes.length) return "TBA";
-  const a = parts(showtimes[0].starts_at);
-  const b = parts(showtimes[showtimes.length - 1].starts_at);
-  if (a.year === b.year && a.month === b.month && a.day === b.day)
-    return `${MON[a.month]} ${a.day}, ${a.year}`;
-  return `${MON[a.month]} ${a.day} – ${MON[b.month]} ${b.day}, ${b.year}`;
+/** month index (1-12) -> season name, using a school-calendar-ish split. */
+const SEASON_BY_MONTH = [
+  "Winter", "Winter", "Spring", "Spring", "Spring", "Summer",
+  "Summer", "Summer", "Fall", "Fall", "Fall", "Winter",
+];
+
+function seasonLabel(dateStr: string): string {
+  const [year, month] = dateStr.split("-").map(Number);
+  return `${SEASON_BY_MONTH[month - 1]} ${year}`;
+}
+
+/** Format a start/end pair of "YYYY-MM-DD" strings as a human date range. */
+export function fmtDateRange(startStr: string, endStr: string): string {
+  const [sy, sm, sd] = startStr.split("-").map(Number);
+  const [ey, em, ed] = endStr.split("-").map(Number);
+  if (sy === ey && sm === em && sd === ed) return `${MON[sm - 1]} ${sd}, ${sy}`;
+  if (sy === ey && sm === em) return `${MON[sm - 1]} ${sd}–${ed}, ${sy}`;
+  if (sy === ey) return `${MON[sm - 1]} ${sd} – ${MON[em - 1]} ${ed}, ${sy}`;
+  return `${MON[sm - 1]} ${sd}, ${sy} – ${MON[em - 1]} ${ed}, ${ey}`;
+}
+
+export type ShowStatus = {
+  tagText: string;
+  tagClass: "onsale" | "upcoming" | "past" | "tbd";
+  dateLabel: string;
+};
+
+/**
+ * A show's date range, more than ~2 months out, reads better as a season
+ * ("Fall 2026") than exact dates nobody will remember yet. Inside that
+ * window (or already running) it shows exact dates and reads as On Sale.
+ * This is computed fresh on every render, so — unlike a manually-set tag —
+ * it can never go stale (e.g. a past show still showing "On Sale").
+ *
+ * Three tiers of fidelity, highest first:
+ *  1. Known performances (showtimes already entered in the Events tab —
+ *     inherently supports multiple dates/times, including two shows the
+ *     same day) — the real min/max of those wins over everything else.
+ *  2. A manually entered starts_on/ends_on range, for when the run dates
+ *     are known but individual performances haven't been scheduled yet.
+ *  3. dates_tbd — nothing is locked in; show the free-text date_range as-is.
+ */
+const SEASON_CUTOFF_DAYS = 60;
+
+export function characterizeShow(
+  p: {
+    starts_on: string | null;
+    ends_on: string | null;
+    dates_tbd: boolean;
+    date_range: string | null;
+    showtimes?: { starts_at: string | null }[];
+  },
+  now: string = new Date().toISOString().slice(0, 10),
+): ShowStatus {
+  const knownDates = (p.showtimes ?? [])
+    .map((s) => s.starts_at)
+    .filter((s): s is string => Boolean(s))
+    .map((s) => s.slice(0, 10))
+    .sort();
+
+  let start: string;
+  let end: string;
+
+  if (knownDates.length > 0) {
+    start = knownDates[0];
+    end = knownDates[knownDates.length - 1];
+  } else if (p.dates_tbd || !p.starts_on) {
+    return {
+      tagText: "Coming Soon",
+      tagClass: "tbd",
+      dateLabel: p.date_range || "Coming soon",
+    };
+  } else {
+    start = p.starts_on;
+    end = p.ends_on || p.starts_on;
+  }
+
+  const dateLabel = fmtDateRange(start, end);
+
+  if (end < now) return { tagText: "Past", tagClass: "past", dateLabel };
+
+  const daysToStart = (Date.parse(start) - Date.parse(now)) / 86400000;
+  if (start <= now || daysToStart <= SEASON_CUTOFF_DAYS) {
+    return { tagText: "On Sale", tagClass: "onsale", dateLabel };
+  }
+
+  return { tagText: seasonLabel(start), tagClass: "upcoming", dateLabel: seasonLabel(start) };
 }
