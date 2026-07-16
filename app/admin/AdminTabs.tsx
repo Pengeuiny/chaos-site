@@ -9,7 +9,11 @@ const TABS = [
   { href: "/admin/social", key: "social", label: "Social Media" },
 ] as const;
 
-export default function AdminTabs({ active }: { active: (typeof TABS)[number]["key"] }) {
+export default function AdminTabs({
+  active,
+}: {
+  active?: (typeof TABS)[number]["key"];
+}) {
   return (
     <nav className={styles.adminTabs}>
       {TABS.map((t) => (
