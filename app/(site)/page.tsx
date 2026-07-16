@@ -63,54 +63,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* MISSION */}
-      <section id="mission">
-        <div className="wrap">
-          <div className="sec-head">
-            <div>
-              <div className="k">Our Mission</div>
-              <h2>
-                Support that makes the <span className="gold">arts thrive</span>
-              </h2>
-            </div>
-          </div>
-          <div className="mission">
-            <div className="mcard">
-              <div className="ic">🎓</div>
-              <h3>Programs</h3>
-              <p>
-                We&rsquo;re a parent-led organization supporting the Chorus and
-                Theatre programs with the resources they need for a thriving
-                arts education.
-              </p>
-            </div>
-            <div className="mcard">
-              <div className="ic">🤝</div>
-              <h3>Volunteer</h3>
-              <p>
-                We rely on our community to make a difference — a variety of
-                ways to get involved, including partnerships with local
-                businesses.
-              </p>
-              <Link className="more" href="/#volunteer">
-                Get involved →
-              </Link>
-            </div>
-            <div className="mcard">
-              <div className="ic">🎭</div>
-              <h3>Events</h3>
-              <p>
-                From musical performances to drama productions, there is always
-                something exciting happening throughout the year.
-              </p>
-              <Link className="more" href="/#season">
-                View the season →
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* SEASON */}
       <section id="season">
         <div className="wrap">
@@ -210,6 +162,54 @@ export default async function Home() {
                 </a>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* MISSION */}
+      <section id="mission">
+        <div className="wrap">
+          <div className="sec-head">
+            <div>
+              <div className="k">Our Mission</div>
+              <h2>
+                Support that makes the <span className="gold">arts thrive</span>
+              </h2>
+            </div>
+          </div>
+          <div className="mission">
+            <div className="mcard">
+              <div className="ic">🎓</div>
+              <h3>Programs</h3>
+              <p>
+                We&rsquo;re a parent-led organization supporting the Chorus and
+                Theatre programs with the resources they need for a thriving
+                arts education.
+              </p>
+            </div>
+            <div className="mcard">
+              <div className="ic">🤝</div>
+              <h3>Volunteer</h3>
+              <p>
+                We rely on our community to make a difference — a variety of
+                ways to get involved, including partnerships with local
+                businesses.
+              </p>
+              <Link className="more" href="/#volunteer">
+                Get involved →
+              </Link>
+            </div>
+            <div className="mcard">
+              <div className="ic">🎭</div>
+              <h3>Events</h3>
+              <p>
+                From musical performances to drama productions, there is always
+                something exciting happening throughout the year.
+              </p>
+              <Link className="more" href="/#season">
+                View the season →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
