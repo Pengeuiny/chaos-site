@@ -7,8 +7,10 @@ import SmartImg from "@/app/components/SmartImg";
 import EventHero from "@/app/components/EventHero";
 import Calendar, { type CalEvent } from "@/app/components/Calendar";
 
-// Render at request time so freshly-published Supabase content always shows.
-export const dynamic = "force-dynamic";
+// Cache the rendered page and refresh it in the background at most once a
+// minute, instead of re-rendering (and re-querying Supabase) on every single
+// request. Newly published shows/events can take up to 60s to appear.
+export const revalidate = 60;
 
 export default async function Home() {
   const [productions, people] = await Promise.all([
