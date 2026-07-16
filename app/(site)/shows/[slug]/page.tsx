@@ -135,32 +135,30 @@ export default async function ShowDetail({ params }: Props) {
         <div className="stubs">
           {p.showtimes.map((st) => {
             const t = parts(st.starts_at);
+            const Tag = st.ticket_url ? "a" : "div";
             return (
-              <div className="stub" key={st.id}>
-                <div
-                  className="dwrap"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 14,
-                    width: "100%",
-                  }}
-                >
-                  <div style={{ textAlign: "center" }}>
-                    <div className="dnum">{t.day}</div>
-                    <div className="dm">
-                      {MON[t.month]} {t.year}
-                    </div>
-                  </div>
-                  <div className="perf" />
-                  <div>
-                    <div className="dt">{st.label}</div>
-                    <div className="dd">
-                      {t.weekday} · {fmtTime(st.starts_at)}
-                    </div>
+              <Tag
+                className={`stub${st.ticket_url ? " ticketable" : ""}`}
+                key={st.id}
+                {...(st.ticket_url
+                  ? { href: st.ticket_url, target: "_blank", rel: "noopener" }
+                  : {})}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <div className="dnum">{t.day}</div>
+                  <div className="dm">
+                    {MON[t.month]} {t.year}
                   </div>
                 </div>
-              </div>
+                <div className="perf" />
+                <div>
+                  <div className="dt">{st.label}</div>
+                  <div className="dd">
+                    {t.weekday} · {fmtTime(st.starts_at)}
+                  </div>
+                </div>
+                {st.ticket_url && <div className="go">🎟 Tickets →</div>}
+              </Tag>
             );
           })}
         </div>

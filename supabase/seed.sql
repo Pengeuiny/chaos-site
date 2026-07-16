@@ -38,7 +38,7 @@ values
 
   ('finding-nemo-jr-2026', 'Finding Nemo Jr.', false,
    'Two-Week Musical Intensive', 'Registration Open', 'upcoming',
-   null, '#2563c9',
+   '/finding-nemo-jr.png', '#2563c9',
    'Cuthbertson High School', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'Dive in. A two-week intensive that ends with a full Jr. production.',
    'Our summer flagship: a two-week musical intensive where campers build a complete production of Disney''s Finding Nemo Jr. from the ground up — music, choreography, staging, and tech — ending in a live performance. Has its own immersive microsite (link below).',
@@ -48,17 +48,16 @@ values
 -- ---------------------------------------------------------------------------
 -- Showtimes
 -- ---------------------------------------------------------------------------
-insert into public.showtimes (production_id, starts_at, label, sort_order) values
-  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-16 19:00:00-04', 'Opening Night', 1),
-  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-17 19:00:00-04', 'Friday', 2),
-  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-18 13:00:00-04', 'Matinee', 3),
-  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-18 19:00:00-04', 'Closing Night', 4),
-  ((select id from public.productions where slug = 'summer-camp-revue-2026'), '2026-06-15 09:00:00-04', 'Camp begins', 1),
-  ((select id from public.productions where slug = 'summer-camp-revue-2026'), '2026-06-19 09:00:00-04', 'Showcase week', 2),
-  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-13 09:00:00-04', 'Week 1 begins', 1),
-  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-17 09:00:00-04', 'Week 1 ends', 2),
-  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-20 09:00:00-04', 'Week 2 begins', 3),
-  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-24 18:00:00-04', 'Final performance', 4);
+insert into public.showtimes (production_id, starts_at, label, ticket_url, sort_order) values
+  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-16 19:00:00-04', 'Opening Night', null, 1),
+  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-17 19:00:00-04', 'Friday', null, 2),
+  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-18 13:00:00-04', 'Matinee', null, 3),
+  ((select id from public.productions where slug = 'spring-mainstage-2026'), '2026-04-18 19:00:00-04', 'Closing Night', null, 4),
+  ((select id from public.productions where slug = 'summer-camp-revue-2026'), '2026-06-15 09:00:00-04', 'Camp begins', null, 1),
+  ((select id from public.productions where slug = 'summer-camp-revue-2026'), '2026-06-19 09:00:00-04', 'Showcase week', null, 2),
+  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-24 17:00:00-04', 'Friday Evening', 'https://cuthbertsontheatre.ludus.com/index.php?time_id=340835', 1),
+  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-24 20:00:00-04', 'Friday Night', 'https://cuthbertsontheatre.ludus.com/index.php?time_id=340836', 2),
+  ((select id from public.productions where slug = 'finding-nemo-jr-2026'), '2026-07-25 10:00:00-04', 'Saturday Matinee', 'https://cuthbertsontheatre.ludus.com/index.php?time_id=340837', 3);
 
 -- ---------------------------------------------------------------------------
 -- Cast (spring mainstage — sample cast)

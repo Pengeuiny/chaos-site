@@ -30,6 +30,7 @@ export type Showtime = {
   production_id: string;
   starts_at: string;
   label: string | null;
+  ticket_url: string | null;
   sort_order: number;
 };
 

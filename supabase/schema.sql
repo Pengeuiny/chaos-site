@@ -41,6 +41,7 @@ create table if not exists public.showtimes (
   production_id uuid not null references public.productions(id) on delete cascade,
   starts_at     timestamptz not null,
   label         text,
+  ticket_url    text,                              -- deep-link straight to this date's checkout
   sort_order    int not null default 0
 );
 create index if not exists showtimes_production_idx on public.showtimes(production_id);
