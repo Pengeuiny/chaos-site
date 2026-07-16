@@ -51,6 +51,29 @@
   margin: 0 auto;
   padding: 28px 24px 80px;
 }
+.adminTabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid rgba(233, 185, 73, 0.22);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.adminTab,
+.adminTabActive {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #9c8f7e;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.adminTab:hover {
+  color: #e3d9c6;
+}
+.adminTabActive {
+  color: #f0c66b;
+  border-bottom-color: #e9b949;
+}
 .h1 {
   font-family: var(--font-anton), sans-serif;
   text-transform: uppercase;

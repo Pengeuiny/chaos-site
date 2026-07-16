@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { socialConfigured } from "@/lib/social";
 import SocialComposer from "@/app/admin/SocialComposer";
+import AdminTabs from "@/app/admin/AdminTabs";
 import styles from "../../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -34,14 +34,8 @@ export default async function SocialPage() {
 
   return (
     <>
-      <div className={styles.showHead} style={{ marginBottom: 18 }}>
-        <h1 className={styles.h1} style={{ margin: 0 }}>
-          Social media
-        </h1>
-        <Link className={styles.topLink} href="/admin">
-          ← Back to dashboard
-        </Link>
-      </div>
+      <h1 className={styles.h1}>Dashboard</h1>
+      <AdminTabs active="social" />
 
       {!admin && (
         <div className={styles.error}>

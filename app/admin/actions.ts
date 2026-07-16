@@ -108,12 +108,12 @@ export async function updateShow(formData: FormData) {
 export async function addEvent(formData: FormData) {
   await requireAdmin();
   const admin = createAdminClient();
-  if (!admin) redirect("/admin?error=nodb");
+  if (!admin) redirect("/admin/events?error=nodb");
 
   const production_id = str(formData.get("production_id"));
   const local = str(formData.get("starts_at")); // "YYYY-MM-DDTHH:MM"
-  if (!production_id) redirect("/admin?error=prod");
-  if (!local) redirect("/admin?error=when");
+  if (!production_id) redirect("/admin/events?error=prod");
+  if (!local) redirect("/admin/events?error=when");
 
   const { error } = await admin.from("showtimes").insert({
     production_id,
@@ -123,9 +123,9 @@ export async function addEvent(formData: FormData) {
     sort_order: Number(formData.get("sort_order") || 0),
   });
 
-  if (error) redirect("/admin?error=event");
+  if (error) redirect("/admin/events?error=event");
   revalidatePath("/");
-  redirect("/admin?ok=event");
+  redirect("/admin/events?ok=event");
 }
 
 /**
@@ -168,12 +168,12 @@ export async function publishSocialPost(formData: FormData): Promise<{
 export async function updateEvent(formData: FormData) {
   await requireAdmin();
   const admin = createAdminClient();
-  if (!admin) redirect("/admin?error=nodb");
+  if (!admin) redirect("/admin/events?error=nodb");
 
   const id = str(formData.get("id"));
   const local = str(formData.get("starts_at"));
-  if (!id) redirect("/admin?error=event");
-  if (!local) redirect("/admin?error=when");
+  if (!id) redirect("/admin/events?error=event");
+  if (!local) redirect("/admin/events?error=when");
 
   const { error } = await admin
     .from("showtimes")
@@ -185,19 +185,19 @@ export async function updateEvent(formData: FormData) {
     })
     .eq("id", id);
 
-  if (error) redirect("/admin?error=event");
+  if (error) redirect("/admin/events?error=event");
   revalidatePath("/");
-  redirect("/admin?ok=event");
+  redirect("/admin/events?ok=event");
 }
 
 export async function deleteEvent(formData: FormData) {
   await requireAdmin();
   const admin = createAdminClient();
-  if (!admin) redirect("/admin?error=nodb");
+  if (!admin) redirect("/admin/events?error=nodb");
   const id = str(formData.get("id"));
   if (id) await admin.from("showtimes").delete().eq("id", id);
   revalidatePath("/");
-  redirect("/admin?ok=deleted");
+  redirect("/admin/events?ok=deleted");
 }
 
 export async function deleteShow(formData: FormData) {
