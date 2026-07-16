@@ -88,7 +88,7 @@ export default async function Home() {
           <div className="split">
             <Calendar events={events} />
             <div className="panel lined panel-pad" id="tickets">
-              <h3>Tickets &amp; Dues</h3>
+              <h3>Event Tickets &amp; Dues</h3>
               <p>
                 Reserved seating for every mainstage show, plus program dues and
                 donations — all handled securely through our box office.
