@@ -197,7 +197,7 @@ export default function NemoPage() {
             rel="noopener"
             style={{ fontSize: "17px", padding: "16px 30px" }}
           >
-            🐟 Register for the Intensive
+            🐟 Register
           </a>
         </div>
       </section>
