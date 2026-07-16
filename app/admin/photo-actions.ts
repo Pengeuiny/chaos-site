@@ -68,9 +68,15 @@ export async function ingestPersonPhoto(
   }
 
   const path = `${randomUUID()}.webp`;
+  // Upload as a Blob, not a raw Node Buffer: storage-js's Buffer code path
+  // passes the body straight to fetch(), which was silently mangling binary
+  // data (every non-UTF8-safe byte replaced with U+FFFD, corrupting the
+  // file). Blob routes through storage-js's FormData/multipart path instead.
   const { error: upErr } = await admin.storage
     .from("people")
-    .upload(path, resized, { contentType: "image/webp" });
+    .upload(path, new Blob([new Uint8Array(resized)], { type: "image/webp" }), {
+      contentType: "image/webp",
+    });
   if (upErr) {
     console.error("ingestPersonPhoto upload error:", upErr);
     return { error: `Upload failed: ${upErr.message}` };
