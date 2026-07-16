@@ -75,9 +75,11 @@ export default async function Home() {
       <section id="season">
         <div className="wrap">
           <div className="season">
-            {productions.map((p) => (
-              <ShowCard key={p.id} p={p} />
-            ))}
+            {productions
+              .filter((p) => p.id !== featured?.id)
+              .map((p) => (
+                <ShowCard key={p.id} p={p} />
+              ))}
           </div>
         </div>
       </section>
