@@ -71,7 +71,10 @@ export async function ingestPersonPhoto(
   const { error: upErr } = await admin.storage
     .from("people")
     .upload(path, resized, { contentType: "image/webp" });
-  if (upErr) return { error: "Upload failed." };
+  if (upErr) {
+    console.error("ingestPersonPhoto upload error:", upErr);
+    return { error: `Upload failed: ${upErr.message}` };
+  }
 
   const { data } = admin.storage.from("people").getPublicUrl(path);
   return { url: data.publicUrl };

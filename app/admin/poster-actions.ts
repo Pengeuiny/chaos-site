@@ -73,7 +73,10 @@ export async function ingestPosterImage(
   const { error: upErr } = await admin.storage
     .from("posters")
     .upload(path, resized, { contentType: "image/webp" });
-  if (upErr) return { error: "Upload failed." };
+  if (upErr) {
+    console.error("ingestPosterImage upload error:", upErr);
+    return { error: `Upload failed: ${upErr.message}` };
+  }
 
   const { data } = admin.storage.from("posters").getPublicUrl(path);
   return { url: data.publicUrl };
