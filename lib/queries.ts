@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/public";
 import type { ProductionWithDetails, Person } from "@/lib/types";
 
 /** Sort a production's embedded showtimes (chronologically) and cast (by order). */
