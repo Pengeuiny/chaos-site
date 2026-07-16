@@ -40,9 +40,9 @@ h1,h2,h3{margin:0;line-height:1.05}
 #stage-fallback{
   position:fixed;inset:0;z-index:-3;
   background:
-    radial-gradient(120% 90% at 30% -10%, rgba(233,185,73,.18), transparent 45%),
-    radial-gradient(120% 90% at 72% -10%, rgba(232,58,130,.16), transparent 45%),
-    linear-gradient(180deg,#1f0810,#140409 60%,#0c0307);
+    radial-gradient(120% 90% at 30% -10%, rgba(233,185,73,.14), transparent 45%),
+    radial-gradient(120% 90% at 72% -10%, rgba(58,130,232,.12), transparent 45%),
+    linear-gradient(180deg,#0a1224,#050b18 60%,#030712);
 }
 .grain{
   position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
@@ -66,7 +66,7 @@ header.bar{
 .brand .mark img{height:100%;width:auto;display:block}
 .brand b{font-family:"Anton";font-size:23px;letter-spacing:.06em;line-height:1}
 .brand small{display:block;font-family:"Space Mono";font-size:9.5px;letter-spacing:.32em;color:var(--brass-soft);text-transform:uppercase;margin-top:2px}
-nav.links{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+nav.links{margin-left:22px;display:flex;gap:4px;flex-wrap:wrap}
 nav.links a{
   font-size:13.5px;font-weight:600;letter-spacing:.02em;padding:9px 12px;border-radius:9px;color:var(--ivory-dim);
   transition:.18s;white-space:nowrap;
@@ -75,6 +75,7 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
 .btn{
   display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;
   padding:11px 18px;border-radius:999px;cursor:pointer;border:0;transition:.2s;line-height:1;
+  white-space:nowrap;
 }
 .btn-primary{background:var(--crimson);color:#fff;box-shadow:0 8px 22px rgba(177,30,55,.4)}
 .btn-primary:hover{background:var(--crimson-deep);transform:translateY(-1px)}
@@ -83,14 +84,7 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
 .btn-ghost{background:transparent;color:var(--ivory);border:1.5px solid rgba(246,239,226,.3)}
 .btn-ghost:hover{border-color:var(--brass);color:var(--brass-soft)}
 .navtoggle{display:none;margin-left:auto;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
-
-/* announce strip */
-.announce{
-  background:repeating-linear-gradient(90deg,var(--crimson) 0 14px,var(--crimson-deep) 14px 28px);
-  text-align:center;font-family:"Space Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  padding:7px 16px;color:#ffe9c2;
-}
-.announce a{border-bottom:1px solid rgba(255,233,194,.6)}
+.bar .row .btn{margin-left:auto;flex-shrink:0;padding:11px 24px}
 
 /* hero */
 .hero{padding:78px 0 60px;position:relative}
@@ -129,7 +123,7 @@ section{position:relative;padding:64px 0}
 }
 
 /* mission grid */
-.mission{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.mission{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .mcard{padding:26px 22px;border-radius:var(--r);background:rgba(246,239,226,.05);border:1px solid rgba(233,185,73,.18);transition:.2s}
 .mcard:hover{background:rgba(246,239,226,.09);transform:translateY(-3px);border-color:rgba(233,185,73,.45)}
 .mcard .ic{font-size:26px;margin-bottom:14px}
@@ -208,6 +202,17 @@ section{position:relative;padding:64px 0}
 /* split */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
 .split .panel-pad{padding:34px}
+
+/* membership tiers */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
+.tier{padding:26px 22px;border-radius:var(--r);background:rgba(246,239,226,.05);
+  border:1px solid rgba(233,185,73,.18);transition:.2s;display:flex;flex-direction:column}
+.tier:hover{background:rgba(246,239,226,.09);transform:translateY(-3px);border-color:rgba(233,185,73,.45)}
+.tier .tier-name{font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass-soft)}
+.tier .tier-price{font-family:"Anton";font-size:40px;color:var(--brass);margin:6px 0 14px}
+.tier .tier-benefits{list-style:none;padding:0;margin:0 0 20px;flex:1}
+.tier .tier-benefits li{font-size:13.5px;color:var(--ivory-dim);padding:6px 0 6px 20px;position:relative}
+.tier .tier-benefits li:before{content:"✓";position:absolute;left:0;color:var(--gel)}
 .split .panel-pad h3{font-family:"Anton";font-size:34px;text-transform:uppercase;color:var(--crimson-deep);margin-bottom:14px}
 .split .panel-pad p{color:#4a3a2e;font-size:15.5px;margin:0 0 14px}
 .bullets{list-style:none;padding:0;margin:0 0 18px}
@@ -256,6 +261,9 @@ footer small{color:var(--ivory-dim);font-size:13px}
 .stubs{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin:8px 0 30px}
 .stub{position:relative;background:linear-gradient(180deg,#fbf6ec,var(--ivory));color:var(--ink);border-radius:10px;padding:16px 18px;
   display:flex;align-items:center;gap:14px;overflow:hidden}
+.stub.ticketable{cursor:pointer;text-decoration:none;transition:.18s}
+.stub.ticketable:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(0,0,0,.35)}
+.stub .go{margin-left:auto;font-family:"Space Mono";font-size:11px;font-weight:700;color:var(--crimson);white-space:nowrap}
 .stub:before,.stub:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:var(--velvet);top:50%;transform:translateY(-50%)}
 .stub:before{left:-8px}.stub:after{right:-8px}
 .stub .perf{position:absolute;left:50%;top:8px;bottom:8px;border-left:2px dashed var(--paper-line)}
@@ -290,6 +298,7 @@ footer small{color:var(--ivory-dim);font-size:13px}
   .split{grid-template-columns:1fr}
   .pb-hero{grid-template-columns:1fr;max-width:520px}
   .contact{grid-template-columns:1fr}
+  .tiers{grid-template-columns:1fr}
 }
 @media(max-width:680px){
   nav.links{display:none}

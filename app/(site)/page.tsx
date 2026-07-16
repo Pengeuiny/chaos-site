@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getProductions, getPeople } from "@/lib/queries";
-import { TICKETS, DUES, PASSES } from "@/lib/links";
+import { TICKETS, DUES, PASSES, MEMBERSHIP_TIERS } from "@/lib/links";
 import ShowCard from "@/app/components/ShowCard";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
 import Calendar, { type CalEvent } from "@/app/components/Calendar";
+import { fmtDay, fmtTime } from "@/lib/format";
 
 // Render at request time so freshly-published Supabase content always shows.
 export const dynamic = "force-dynamic";
@@ -28,49 +29,75 @@ export default async function Home() {
     )
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
 
+  const now = new Date().toISOString();
+  const nextEvent = events.find((e) => e.starts_at >= now);
+
   return (
     <>
       {/* HERO */}
       <section className="hero" id="home">
         <div className="wrap">
-          <div className="eyebrow">Cuthbertson High School · Waxhaw, NC</div>
-          <h1>
-            Where the
-            <br />
-            students take
-            <span className="em">center stage.</span>
-          </h1>
-          <p className="lead">
-            CHS CHAOS is the parent-led booster organization powering
-            Cuthbertson High School&rsquo;s theatre and choral programs —
-            tickets, talent, and the people who make the curtain rise.
-          </p>
-          <div className="cta">
-            <a
-              className="btn btn-primary"
-              href={TICKETS}
-              target="_blank"
-              rel="noopener"
-            >
-              🎟 Buy Tickets
-            </a>
-            <a
-              className="btn btn-gold"
-              href={PASSES}
-              target="_blank"
-              rel="noopener"
-            >
-              Become a Member
-            </a>
-            <Link className="btn btn-ghost" href="/#season">
-              See the Season
-            </Link>
-          </div>
-          <div className="bulbs">
-            {Array.from({ length: 9 }).map((_, i) => (
-              <span className="bulb" key={i} />
-            ))}
-            <span className="lbl">Now playing the 2025–26 season</span>
+          <div className="split">
+            <div>
+              <div className="eyebrow">Next Up</div>
+              {nextEvent ? (
+                <>
+                  <h1>{nextEvent.title}</h1>
+                  <p className="lead">
+                    {nextEvent.label ? `${nextEvent.label} · ` : ""}
+                    {fmtDay(nextEvent.starts_at)} at{" "}
+                    {fmtTime(nextEvent.starts_at)}
+                  </p>
+                  <div className="cta">
+                    <Link
+                      className="btn btn-ghost"
+                      href={`/shows/${nextEvent.slug}`}
+                    >
+                      Show Details →
+                    </Link>
+                    <Link className="btn btn-ghost" href="/#season">
+                      See the Season
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h1>Season wrapped</h1>
+                  <p className="lead">Check back soon for next season.</p>
+                </>
+              )}
+              <div className="bulbs">
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <span className="bulb" key={i} />
+                ))}
+                <span className="lbl">Now Playing</span>
+              </div>
+            </div>
+            <div className="panel lined panel-pad">
+              <h3>Tickets &amp; Membership</h3>
+              <p>
+                Reserved seating for every mainstage show — support the
+                program with every purchase.
+              </p>
+              <div className="pb-cta">
+                <a
+                  className="btn btn-primary"
+                  href={TICKETS}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  🎟 Buy Tickets
+                </a>
+                <a
+                  className="btn btn-gold"
+                  href={PASSES}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Become a Member
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -119,17 +146,6 @@ export default async function Home() {
                 View the season →
               </Link>
             </div>
-            <div className="mcard">
-              <div className="ic">💰</div>
-              <h3>Sponsors</h3>
-              <p>
-                Corporate and small-business supporters help us provide a level
-                of support like no other for our students.
-              </p>
-              <Link className="more" href="/#sponsors">
-                Sponsor us →
-              </Link>
-            </div>
           </div>
         </div>
       </section>
@@ -137,22 +153,6 @@ export default async function Home() {
       {/* SEASON */}
       <section id="season">
         <div className="wrap">
-          <div className="sec-head">
-            <div>
-              <div className="k">2025–26 Season</div>
-              <h2>
-                On the <span className="gold">Marquee</span>
-              </h2>
-            </div>
-            <a
-              className="btn btn-ghost"
-              href={TICKETS}
-              target="_blank"
-              rel="noopener"
-            >
-              All tickets ↗
-            </a>
-          </div>
           <div className="season">
             {productions.map((p) => (
               <ShowCard key={p.id} p={p} />
@@ -222,18 +222,41 @@ export default async function Home() {
               <p style={{ color: "var(--ivory-dim)" }}>
                 General Booster Membership brings benefits such as early ticket
                 purchases and discounted tickets. Becoming a member is the
-                simplest way to support the program all year long.
+                simplest way to support the program all year long. Pick a
+                tier below — checkout is handled securely through our box
+                office.
               </p>
               <a
-                className="btn btn-gold"
+                className="btn btn-ghost"
                 href={PASSES}
                 target="_blank"
                 rel="noopener"
                 style={{ marginTop: 8 }}
               >
-                Become a Member ↗
+                Or view all membership options ↗
               </a>
             </div>
+          </div>
+          <div className="tiers">
+            {MEMBERSHIP_TIERS.map((tier) => (
+              <div className="tier" key={tier.name}>
+                <div className="tier-name">{tier.name}</div>
+                <div className="tier-price">${tier.price}</div>
+                <ul className="tier-benefits">
+                  {tier.benefits.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+                <a
+                  className="btn btn-gold"
+                  href={tier.url}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Join — ${tier.price} ↗
+                </a>
+              </div>
+            ))}
           </div>
         </div>
       </section>

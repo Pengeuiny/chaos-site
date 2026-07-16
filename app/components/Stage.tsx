@@ -40,7 +40,7 @@ export default function Stage() {
       vec2 uv=gl_FragCoord.xy/u_res.xy;
       float asp=u_res.x/u_res.y;
       vec2 p=vec2(uv.x*asp,uv.y);
-      vec3 top=vec3(0.12,0.035,0.065), bot=vec3(0.02,0.008,0.03);
+      vec3 top=vec3(0.035,0.07,0.14), bot=vec3(0.006,0.014,0.035);
       vec3 col=mix(bot,top,pow(uv.y,1.35));
       float t=u_time*0.22;
       vec2 m=(u_mouse-0.5);
@@ -51,7 +51,7 @@ export default function Stage() {
       float b1=beam(p,s1,d1,0.055);
       float b2=beam(p,s2,d2,0.055);
       col+=vec3(1.0,0.78,0.35)*b1*1.5;
-      col+=vec3(1.0,0.30,0.55)*b2*1.15;
+      col+=vec3(0.3,0.55,1.0)*b2*1.15;
       float dust=pow(noise(p*7.0+vec2(0.0,-u_time*0.25)),3.0);
       col+=(b1+b2)*dust*vec3(1.0,0.9,0.7)*0.7;
       col*=smoothstep(1.25,0.15,length(uv-0.5));

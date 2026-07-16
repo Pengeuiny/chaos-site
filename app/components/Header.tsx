@@ -25,7 +25,7 @@ export default function Header() {
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="mark">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/cuthbertson-mark.png" alt="Cuthbertson" />
+            <img src="/chaos-logo.png" alt="CHS CHAOS" />
           </div>
           <div>
             <b>CHS&nbsp;CHAOS</b>
