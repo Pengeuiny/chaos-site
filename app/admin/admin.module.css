@@ -128,6 +128,71 @@
   resize: vertical;
 }
 
+.posterTabs {
+  display: flex;
+  gap: 8px;
+}
+.posterTab,
+.posterTabActive {
+  background: none;
+  border: 1px solid rgba(233, 185, 73, 0.25);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #e3d9c6;
+}
+.posterTabActive {
+  background: #e9b949;
+  border-color: #e9b949;
+  color: #221016;
+}
+.posterUrlRow {
+  display: flex;
+  gap: 10px;
+}
+.posterUrlRow .input {
+  flex: 1;
+}
+.posterUrlRow .btn {
+  margin-top: 0;
+  white-space: nowrap;
+}
+.dropzone {
+  border: 1.5px dashed rgba(233, 185, 73, 0.35);
+  border-radius: 10px;
+  padding: 22px 14px;
+  text-align: center;
+  font-size: 13px;
+  color: #9c8f7e;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.dropzone:hover,
+.dropzoneOver {
+  border-color: #e9b949;
+  color: #e3d9c6;
+  background: rgba(233, 185, 73, 0.06);
+}
+.posterPreview {
+  width: 140px;
+  aspect-ratio: 3 / 4;
+  border-radius: 9px;
+  overflow: hidden;
+  border: 1px solid rgba(233, 185, 73, 0.25);
+}
+.posterPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.inlineError {
+  font-size: 12.5px;
+  color: #f0a9b5;
+  margin: 0;
+}
+
 .fieldset {
   border: 1px solid rgba(233, 185, 73, 0.25);
   border-radius: 9px;

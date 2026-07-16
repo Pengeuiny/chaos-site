@@ -1,4 +1,5 @@
 import type { Production } from "@/lib/types";
+import PosterImageField from "./PosterImageField";
 import styles from "./admin.module.css";
 
 /**
@@ -159,26 +160,17 @@ export default function ShowFormFields({
         />
       </label>
 
-      <div className={styles.row2}>
-        <label className={styles.label}>
-          Ticket URL
-          <input
-            className={styles.input}
-            name="ticket_url"
-            placeholder="https://…"
-            defaultValue={d?.ticket_url ?? ""}
-          />
-        </label>
-        <label className={styles.label}>
-          Poster URL
-          <input
-            className={styles.input}
-            name="poster_url"
-            placeholder="https://…"
-            defaultValue={d?.poster_url ?? ""}
-          />
-        </label>
-      </div>
+      <label className={styles.label}>
+        Ticket URL
+        <input
+          className={styles.input}
+          name="ticket_url"
+          placeholder="https://…"
+          defaultValue={d?.ticket_url ?? ""}
+        />
+      </label>
+
+      <PosterImageField defaultValue={d?.poster_url} />
 
       <label className={styles.check}>
         <input

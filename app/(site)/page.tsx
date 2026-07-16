@@ -4,8 +4,8 @@ import { TICKETS, DUES, PASSES, MEMBERSHIP_TIERS } from "@/lib/links";
 import ShowCard from "@/app/components/ShowCard";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
+import EventHero from "@/app/components/EventHero";
 import Calendar, { type CalEvent } from "@/app/components/Calendar";
-import { fmtDay, fmtTime } from "@/lib/format";
 
 // Render at request time so freshly-published Supabase content always shows.
 export const dynamic = "force-dynamic";
@@ -30,75 +30,36 @@ export default async function Home() {
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
 
   const now = new Date().toISOString();
-  const nextEvent = events.find((e) => e.starts_at >= now);
+  let featured = productions[0] ?? null;
+  let featuredNext: string | null = null;
+  for (const p of productions) {
+    for (const st of p.showtimes) {
+      if (st.starts_at >= now && (!featuredNext || st.starts_at < featuredNext)) {
+        featured = p;
+        featuredNext = st.starts_at;
+      }
+    }
+  }
 
   return (
     <>
       {/* HERO */}
       <section className="hero" id="home">
         <div className="wrap">
-          <div className="split">
-            <div>
-              <div className="eyebrow">Next Up</div>
-              {nextEvent ? (
-                <>
-                  <h1>{nextEvent.title}</h1>
-                  <p className="lead">
-                    {nextEvent.label ? `${nextEvent.label} · ` : ""}
-                    {fmtDay(nextEvent.starts_at)} at{" "}
-                    {fmtTime(nextEvent.starts_at)}
-                  </p>
-                  <div className="cta">
-                    <Link
-                      className="btn btn-ghost"
-                      href={`/shows/${nextEvent.slug}`}
-                    >
-                      Show Details →
-                    </Link>
-                    <Link className="btn btn-ghost" href="/#season">
-                      See the Season
-                    </Link>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <h1>Season wrapped</h1>
-                  <p className="lead">Check back soon for next season.</p>
-                </>
-              )}
-              <div className="bulbs">
-                {Array.from({ length: 9 }).map((_, i) => (
-                  <span className="bulb" key={i} />
-                ))}
-                <span className="lbl">Now Playing</span>
-              </div>
-            </div>
-            <div className="panel lined panel-pad">
-              <h3>Tickets &amp; Membership</h3>
-              <p>
-                Reserved seating for every mainstage show — support the
-                program with every purchase.
-              </p>
-              <div className="pb-cta">
-                <a
-                  className="btn btn-primary"
-                  href={TICKETS}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  🎟 Buy Tickets
-                </a>
-                <a
-                  className="btn btn-gold"
-                  href={PASSES}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Become a Member
-                </a>
-              </div>
-            </div>
+          <div className="bulbs">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <span className="bulb" key={i} />
+            ))}
+            <span className="lbl">Now Playing</span>
           </div>
+          {featured ? (
+            <EventHero production={featured} />
+          ) : (
+            <>
+              <h1>Season wrapped</h1>
+              <p className="lead">Check back soon for next season.</p>
+            </>
+          )}
         </div>
       </section>
 

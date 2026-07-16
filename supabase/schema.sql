@@ -121,3 +121,18 @@ create policy "Public read people"        on public.people       for select usin
 -- them back through the anon/auth API. Reads happen via the service role only.
 create policy "Public insert reservations" on public.ticket_reservations for insert with check (true);
 create policy "Public insert volunteers"   on public.volunteers          for insert with check (true);
+
+-- ---------------------------------------------------------------------------
+-- Storage: poster images
+-- ---------------------------------------------------------------------------
+-- Admin uploads (pasted URL or drag/drop) are resized server-side and stored
+-- here so we control resolution/format instead of hot-linking arbitrary
+-- external images. Uploads happen via the service-role admin client, which
+-- bypasses RLS, so only a public-read policy is needed.
+insert into storage.buckets (id, name, public)
+values ('posters', 'posters', true)
+on conflict (id) do nothing;
+
+create policy "Public read posters"
+  on storage.objects for select
+  using (bucket_id = 'posters');
