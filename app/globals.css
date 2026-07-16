@@ -212,9 +212,6 @@ section{position:relative;padding:64px 0}
 .bullets li:before{content:"★";position:absolute;left:0;color:var(--crimson)}
 
 /* sponsor */
-.sponsor{display:flex;align-items:center;gap:26px;background:rgba(246,239,226,.05);border:1px solid rgba(233,185,73,.18);border-radius:var(--r);padding:26px;flex-wrap:wrap}
-.sponsor .logo{width:96px;height:96px;border-radius:14px;background:#fff;display:grid;place-items:center;overflow:hidden}
-.sponsor h3{font-family:var(--font-fraunces);font-size:22px;color:var(--brass-soft)}
 
 /* contact */
 .contact{display:grid;grid-template-columns:1fr 1fr;gap:24px}

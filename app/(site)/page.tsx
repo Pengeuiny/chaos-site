@@ -390,50 +390,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* SPONSORS */}
-      <section id="sponsors">
-        <div className="wrap">
-          <div className="sec-head">
-            <div>
-              <div className="k">Corporate &amp; Small-Business Supporters</div>
-              <h2>
-                Our <span className="gold">Sponsors</span>
-              </h2>
-            </div>
-          </div>
-          <div className="sponsor">
-            <div className="logo">
-              <SmartImg
-                src="https://static.wixstatic.com/media/020dca_adc56bcbf0974b76a862035ba4f39def~mv2.png/v1/fill/w_120,h_119,al_c,q_85,enc_avif,quality_auto/020dca_adc56bcbf0974b76a862035ba4f39def~mv2.png"
-                alt="OoShirts"
-                fallback={<b style={{ color: "#2454a8" }}>Oo</b>}
-              />
-            </div>
-            <div>
-              <h3>OoShirts</h3>
-              <p style={{ color: "var(--ivory-dim)", margin: "6px 0" }}>
-                Proud supporter of CHS CHAOS. OoShirts are great!
-              </p>
-              <a
-                className="btn btn-ghost"
-                href="https://www.ooshirts.com/"
-                target="_blank"
-                rel="noopener"
-              >
-                www.ooshirts.com ↗
-              </a>
-            </div>
-          </div>
-          <p style={{ color: "var(--ivory-dim)", marginTop: 22 }}>
-            Interested in partnering with us? We&rsquo;d love to feature your
-            business here.{" "}
-            <Link style={{ color: "var(--brass-soft)" }} href="/#contact">
-              Get in touch →
-            </Link>
-          </p>
-        </div>
-      </section>
-
       {/* CONTACT */}
       <section id="contact">
         <div className="wrap">
