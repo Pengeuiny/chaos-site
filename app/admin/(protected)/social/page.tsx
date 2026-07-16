@@ -23,10 +23,14 @@ export default async function SocialPage() {
 
   let shows: Show[] = [];
   if (admin) {
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    const t0 = Date.now();
     const { data } = await admin
       .from("productions")
       .select("id, title, tagline, date_range, ticket_url, poster_url")
       .order("sort_order", { ascending: true });
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    console.log(`[perf] /admin/social productions query: ${Date.now() - t0}ms`);
     shows = (data as Show[] | null) ?? [];
   }
 

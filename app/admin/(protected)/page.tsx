@@ -40,10 +40,14 @@ export default async function AdminDashboard({
 
   let shows: Row[] = [];
   if (admin) {
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    const t0 = Date.now();
     const { data } = await admin
       .from("productions")
       .select("id, slug, program, title, sort_order")
       .order("sort_order", { ascending: true });
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    console.log(`[perf] /admin productions query: ${Date.now() - t0}ms`);
     shows = (data as Row[] | null) ?? [];
   }
 

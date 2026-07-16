@@ -10,7 +10,11 @@ export default async function ProtectedAdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+  const t0 = Date.now();
   await requireAdmin();
+  // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+  console.log(`[perf] requireAdmin(): ${Date.now() - t0}ms`);
   return (
     <div className={styles.root}>
       <header className={styles.topbar}>

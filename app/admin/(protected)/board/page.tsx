@@ -37,11 +37,15 @@ export default async function BoardTab({
 
   let people: Person[] = [];
   if (admin) {
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    const t0 = Date.now();
     const { data } = await admin
       .from("people")
       .select("id, name, role, email")
       .eq("group_name", "board")
       .order("sort_order", { ascending: true });
+    // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic
+    console.log(`[perf] /admin/board people query: ${Date.now() - t0}ms`);
     people = (data as Person[] | null) ?? [];
   }
 
