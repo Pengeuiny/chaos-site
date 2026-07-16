@@ -21,7 +21,7 @@ export default function Header() {
 
   return (
     <header className="bar">
-      <div className="wrap row">
+      <div className="row">
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="mark">
             {/* eslint-disable-next-line @next/next/no-img-element */}
