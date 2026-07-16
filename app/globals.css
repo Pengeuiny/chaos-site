@@ -1,8 +1,8 @@
 :root{
   --velvet:#140409;
   --velvet-2:#1f0810;
-  --crimson:#b11e37;
-  --crimson-deep:#7c1326;
+  --crimson:#2454a8;
+  --crimson-deep:#173568;
   --brass:#e9b949;
   --brass-soft:#f0c66b;
   --gel:#e83a82;
@@ -56,8 +56,8 @@ header.bar{
   background:linear-gradient(180deg,rgba(13,3,7,.92),rgba(13,3,7,.62));
   border-bottom:1px solid rgba(233,185,73,.22);
 }
-.bar .row{display:flex;align-items:center;gap:22px;height:70px}
-.brand{display:flex;align-items:center;gap:12px;cursor:pointer}
+.bar .row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:22px;height:70px}
+.brand{display:flex;align-items:center;gap:12px;cursor:pointer;justify-self:start}
 .brand .mark{
   height:48px;
   display:flex;align-items:center;
@@ -66,7 +66,7 @@ header.bar{
 .brand .mark img{height:100%;width:auto;display:block}
 .brand b{font-family:"Anton";font-size:23px;letter-spacing:.06em;line-height:1}
 .brand small{display:block;font-family:"Space Mono";font-size:9.5px;letter-spacing:.32em;color:var(--brass-soft);text-transform:uppercase;margin-top:2px}
-nav.links{margin-left:22px;display:flex;gap:4px;flex-wrap:wrap}
+nav.links{grid-column:2;justify-self:center;display:flex;gap:4px;flex-wrap:wrap}
 nav.links a{
   font-size:13.5px;font-weight:600;letter-spacing:.02em;padding:9px 12px;border-radius:9px;color:var(--ivory-dim);
   transition:.18s;white-space:nowrap;
@@ -77,14 +77,14 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
   padding:11px 18px;border-radius:999px;cursor:pointer;border:0;transition:.2s;line-height:1;
   white-space:nowrap;
 }
-.btn-primary{background:var(--crimson);color:#fff;box-shadow:0 8px 22px rgba(177,30,55,.4)}
+.btn-primary{background:var(--crimson);color:#fff;box-shadow:0 8px 22px rgba(36,84,168,.4)}
 .btn-primary:hover{background:var(--crimson-deep);transform:translateY(-1px)}
 .btn-gold{background:var(--brass);color:var(--ink)}
 .btn-gold:hover{background:var(--brass-soft);transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--ivory);border:1.5px solid rgba(246,239,226,.3)}
 .btn-ghost:hover{border-color:var(--brass);color:var(--brass-soft)}
-.navtoggle{display:none;margin-left:auto;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
-.bar .row .btn{margin-left:auto;flex-shrink:0;padding:11px 24px}
+.navtoggle{display:none;grid-column:3;justify-self:end;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
+.bar .row .btn{grid-column:3;justify-self:end;flex-shrink:0;padding:11px 24px}
 
 /* hero */
 .hero{padding:78px 0 60px;position:relative}
@@ -167,7 +167,7 @@ section{position:relative;padding:64px 0}
 .day{aspect-ratio:1;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;
   font-size:14px;color:var(--ivory-dim);position:relative;border:1px solid transparent}
 .day.muted{opacity:.25}
-.day.has{cursor:pointer;background:rgba(177,30,55,.16);border-color:rgba(233,185,73,.4);color:#fff;font-weight:700}
+.day.has{cursor:pointer;background:rgba(36,84,168,.16);border-color:rgba(233,185,73,.4);color:#fff;font-weight:700}
 .day.has:hover{background:var(--crimson);transform:scale(1.05)}
 .day .dot{width:5px;height:5px;border-radius:50%;background:var(--brass);margin-top:3px}
 .day.today{outline:2px solid var(--gel);outline-offset:-2px}
@@ -268,7 +268,7 @@ footer small{color:var(--ivory-dim);font-size:13px}
 .stub:before{left:-8px}.stub:after{right:-8px}
 .stub .perf{position:absolute;left:50%;top:8px;bottom:8px;border-left:2px dashed var(--paper-line)}
 .stub .dnum{font-family:"Anton";font-size:34px;color:var(--crimson);line-height:.8}
-.stub .dwrap .dm{font-family:"Space Mono";font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#7c1326}
+.stub .dwrap .dm{font-family:"Space Mono";font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#173568}
 .stub .dwrap .dt{font-family:"Space Mono";font-size:13px;color:#3a2c22;margin-top:6px;font-weight:700}
 .stub .dwrap .dd{font-size:12px;color:#6b5848}
 

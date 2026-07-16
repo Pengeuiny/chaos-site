@@ -2,11 +2,52 @@
 
 import { useEffect, useRef } from "react";
 
+type Beam = {
+  color: [number, number, number];
+  baseX: number; // fraction of width
+  swaySpeed: number;
+  swayAmount: number; // fraction of width
+  halfAngle: number; // radians
+  intensity: number;
+  particles: { t: number; s: number; speed: number; phase: number }[];
+};
+
+const BEAMS: Beam[] = [
+  {
+    color: [255, 199, 89], // amber
+    baseX: 0.3,
+    swaySpeed: 0.22 * 0.7,
+    swayAmount: 0.05,
+    halfAngle: 0.24,
+    intensity: 1,
+    particles: [],
+  },
+  {
+    color: [77, 140, 255], // blue
+    baseX: 0.72,
+    swaySpeed: 0.22 * 0.8,
+    swayAmount: 0.05,
+    halfAngle: 0.24,
+    intensity: 0.9,
+    particles: [],
+  },
+];
+
+for (const b of BEAMS) {
+  for (let i = 0; i < 26; i++) {
+    b.particles.push({
+      t: Math.random(),
+      s: Math.random() * 2 - 1,
+      speed: 0.05 + Math.random() * 0.1,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+}
+
 /**
- * Persistent spotlight background — raw WebGL, no library.
- * Falls back to the CSS gradient (#stage-fallback) when WebGL is
- * unavailable or the visitor prefers reduced motion.
- * Ported from the reference prototype.
+ * Persistent spotlight background — canvas2D, no GL context required.
+ * Falls back to the CSS gradient (#stage-fallback) only when the visitor
+ * prefers reduced motion.
  */
 export default function Stage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,113 +56,119 @@ export default function Stage() {
     const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const gl = (canvas.getContext("webgl") ||
-      canvas.getContext("experimental-webgl")) as WebGLRenderingContext | null;
-    if (!gl || reduce) {
+    const ctx = canvas.getContext("2d");
+    if (!ctx || reduce) {
       canvas.style.display = "none";
       return;
     }
-
-    const vs = `attribute vec2 p;void main(){gl_Position=vec4(p,0.0,1.0);}`;
-    const fs = `
-    precision highp float;
-    uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse;
-    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
-    float noise(vec2 p){vec2 i=floor(p),f=fract(p);
-      float a=hash(i),b=hash(i+vec2(1.,0.)),c=hash(i+vec2(0.,1.)),d=hash(i+vec2(1.,1.));
-      vec2 u=f*f*(3.-2.*f);return mix(mix(a,b,u.x),mix(c,d,u.x),u.y);}
-    float beam(vec2 uv,vec2 src,vec2 dir,float spread){
-      vec2 v=uv-src;float d=length(v);
-      float ang=dot(normalize(v),dir);
-      float cone=smoothstep(1.0-spread,1.0,ang);
-      float atten=1.0/(1.0+d*d*2.6);
-      return cone*atten;}
-    void main(){
-      vec2 uv=gl_FragCoord.xy/u_res.xy;
-      float asp=u_res.x/u_res.y;
-      vec2 p=vec2(uv.x*asp,uv.y);
-      vec3 top=vec3(0.035,0.07,0.14), bot=vec3(0.006,0.014,0.035);
-      vec3 col=mix(bot,top,pow(uv.y,1.35));
-      float t=u_time*0.22;
-      vec2 m=(u_mouse-0.5);
-      vec2 s1=vec2((0.30+0.05*sin(t)+m.x*0.10)*asp,1.18);
-      vec2 s2=vec2((0.72-0.05*sin(t*0.8)-m.x*0.10)*asp,1.18);
-      vec2 d1=normalize(vec2(0.16*sin(t*0.7),-1.0));
-      vec2 d2=normalize(vec2(-0.16*sin(t*0.9),-1.0));
-      float b1=beam(p,s1,d1,0.055);
-      float b2=beam(p,s2,d2,0.055);
-      col+=vec3(1.0,0.78,0.35)*b1*1.5;
-      col+=vec3(0.3,0.55,1.0)*b2*1.15;
-      float dust=pow(noise(p*7.0+vec2(0.0,-u_time*0.25)),3.0);
-      col+=(b1+b2)*dust*vec3(1.0,0.9,0.7)*0.7;
-      col*=smoothstep(1.25,0.15,length(uv-0.5));
-      col+=hash(uv+u_time)*0.015;
-      gl_FragColor=vec4(col,1.0);
-    }`;
-
-    function sh(type: number, src: string) {
-      const s = gl!.createShader(type)!;
-      gl!.shaderSource(s, src);
-      gl!.compileShader(s);
-      if (!gl!.getShaderParameter(s, gl!.COMPILE_STATUS)) {
-        console.warn(gl!.getShaderInfoLog(s));
-        return null;
-      }
-      return s;
-    }
-
-    const prog = gl.createProgram()!;
-    const v = sh(gl.VERTEX_SHADER, vs);
-    const f = sh(gl.FRAGMENT_SHADER, fs);
-    if (!v || !f) {
-      canvas.style.display = "none";
-      return;
-    }
-    gl.attachShader(prog, v);
-    gl.attachShader(prog, f);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      canvas.style.display = "none";
-      return;
-    }
-    gl.useProgram(prog);
-
-    const buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 3, -1, -1, 3]),
-      gl.STATIC_DRAW,
-    );
-    const loc = gl.getAttribLocation(prog, "p");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const uRes = gl.getUniformLocation(prog, "u_res");
-    const uTime = gl.getUniformLocation(prog, "u_time");
-    const uMouse = gl.getUniformLocation(prog, "u_mouse");
 
     let mouse = [0.5, 0.5];
     const onMove = (e: PointerEvent) => {
-      mouse = [e.clientX / innerWidth, 1 - e.clientY / innerHeight];
+      mouse = [e.clientX / innerWidth, e.clientY / innerHeight];
     };
     window.addEventListener("pointermove", onMove, { passive: true });
 
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
     const resize = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.75);
-      canvas.width = innerWidth * dpr;
-      canvas.height = innerHeight * dpr;
+      dpr = Math.min(devicePixelRatio || 1, 1.75);
+      w = innerWidth;
+      h = innerHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     addEventListener("resize", resize);
     resize();
 
+    const drawBeam = (t: number, beam: Beam) => {
+      const sway = Math.sin(t * beam.swaySpeed) * beam.swayAmount;
+      const srcX = (beam.baseX + sway + (mouse[0] - 0.5) * 0.08) * w;
+      const srcY = -h * 0.08;
+      const dirX = Math.sin(t * beam.swaySpeed * 3) * 0.12;
+      const dirY = 1;
+      const dirLen = Math.hypot(dirX, dirY);
+      const angle = Math.atan2(dirX, dirY); // measured from +y (down)
+      const far = h * 1.7;
+      const [r, g, b] = beam.color;
+
+      const layers: [number, number][] = [
+        [beam.halfAngle * 1.7, 0.05],
+        [beam.halfAngle * 1.15, 0.09],
+        [beam.halfAngle * 0.55, 0.16],
+      ];
+      for (const [halfAngle, alpha] of layers) {
+        const leftAngle = angle - halfAngle;
+        const rightAngle = angle + halfAngle;
+        const lx = srcX + Math.sin(leftAngle) * far;
+        const ly = srcY + Math.cos(leftAngle) * far;
+        const rx = srcX + Math.sin(rightAngle) * far;
+        const ry = srcY + Math.cos(rightAngle) * far;
+        const cx = srcX + (dirX / dirLen) * far;
+        const cy = srcY + (dirY / dirLen) * far;
+
+        const grad = ctx.createLinearGradient(srcX, srcY, cx, cy);
+        grad.addColorStop(0, `rgba(${r},${g},${b},${alpha * beam.intensity})`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+
+        ctx.beginPath();
+        ctx.moveTo(srcX, srcY);
+        ctx.lineTo(lx, ly);
+        ctx.lineTo(rx, ry);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      // dust sparkle drifting down the beam
+      for (const p of beam.particles) {
+        const along = (p.t + t * p.speed) % 1;
+        const spread = p.s * beam.halfAngle * 0.85 * along;
+        const ang = angle + spread;
+        const dist = along * far;
+        const px = srcX + Math.sin(ang) * dist;
+        const py = srcY + Math.cos(ang) * dist;
+        const twinkle = (Math.sin(t * 2 + p.phase) + 1) / 2;
+        const a = (1 - along) * 0.35 * twinkle * beam.intensity;
+        if (a <= 0.01) continue;
+        ctx.beginPath();
+        ctx.arc(px, py, 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,240,215,${a})`;
+        ctx.fill();
+      }
+    };
+
     const start = performance.now();
     let raf = 0;
     const loop = (now: number) => {
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.uniform2f(uRes, canvas.width, canvas.height);
-      gl.uniform1f(uTime, (now - start) / 1000);
-      gl.uniform2f(uMouse, mouse[0], mouse[1]);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      const t = (now - start) / 1000;
+
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "rgb(9,18,36)");
+      bg.addColorStop(1, "rgb(2,4,9)");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.globalCompositeOperation = "lighter";
+      for (const beam of BEAMS) drawBeam(t, beam);
+
+      ctx.globalCompositeOperation = "source-over";
+      const vignette = ctx.createRadialGradient(
+        w / 2,
+        h * 0.45,
+        0,
+        w / 2,
+        h * 0.45,
+        Math.hypot(w, h) * 0.65,
+      );
+      vignette.addColorStop(0, "rgba(0,0,0,0)");
+      vignette.addColorStop(1, "rgba(0,0,0,0.55)");
+      ctx.fillStyle = vignette;
+      ctx.fillRect(0, 0, w, h);
+
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
