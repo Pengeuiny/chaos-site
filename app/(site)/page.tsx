@@ -122,26 +122,20 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CALENDAR */}
+      {/* CALENDAR + TICKETS */}
       <section id="calendar">
         <div className="wrap">
           <div className="sec-head">
             <div>
               <div className="k">Plan Ahead</div>
               <h2>
-                Event <span className="gold">Calendar</span>
+                Calendar &amp; <span className="gold">Tickets</span>
               </h2>
             </div>
           </div>
-          <Calendar events={events} />
-        </div>
-      </section>
-
-      {/* TICKETS / DUES */}
-      <section id="tickets">
-        <div className="wrap">
           <div className="split">
-            <div className="panel lined panel-pad">
+            <Calendar events={events} />
+            <div className="panel lined panel-pad" id="tickets">
               <h3>Tickets &amp; Dues</h3>
               <p>
                 Reserved seating for every mainstage show, plus program dues and
@@ -171,33 +165,31 @@ export default async function Home() {
                 </a>
               </div>
             </div>
+          </div>
+
+          <div className="sec-head" style={{ marginTop: 40, marginBottom: 18 }}>
             <div>
-              <div className="sec-head" style={{ marginBottom: 18 }}>
-                <div>
-                  <div className="k">Membership</div>
-                  <h2 style={{ fontSize: 34 }}>
-                    Join the <span className="gold">Boosters</span>
-                  </h2>
-                </div>
-              </div>
-              <p style={{ color: "var(--ivory-dim)" }}>
-                General Booster Membership brings benefits such as early ticket
-                purchases and discounted tickets. Becoming a member is the
-                simplest way to support the program all year long. Pick a
-                tier below — checkout is handled securely through our box
-                office.
-              </p>
-              <a
-                className="btn btn-ghost"
-                href={PASSES}
-                target="_blank"
-                rel="noopener"
-                style={{ marginTop: 8 }}
-              >
-                Or view all membership options ↗
-              </a>
+              <div className="k">Membership</div>
+              <h2 style={{ fontSize: 34 }}>
+                Join the <span className="gold">Boosters</span>
+              </h2>
             </div>
           </div>
+          <p style={{ color: "var(--ivory-dim)", maxWidth: 700 }}>
+            General Booster Membership brings benefits such as early ticket
+            purchases and discounted tickets. Becoming a member is the
+            simplest way to support the program all year long. Pick a tier
+            below — checkout is handled securely through our box office.
+          </p>
+          <a
+            className="btn btn-ghost"
+            href={PASSES}
+            target="_blank"
+            rel="noopener"
+            style={{ marginTop: 8, marginBottom: 30, display: "inline-flex" }}
+          >
+            Or view all membership options ↗
+          </a>
           <div className="tiers">
             {MEMBERSHIP_TIERS.map((tier) => (
               <div className="tier" key={tier.name}>
