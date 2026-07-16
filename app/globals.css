@@ -192,6 +192,7 @@ section{position:relative;padding:64px 0}
 
 /* split */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.ticket-dues-stack{display:flex;flex-direction:column;gap:20px}
 .split .panel-pad{padding:34px}
 
 /* membership tiers */

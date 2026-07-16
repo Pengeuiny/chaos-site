@@ -89,34 +89,43 @@ export default async function Home() {
           </div>
           <div className="split">
             <Calendar events={events} />
-            <div className="panel lined panel-pad" id="tickets">
-              <h3>Event Tickets &amp; Dues</h3>
-              <p>
-                Reserved seating for every mainstage show, plus program dues and
-                donations — all handled securely through our box office.
-              </p>
-              <ul className="bullets">
-                <li>Members get early access and discounted tickets</li>
-                <li>Pay program dues online in a few clicks</li>
-                <li>Support a 501(c)(3) — every dollar funds the kids</li>
-              </ul>
-              <div className="pb-cta">
-                <a
-                  className="btn btn-primary"
-                  href={TICKETS}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Buy Tickets
-                </a>
-                <a
-                  className="btn btn-gold"
-                  href={DUES}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  Pay Dues
-                </a>
+            <div className="ticket-dues-stack">
+              <div className="panel lined panel-pad" id="tickets">
+                <h3>Event Tickets</h3>
+                <p>
+                  Reserved seating for every mainstage show — all handled
+                  securely through our box office.
+                </p>
+                <ul className="bullets">
+                  <li>Members get early access and discounted tickets</li>
+                </ul>
+                <div className="pb-cta">
+                  <a
+                    className="btn btn-primary"
+                    href={TICKETS}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Buy Tickets
+                  </a>
+                </div>
+              </div>
+              <div className="panel lined panel-pad">
+                <h3>Program Dues</h3>
+                <p>Pay your program dues securely online in a few clicks.</p>
+                <ul className="bullets">
+                  <li>Support a 501(c)(3) — every dollar funds the kids</li>
+                </ul>
+                <div className="pb-cta">
+                  <a
+                    className="btn btn-gold"
+                    href={DUES}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Pay Dues
+                  </a>
+                </div>
               </div>
             </div>
           </div>
