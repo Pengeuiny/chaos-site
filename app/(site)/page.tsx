@@ -442,7 +442,7 @@ export default async function Home() {
               <SmartImg
                 src="https://static.wixstatic.com/media/020dca_adc56bcbf0974b76a862035ba4f39def~mv2.png/v1/fill/w_120,h_119,al_c,q_85,enc_avif,quality_auto/020dca_adc56bcbf0974b76a862035ba4f39def~mv2.png"
                 alt="OoShirts"
-                fallback={<b style={{ color: "#b11e37" }}>Oo</b>}
+                fallback={<b style={{ color: "#2454a8" }}>Oo</b>}
               />
             </div>
             <div>

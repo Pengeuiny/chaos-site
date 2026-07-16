@@ -28,7 +28,7 @@ export default function ShowCard({ p }: { p: ProductionWithDetails }) {
           <div
             className="ph"
             style={{
-              background: `linear-gradient(150deg,${p.accent ?? "#7c1326"},#0c0307)`,
+              background: `linear-gradient(150deg,${p.accent ?? "#173568"},#0c0307)`,
             }}
           >
             <div>

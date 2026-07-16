@@ -100,7 +100,7 @@ export default function ShowFormFields({
             className={styles.input}
             type="color"
             name="accent"
-            defaultValue={d?.accent ?? "#b11e37"}
+            defaultValue={d?.accent ?? "#2454a8"}
           />
         </label>
         <label className={styles.label}>

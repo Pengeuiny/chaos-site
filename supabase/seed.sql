@@ -20,7 +20,7 @@ values
   ('spring-mainstage-2026', 'Spring Mainstage Musical', true,
    'Mainstage Musical', 'On Sale', 'onsale',
    'https://static.wixstatic.com/media/020dca_7535fbc88b494e10b8629400c63b8dbf~mv2.jpg/v1/fill/w_600,h_800,al_c,q_85,enc_avif,quality_auto/020dca_7535fbc88b494e10b8629400c63b8dbf~mv2.jpg',
-   '#b11e37',
+   '#2454a8',
    'Cuthbertson High School Auditorium', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'The whole company takes the stage for the spring main event.',
    'Our students close the season with the spring mainstage musical — months of rehearsal, a full pit, and a cast and crew that have poured everything into the show. Doors open 30 minutes before curtain. Reserved seating; CHAOS members get early access and discounted tickets.',

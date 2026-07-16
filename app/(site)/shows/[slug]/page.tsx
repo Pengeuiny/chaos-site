@@ -24,7 +24,7 @@ export default async function ShowDetail({ params }: Props) {
   if (!p) notFound();
 
   const dates = p.date_range || rangeFrom(p.showtimes);
-  const accent = p.accent || "#7c1326";
+  const accent = p.accent || "#173568";
 
   const titleArt = (
     <div
