@@ -18,6 +18,9 @@ export default async function ProtectedAdminLayout({
           CHS CHAOS <span>Admin</span>
         </div>
         <div className={styles.topActions}>
+          <Link className={styles.topLink} href="/admin/social">
+            Social Media
+          </Link>
           <Link className={styles.topLink} href="/" target="_blank">
             View site ↗
           </Link>

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { fmtDay, fmtTime } from "@/lib/format";
-import { createShow, addEvent, deleteEvent, deleteShow } from "@/app/admin/actions";
+import { toEasternLocalInput } from "@/lib/format";
+import { createShow, addEvent, deleteShow } from "@/app/admin/actions";
 import ShowFormFields from "@/app/admin/ShowFormFields";
+import EventListItem from "@/app/admin/EventListItem";
 import styles from "../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -15,13 +16,19 @@ type Row = {
   program: string;
   title: string;
   sort_order: number;
-  showtimes: { id: string; starts_at: string; label: string | null }[];
+  showtimes: {
+    id: string;
+    starts_at: string;
+    label: string | null;
+    ticket_url: string | null;
+    sort_order: number;
+  }[];
 };
 
 const OK: Record<string, string> = {
   show: "Show created.",
   updated: "Show updated.",
-  event: "Event added to the calendar.",
+  event: "Event saved.",
   deleted: "Deleted.",
 };
 const ERR: Record<string, string> = {
@@ -47,7 +54,9 @@ export default async function AdminDashboard({
   if (admin) {
     const { data } = await admin
       .from("productions")
-      .select("id, slug, program, title, sort_order, showtimes(id, starts_at, label)")
+      .select(
+        "id, slug, program, title, sort_order, showtimes(id, starts_at, label, ticket_url, sort_order)",
+      )
       .order("sort_order", { ascending: true });
     shows = (data as Row[] | null) ?? [];
   }
@@ -80,6 +89,37 @@ export default async function AdminDashboard({
         {/* ADD EVENT */}
         <section className={styles.card}>
           <h2 className={styles.h2}>Add a calendar event</h2>
+
+          <details className={styles.helpBox} style={{ marginBottom: 16 }}>
+            <summary>Where do I get a performance&rsquo;s Ticket URL?</summary>
+            <ol>
+              <li>
+                Open the Ludus tickets page:{" "}
+                <code>
+                  https://cuthbertsontheatre.ludus.com/index.php?sections=events
+                </code>
+              </li>
+              <li>Click the calendar icon to switch to Calendar view.</li>
+              <li>
+                Find the performance&rsquo;s date, then right-click it (on
+                mobile Safari: tap and hold).
+              </li>
+              <li>
+                Choose <strong>Copy Link Address</strong> (Chrome/Edge) or{" "}
+                <strong>Copy Link</strong> (Firefox/Safari).
+              </li>
+              <li>
+                Paste that link into the Ticket URL field below (or when
+                editing an existing date).
+              </li>
+            </ol>
+            <p style={{ margin: "10px 0 0" }}>
+              If a show doesn&rsquo;t sell tickets per-date yet (e.g.
+              registration-only camps), leave Ticket URL blank — the date will
+              still show, just without a buy link.
+            </p>
+          </details>
+
           {shows.length === 0 ? (
             <p className={styles.muted}>Create a show first — events attach to a show.</p>
           ) : (
@@ -104,6 +144,14 @@ export default async function AdminDashboard({
               <label className={styles.label}>
                 Label
                 <input className={styles.input} name="label" placeholder="Opening Night" />
+              </label>
+              <label className={styles.label}>
+                Ticket URL <span className={styles.hint}>(optional)</span>
+                <input
+                  className={styles.input}
+                  name="ticket_url"
+                  placeholder="https://…"
+                />
               </label>
               <label className={styles.label}>
                 Sort order
@@ -146,18 +194,11 @@ export default async function AdminDashboard({
                       {[...s.showtimes]
                         .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1))
                         .map((e) => (
-                          <li key={e.id} className={styles.eventItem}>
-                            <span>
-                              {fmtDay(e.starts_at)} · {fmtTime(e.starts_at)}
-                              {e.label ? ` — ${e.label}` : ""}
-                            </span>
-                            <form action={deleteEvent}>
-                              <input type="hidden" name="id" value={e.id} />
-                              <button className={styles.delSmall} type="submit">
-                                ✕
-                              </button>
-                            </form>
-                          </li>
+                          <EventListItem
+                            key={e.id}
+                            event={e}
+                            localInput={toEasternLocalInput(e.starts_at)}
+                          />
                         ))}
                     </ul>
                   )}

@@ -94,6 +94,22 @@ export function easternWallToUtcIso(local: string): string {
   return new Date(wall - off * 60000).toISOString();
 }
 
+/** The inverse of easternWallToUtcIso — for pre-filling an edit form's `datetime-local` input. */
+export function toEasternLocalInput(iso: string): string {
+  const f = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  const p: Record<string, string> = {};
+  for (const part of f.formatToParts(new Date(iso))) p[part.type] = part.value;
+  return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
+}
+
 export function rangeFrom(showtimes: { starts_at: string }[]) {
   if (!showtimes.length) return "TBA";
   const a = parts(showtimes[0].starts_at);
