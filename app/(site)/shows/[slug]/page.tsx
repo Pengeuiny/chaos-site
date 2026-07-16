@@ -70,7 +70,7 @@ export default async function ShowDetail({ params }: Props) {
               </a>
               {p.has_microsite && (
                 <Link className="btn btn-ghost" href="/nemo">
-                  🌊 Open the immersive microsite ↗
+                  🌊 Open Microsite ↗
                 </Link>
               )}
             </div>
