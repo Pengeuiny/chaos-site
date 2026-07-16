@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { addBoardMember } from "./people-actions";
+import PersonPhotoField from "./PersonPhotoField";
 import styles from "./admin.module.css";
 
 export default function AddBoardMemberToggle() {
@@ -43,6 +44,7 @@ export default function AddBoardMemberToggle() {
               placeholder="name@chschaos.org"
             />
           </label>
+          <PersonPhotoField />
           <button className={styles.btn} type="submit">
             Add board member
           </button>

@@ -13,6 +13,7 @@ type Person = {
   name: string;
   role: string;
   email: string | null;
+  image_url: string | null;
 };
 
 const OK: Record<string, string> = {
@@ -41,7 +42,7 @@ export default async function BoardTab({
     const t0 = Date.now();
     const { data } = await admin
       .from("people")
-      .select("id, name, role, email")
+      .select("id, name, role, email, image_url")
       .eq("group_name", "board")
       .order("sort_order", { ascending: true });
     // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic

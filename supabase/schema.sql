@@ -136,3 +136,14 @@ on conflict (id) do nothing;
 create policy "Public read posters"
   on storage.objects for select
   using (bucket_id = 'posters');
+
+-- ---------------------------------------------------------------------------
+-- Storage: board/ITS member photos
+-- ---------------------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('people', 'people', true)
+on conflict (id) do nothing;
+
+create policy "Public read people photos"
+  on storage.objects for select
+  using (bucket_id = 'people');

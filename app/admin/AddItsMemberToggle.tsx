@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { addItsMember } from "./people-actions";
+import PersonPhotoField from "./PersonPhotoField";
 import styles from "./admin.module.css";
 
 export default function AddItsMemberToggle() {
@@ -38,6 +39,7 @@ export default function AddItsMemberToggle() {
             Contact email <span className={styles.hint}>(optional — most student officers don&rsquo;t list one)</span>
             <input className={styles.input} type="email" name="email" />
           </label>
+          <PersonPhotoField />
           <button className={styles.btn} type="submit">
             Add ITS member
           </button>

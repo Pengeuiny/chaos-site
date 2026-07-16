@@ -33,6 +33,7 @@ export async function addBoardMember(formData: FormData) {
     name,
     role,
     email: str(formData.get("email")),
+    image_url: str(formData.get("image_url")),
     sort_order,
   });
 
@@ -59,6 +60,7 @@ export async function updateBoardMember(formData: FormData) {
       name,
       role,
       email: str(formData.get("email")),
+      image_url: str(formData.get("image_url")),
     })
     .eq("id", id);
 
@@ -100,6 +102,7 @@ export async function addItsMember(formData: FormData) {
     name,
     role,
     email: str(formData.get("email")),
+    image_url: str(formData.get("image_url")),
     sort_order,
   });
 
@@ -126,6 +129,7 @@ export async function updateItsMember(formData: FormData) {
       name,
       role,
       email: str(formData.get("email")),
+      image_url: str(formData.get("image_url")),
     })
     .eq("id", id);
 
