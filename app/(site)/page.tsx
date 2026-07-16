@@ -254,19 +254,6 @@ export default async function Home() {
               </p>
             </div>
           </div>
-          <div className="sec-head" style={{ marginBottom: 22 }}>
-            <div>
-              <div className="k">Learners · Leaders · Scholars</div>
-              <h2 style={{ fontSize: 34 }}>
-                ITS <span className="gold">Student Board</span>
-              </h2>
-            </div>
-          </div>
-          <div className="people">
-            {its.map((p) => (
-              <PersonCard key={p.id} p={p} />
-            ))}
-          </div>
         </div>
       </section>
 
@@ -327,6 +314,20 @@ export default async function Home() {
           </p>
           <div className="people">
             {board.map((p) => (
+              <PersonCard key={p.id} p={p} />
+            ))}
+          </div>
+
+          <div className="sec-head" style={{ marginTop: 46, marginBottom: 22 }}>
+            <div>
+              <div className="k">Learners · Leaders · Scholars</div>
+              <h2 style={{ fontSize: 34 }}>
+                ITS <span className="gold">Student Board</span>
+              </h2>
+            </div>
+          </div>
+          <div className="people">
+            {its.map((p) => (
               <PersonCard key={p.id} p={p} />
             ))}
           </div>
