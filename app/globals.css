@@ -147,11 +147,11 @@ section{position:relative;padding:64px 0}
 .show:hover .poster img{transform:scale(1.05)}
 .show .poster .ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px}
 .tag{position:absolute;top:12px;left:12px;font-family:var(--font-space-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
-  padding:6px 10px;border-radius:6px;font-weight:700;z-index:2}
+  padding:6px 10px;border-radius:6px;font-weight:700;z-index:2;box-shadow:0 1px 6px rgba(0,0,0,.45)}
 .tag.onsale{background:var(--brass);color:var(--ink)}
 .tag.upcoming{background:var(--gel);color:#fff}
-.tag.past{background:rgba(246,239,226,.2);color:var(--ivory)}
-.tag.tbd{background:rgba(246,239,226,.12);color:var(--ivory-dim)}
+.tag.past{background:var(--ink);color:var(--ivory-dim)}
+.tag.tbd{background:var(--crimson-deep);color:var(--ivory)}
 .show .body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:8px;flex:1}
 .show .body .type{font-family:var(--font-space-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass-soft)}
 .show .body h3{font-family:var(--font-fraunces);font-size:23px;font-weight:600;line-height:1.05}
