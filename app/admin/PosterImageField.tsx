@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ingestPosterImage } from "./actions";
+import { ingestPosterImage } from "./poster-actions";
 import styles from "./admin.module.css";
 
 /**

@@ -92,9 +92,9 @@ export default async function SocialPage() {
               in the Graph API Explorer.
             </li>
             <li>
-              Set <code>META_PAGE_ACCESS_TOKEN</code>, <code>META_PAGE_ID</code>
-              , and <code>META_IG_USER_ID</code> in the project&rsquo;s
-              environment variables (Vercel dashboard, or{" "}
+              [Send to Web Admin] Set <code>META_PAGE_ACCESS_TOKEN</code>,{" "}
+              <code>META_PAGE_ID</code>, and <code>META_IG_USER_ID</code> in
+              the project&rsquo;s environment variables (Vercel dashboard, or{" "}
               <code>.env.local</code> for local dev), then redeploy.
             </li>
           </ol>
