@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateBoardMember, deleteBoardMember } from "./people-actions";
+import { updateBoardMember, deleteBoardMember, moveBoardMember } from "./people-actions";
 import PersonPhotoField from "./PersonPhotoField";
 import styles from "./admin.module.css";
 
@@ -14,7 +14,15 @@ type Person = {
 };
 
 /** One board member row: view mode, or an inline edit form. */
-export default function BoardMemberListItem({ person }: { person: Person }) {
+export default function BoardMemberListItem({
+  person,
+  isFirst,
+  isLast,
+}: {
+  person: Person;
+  isFirst: boolean;
+  isLast: boolean;
+}) {
   const [editing, setEditing] = useState(false);
 
   if (editing) {
@@ -84,6 +92,20 @@ export default function BoardMemberListItem({ person }: { person: Person }) {
         </span>
       </span>
       <div className={styles.rowActions}>
+        <form action={moveBoardMember}>
+          <input type="hidden" name="id" value={person.id} />
+          <input type="hidden" name="direction" value="up" />
+          <button className={styles.moveBtn} type="submit" disabled={isFirst} title="Move up">
+            ▲
+          </button>
+        </form>
+        <form action={moveBoardMember}>
+          <input type="hidden" name="id" value={person.id} />
+          <input type="hidden" name="direction" value="down" />
+          <button className={styles.moveBtn} type="submit" disabled={isLast} title="Move down">
+            ▼
+          </button>
+        </form>
         <button
           type="button"
           className={styles.editLink}

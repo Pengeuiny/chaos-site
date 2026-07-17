@@ -79,6 +79,38 @@ export async function deleteBoardMember(formData: FormData) {
   redirect("/admin/board?ok=deleted");
 }
 
+/** Swap a board member's sort_order with the neighbor above/below it. */
+export async function moveBoardMember(formData: FormData) {
+  await requireAdmin();
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/board?error=nodb");
+
+  const id = str(formData.get("id"));
+  const direction = str(formData.get("direction"));
+  if (!id || (direction !== "up" && direction !== "down")) {
+    redirect("/admin/board?error=save");
+  }
+
+  const { data } = await admin
+    .from("people")
+    .select("id, sort_order")
+    .eq("group_name", "board")
+    .order("sort_order", { ascending: true });
+  const list = data ?? [];
+  const idx = list.findIndex((p) => p.id === id);
+  const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+
+  if (idx !== -1 && swapIdx >= 0 && swapIdx < list.length) {
+    const a = list[idx];
+    const b = list[swapIdx];
+    await admin.from("people").update({ sort_order: b.sort_order }).eq("id", a.id);
+    await admin.from("people").update({ sort_order: a.sort_order }).eq("id", b.id);
+  }
+
+  revalidatePath("/");
+  redirect("/admin/board?ok=reordered");
+}
+
 export async function addItsMember(formData: FormData) {
   await requireAdmin();
   const admin = createAdminClient();
@@ -146,4 +178,36 @@ export async function deleteItsMember(formData: FormData) {
   if (id) await admin.from("people").delete().eq("id", id);
   revalidatePath("/");
   redirect("/admin/its?ok=deleted");
+}
+
+/** Swap an ITS board member's sort_order with the neighbor above/below it. */
+export async function moveItsMember(formData: FormData) {
+  await requireAdmin();
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/its?error=nodb");
+
+  const id = str(formData.get("id"));
+  const direction = str(formData.get("direction"));
+  if (!id || (direction !== "up" && direction !== "down")) {
+    redirect("/admin/its?error=save");
+  }
+
+  const { data } = await admin
+    .from("people")
+    .select("id, sort_order")
+    .eq("group_name", "its")
+    .order("sort_order", { ascending: true });
+  const list = data ?? [];
+  const idx = list.findIndex((p) => p.id === id);
+  const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+
+  if (idx !== -1 && swapIdx >= 0 && swapIdx < list.length) {
+    const a = list[idx];
+    const b = list[swapIdx];
+    await admin.from("people").update({ sort_order: b.sort_order }).eq("id", a.id);
+    await admin.from("people").update({ sort_order: a.sort_order }).eq("id", b.id);
+  }
+
+  revalidatePath("/");
+  redirect("/admin/its?ok=reordered");
 }

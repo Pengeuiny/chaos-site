@@ -20,6 +20,7 @@ const OK: Record<string, string> = {
   added: "Board member added.",
   updated: "Board member updated.",
   deleted: "Deleted.",
+  reordered: "Order updated.",
 };
 const ERR: Record<string, string> = {
   nodb: "Supabase service-role key isn't configured (SUPABASE_SERVICE_ROLE_KEY).",
@@ -71,8 +72,13 @@ export default async function BoardTab({
           <p className={styles.muted}>No board members yet.</p>
         ) : (
           <ul className={styles.eventList}>
-            {people.map((p) => (
-              <BoardMemberListItem key={p.id} person={p} />
+            {people.map((p, i) => (
+              <BoardMemberListItem
+                key={p.id}
+                person={p}
+                isFirst={i === 0}
+                isLast={i === people.length - 1}
+              />
             ))}
           </ul>
         )}
