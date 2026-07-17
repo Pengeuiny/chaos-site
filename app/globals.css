@@ -90,6 +90,30 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
 .btn-gold:hover{background:var(--brass-soft);transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--ivory);border:1.5px solid rgba(246,239,226,.3)}
 .btn-ghost:hover{border-color:var(--brass);color:var(--brass-soft)}
+
+/* Eye-catching treatment for buttons that sell/collect money (tickets,
+   dues, membership): a continuous light sweep plus a soft twinkling
+   glow ring, so they read as "act now" against the calmer, hover-only
+   card shimmer used elsewhere. */
+@keyframes cta-sweep{
+  0%{transform:translateX(-160%) skewX(-20deg)}
+  55%,100%{transform:translateX(220%) skewX(-20deg)}
+}
+@keyframes cta-twinkle{
+  0%,100%{box-shadow:0 0 0 0 rgba(233,185,73,.55),0 8px 22px rgba(0,0,0,.35)}
+  50%{box-shadow:0 0 14px 4px rgba(233,185,73,0),0 8px 22px rgba(0,0,0,.35)}
+}
+.cta-glow{position:relative;overflow:hidden;animation:cta-twinkle 2.6s ease-in-out infinite}
+.cta-glow::after{
+  content:"";position:absolute;top:0;left:0;width:35%;height:100%;
+  background:linear-gradient(115deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:translateX(-160%) skewX(-20deg);
+  animation:cta-sweep 2.6s ease-in-out infinite;
+  pointer-events:none;
+}
+@media(prefers-reduced-motion:reduce){
+  .cta-glow,.cta-glow::after{animation:none}
+}
 .navtoggle{display:none;grid-column:3;justify-self:end;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
 .bar .row .btn{grid-column:3;justify-self:end;flex-shrink:0;padding:11px 24px}
 
@@ -151,7 +175,7 @@ section{position:relative;padding:64px 0}
    shows, mission cards, membership tiers, board/ITS people). */
 .show::before,.mcard::before,.tier::before,.person::before{
   content:"";position:absolute;inset:0;z-index:5;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(115deg,transparent 30%,rgba(246,239,226,.14) 45%,rgba(246,239,226,.26) 50%,rgba(246,239,226,.14) 55%,transparent 70%);
+  background:linear-gradient(115deg,transparent 30%,rgba(246,239,226,.10) 45%,rgba(246,239,226,.18) 50%,rgba(246,239,226,.10) 55%,transparent 70%);
   transform:translateX(-140%);transition:transform .85s ease;
 }
 .show:hover::before,.mcard:hover::before,.tier:hover::before,.person:hover::before{transform:translateX(140%)}

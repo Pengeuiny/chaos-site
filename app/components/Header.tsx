@@ -46,7 +46,7 @@ export default function Header() {
           ))}
         </nav>
         <a
-          className="btn btn-gold"
+          className="btn btn-gold cta-glow"
           href={PASSES}
           target="_blank"
           rel="noopener"

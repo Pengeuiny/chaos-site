@@ -117,7 +117,7 @@ export default async function Home() {
                 </ul>
                 <div className="pb-cta">
                   <a
-                    className="btn btn-primary"
+                    className="btn btn-primary cta-glow"
                     href={TICKETS}
                     target="_blank"
                     rel="noopener"
@@ -163,7 +163,7 @@ export default async function Home() {
                   ))}
                 </ul>
                 <a
-                  className="btn btn-gold"
+                  className="btn btn-gold cta-glow"
                   href={tier.url}
                   target="_blank"
                   rel="noopener"
@@ -358,7 +358,7 @@ export default async function Home() {
                   Contact the Board
                 </Link>
                 <a
-                  className="btn btn-gold"
+                  className="btn btn-gold cta-glow"
                   href={PASSES}
                   target="_blank"
                   rel="noopener"

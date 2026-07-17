@@ -52,7 +52,7 @@ export default async function ShowDetail({ params }: Props) {
             <div className="pb-cta">
               {p.ticket_url && (
                 <a
-                  className="btn btn-primary"
+                  className="btn btn-primary cta-glow"
                   href={p.ticket_url}
                   target="_blank"
                   rel="noopener"
@@ -61,7 +61,7 @@ export default async function ShowDetail({ params }: Props) {
                 </a>
               )}
               <a
-                className="btn btn-gold"
+                className="btn btn-gold cta-glow"
                 href={PASSES}
                 target="_blank"
                 rel="noopener"
