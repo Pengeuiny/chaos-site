@@ -43,7 +43,10 @@ export default function AboutSitePage() {
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
         <h2 className={styles.h2}>What it costs</h2>
         <p className={styles.muted} style={{ marginBottom: 12 }}>
-          Every piece of infrastructure below runs on a free plan.
+          Every piece of infrastructure below runs on a free plan — and not a
+          free trial that expires. These are plans providers offer free
+          permanently, by design, for a site at this scale. Nothing here is
+          on a clock.
         </p>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
           <thead>
@@ -56,10 +59,10 @@ export default function AboutSitePage() {
           </thead>
           <tbody>
             {[
-              ["Hosting + builds", "Vercel", "Hobby"],
-              ["Database + file storage", "Supabase", "Free"],
+              ["Hosting + builds", "Vercel", "Hobby (free forever)"],
+              ["Database + file storage", "Supabase", "Free (free forever)"],
               ["Source code", "GitHub", "Public repo"],
-              ["Domain", "vercel.app subdomain", "no custom domain purchased"],
+              ["Domain", "vercel.app subdomain", "see note below"],
               ["Ticketing & payments", "Ludus (existing box office)", "external — not billed here"],
               ["Social posting", "Meta Graph API", "free API"],
             ].map(([what, provider, plan]) => (
@@ -73,6 +76,17 @@ export default function AboutSitePage() {
           </tbody>
         </table>
         <p style={{ marginTop: 14, fontWeight: 700 }}>Total: $0/month</p>
+        <p className={styles.muted} style={{ marginTop: 14 }}>
+          <strong style={{ color: "#e3d9c6" }}>On the domain:</strong> the
+          site currently runs on a free vercel.app address. If CHAOS already
+          owns (or later buys) a custom domain — e.g. chschaos.org —
+          it can be pointed at this site for free; Vercel doesn&rsquo;t
+          charge anything to connect a domain you own, only domain
+          registration itself costs money (paid to whoever the domain is
+          registered through, not Vercel). Connecting a domain like that
+          doesn&rsquo;t require changing the domain name itself — it just
+          tells that existing name where to point.
+        </p>
       </div>
 
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
