@@ -98,7 +98,7 @@ export default async function Home() {
           <div className="split">
             <Calendar events={events} />
             <div className="ticket-dues-stack">
-              <div className="panel lined panel-pad" id="tickets">
+              <div className="panel lined panel-pad">
                 <h3>Event Tickets</h3>
                 <p>
                   Reserved seating for every mainstage show — all handled

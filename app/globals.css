@@ -14,7 +14,10 @@
   --r:14px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+/* Compensate for the sticky 70px header (see header.bar) so every #anchor
+   jump lands with its section heading fully visible instead of tucked
+   underneath it. */
+html{scroll-behavior:smooth;scroll-padding-top:86px}
 body{
   margin:0;
   background:var(--velvet);

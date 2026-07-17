@@ -8,7 +8,7 @@ const NAV = [
   { href: "/#home", label: "Home" },
   { href: "/#season", label: "Season" },
   { href: "/#calendar", label: "Calendar" },
-  { href: "/#tickets", label: "Tickets & Dues" },
+  { href: "/#calendar", label: "Tickets & Dues" },
   { href: "/#theatre", label: "Theatre & ITS" },
   { href: "/#chorus", label: "Chorus" },
   { href: "/#board", label: "The Board" },
