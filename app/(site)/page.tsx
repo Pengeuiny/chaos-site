@@ -74,6 +74,14 @@ export default async function Home() {
       {/* SEASON */}
       <section id="season">
         <div className="wrap">
+          <div className="sec-head">
+            <div>
+              <div className="k">The Lineup</div>
+              <h2>
+                This Season&rsquo;s <span className="gold">Shows</span>
+              </h2>
+            </div>
+          </div>
           <div className="season">
             {productions
               .filter((p) => p.id !== featured?.id)
