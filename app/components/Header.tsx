@@ -8,10 +8,9 @@ const NAV = [
   { href: "/#home", label: "Home" },
   { href: "/#season", label: "Season" },
   { href: "/#calendar", label: "Calendar" },
-  { href: "/#calendar", label: "Tickets & Dues" },
+  { href: "/#calendar", label: "Event Tickets" },
   { href: "/#theatre", label: "Theatre & ITS" },
-  { href: "/#chorus", label: "Chorus" },
-  { href: "/#board", label: "The Board" },
+  { href: "/#mission", label: "About" },
   { href: "/#volunteer", label: "Volunteer" },
   { href: "/#contact", label: "Contact" },
 ];

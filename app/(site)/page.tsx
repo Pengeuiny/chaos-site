@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProductions, getPeople } from "@/lib/queries";
-import { TICKETS, DUES, PASSES, MEMBERSHIP_TIERS } from "@/lib/links";
+import { TICKETS, PASSES, MEMBERSHIP_TIERS } from "@/lib/links";
 import ShowCard from "@/app/components/ShowCard";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
@@ -123,23 +123,6 @@ export default async function Home() {
                     rel="noopener"
                   >
                     Buy Tickets
-                  </a>
-                </div>
-              </div>
-              <div className="panel lined panel-pad">
-                <h3>Program Dues</h3>
-                <p>Pay your program dues securely online in a few clicks.</p>
-                <ul className="bullets">
-                  <li>Support a 501(c)(3) — every dollar funds the kids</li>
-                </ul>
-                <div className="pb-cta">
-                  <a
-                    className="btn btn-gold"
-                    href={DUES}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    Pay Dues
                   </a>
                 </div>
               </div>
