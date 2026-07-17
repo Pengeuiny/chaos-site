@@ -92,28 +92,29 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
 .btn-ghost:hover{border-color:var(--brass);color:var(--brass-soft)}
 
 /* Eye-catching treatment for buttons that sell/collect money (tickets,
-   dues, membership): just a faint idle breathing glow at rest — no
-   constant sweep, so it doesn't fight with the hover-only card shimmer
-   used elsewhere — and a pronounced sweep + brighter glow on hover. */
-@keyframes cta-idle{
-  0%,100%{box-shadow:0 0 0 0 rgba(233,185,73,.35),0 8px 22px rgba(0,0,0,.35)}
-  50%{box-shadow:0 0 7px 1px rgba(233,185,73,0),0 8px 22px rgba(0,0,0,.35)}
+   dues, membership): a thin gold ring that rotates around the button's
+   border — slow and dim at rest, faster and brighter on hover. Built
+   from a conic-gradient masked down to just the ring (center cut out),
+   so it never covers the label or fights with card hover-shimmer. */
+@property --cta-angle{
+  syntax:'<angle>';inherits:false;initial-value:0deg;
 }
-@keyframes cta-sweep{
-  0%{transform:translateX(-160%) skewX(-20deg)}
-  100%{transform:translateX(220%) skewX(-20deg)}
+@keyframes cta-spin{to{--cta-angle:360deg}}
+.cta-glow{position:relative}
+.cta-glow::before{
+  content:"";position:absolute;inset:-3px;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--cta-angle),transparent 0%,rgba(233,185,73,.55) 10%,transparent 24%,transparent 100%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:cta-spin 4.5s linear infinite;pointer-events:none;
 }
-.cta-glow{position:relative;overflow:hidden;animation:cta-idle 3.4s ease-in-out infinite}
-.cta-glow::after{
-  content:"";position:absolute;top:0;left:0;width:35%;height:100%;
-  background:linear-gradient(115deg,transparent,rgba(255,255,255,.85),transparent);
-  transform:translateX(-160%) skewX(-20deg);
-  pointer-events:none;opacity:0;
+.cta-glow:hover::before{
+  inset:-4px;padding:3px;
+  background:conic-gradient(from var(--cta-angle),transparent 0%,var(--brass) 10%,#fff 15%,var(--brass) 20%,transparent 34%,transparent 100%);
+  animation-duration:1.3s;
 }
-.cta-glow:hover{animation:none;box-shadow:0 0 20px 5px rgba(233,185,73,.65),0 10px 26px rgba(0,0,0,.4)}
-.cta-glow:hover::after{opacity:1;animation:cta-sweep 1s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){
-  .cta-glow,.cta-glow::after,.cta-glow:hover::after{animation:none}
+  .cta-glow::before{animation:none}
 }
 .navtoggle{display:none;grid-column:3;justify-self:end;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
 .bar .row .btn{grid-column:3;justify-self:end;flex-shrink:0;padding:11px 24px}
