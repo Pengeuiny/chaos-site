@@ -5,10 +5,13 @@ export const DUES =
   "https://cuthbertsontheatre.ludus.com/index.php?sections=payments";
 export const PASSES = "https://cuthbertsontheatre.ludus.com/passes.php";
 
-// Membership tiers, ported from the Ludus passes page so we can present them
-// in our own skin instead of sending members straight off-site. Each still
-// checks out on Ludus via its own flex.php link.
-export const MEMBERSHIP_TIERS = [
+// CHAOS 26-27 Flex Pass tiers (formerly "Membership"), ported from the
+// Ludus passes page so we can present them in our own skin instead of
+// sending people straight off-site. Each still checks out on Ludus via its
+// own flex.php link. Ludus now auto-tracks each tier's complimentary
+// tickets and usage, and every 26-27 Flex Pass includes a 10% discount on
+// event tickets — see the passes page for the source of truth.
+export const FLEX_PASS_TIERS = [
   {
     name: "Tier 1",
     price: 30,

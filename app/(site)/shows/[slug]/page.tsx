@@ -66,7 +66,7 @@ export default async function ShowDetail({ params }: Props) {
                 target="_blank"
                 rel="noopener"
               >
-                Member Pre-Sale
+                Flex Pass Presale
               </a>
               {p.has_microsite && (
                 <Link className="btn btn-ghost" href="/nemo">

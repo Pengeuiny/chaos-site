@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProductions, getPeople } from "@/lib/queries";
-import { TICKETS, PASSES, MEMBERSHIP_TIERS } from "@/lib/links";
+import { TICKETS, PASSES, FLEX_PASS_TIERS } from "@/lib/links";
 import ShowCard from "@/app/components/ShowCard";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
@@ -131,17 +131,19 @@ export default async function Home() {
 
           <div className="sec-head" style={{ marginTop: 40, marginBottom: 18 }}>
             <div>
-              <div className="k">Membership</div>
+              <div className="k">26-27 Flex Pass</div>
               <h2 style={{ fontSize: 34 }}>
-                Join the <span className="gold">Boosters</span>
+                Get the <span className="gold">Flex Pass</span>
               </h2>
             </div>
           </div>
           <p style={{ color: "var(--ivory-dim)", maxWidth: 700 }}>
-            General Booster Membership brings benefits such as early ticket
-            purchases and discounted tickets. Becoming a member is the
-            simplest way to support the program all year long. Pick a tier
-            below — checkout is handled securely through our box office.
+            The CHAOS Flex Pass replaces general Booster Membership for the
+            26-27 season — Ludus automatically tracks each tier&rsquo;s
+            complimentary tickets and when they&rsquo;re used. Every 26-27
+            Flex Pass also includes a 10% discount on event tickets. Pick a
+            tier below — checkout is handled securely through our box
+            office.
           </p>
           <a
             className="btn btn-ghost"
@@ -150,10 +152,10 @@ export default async function Home() {
             rel="noopener"
             style={{ marginTop: 8, marginBottom: 30, display: "inline-flex" }}
           >
-            Or view all membership options ↗
+            Or view all Flex Pass options ↗
           </a>
           <div className="tiers">
-            {MEMBERSHIP_TIERS.map((tier) => (
+            {FLEX_PASS_TIERS.map((tier) => (
               <div className="tier" key={tier.name}>
                 <div className="tier-name">{tier.name}</div>
                 <div className="tier-price">${tier.price}</div>
@@ -168,7 +170,7 @@ export default async function Home() {
                   target="_blank"
                   rel="noopener"
                 >
-                  Join — ${tier.price} ↗
+                  Get — ${tier.price} ↗
                 </a>
               </div>
             ))}
@@ -363,7 +365,7 @@ export default async function Home() {
                   target="_blank"
                   rel="noopener"
                 >
-                  Become a Member
+                  Get a Flex Pass
                 </a>
               </div>
             </div>

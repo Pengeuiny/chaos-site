@@ -35,7 +35,7 @@ export default function AboutSitePage() {
           When you edit something here — a show&rsquo;s dates, a new board
           member, a photo — it saves straight to the live database. Public
           pages catch up within about a minute. Buying a ticket, paying
-          dues, or becoming a member always happens on the existing CHAOS
+          dues, or getting a Flex Pass always happens on the existing CHAOS
           box office (Ludus) — this site never touches payments directly.
         </p>
       </div>

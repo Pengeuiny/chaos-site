@@ -51,7 +51,7 @@ export default function Header() {
           target="_blank"
           rel="noopener"
         >
-          Become a Member
+          Get a Flex Pass
         </a>
       </div>
     </header>
