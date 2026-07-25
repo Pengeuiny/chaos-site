@@ -137,20 +137,40 @@ export default async function BudgetDashboard({
         <>
           <section className={styles.card} style={{ maxWidth: 820, marginBottom: 20 }}>
             <h2 className={styles.h2}>{activeSeason.name} summary</h2>
-            <p style={{ margin: "0 0 6px" }}>
-              Total budgeted <strong>{fmtMoney(seasonTotals.budgeted)}</strong> · Committed {fmtMoney(seasonTotals.committed)} · Paid {fmtMoney(seasonTotals.paid)}
-            </p>
-            <p style={{ margin: "0 0 6px" }}>
-              Revenue projected <strong>{fmtMoney(totalRevenueProjected)}</strong>
-              {" · "}counting actuals where entered: {fmtMoney(totalRevenueActual)}
-            </p>
-            <p style={{ margin: "0 0 6px", fontWeight: 700 }}>
-              {gap > 0 ? `Fundraising gap: ${fmtMoney(gap)}` : `Projected surplus: ${fmtMoney(-gap)}`}
-            </p>
-            <p className={styles.muted} style={{ margin: 0 }}>
-              Overhead {fmtMoney(overheadTotals.budgeted)} · Trip {fmtMoney(tripTotals.budgeted)} · Reserve balance{" "}
-              {activeSeason.current_reserve_balance != null ? fmtMoney(activeSeason.current_reserve_balance) : "not entered"}
-            </p>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
+              <tbody>
+                {[
+                  ["Total budgeted", fmtMoney(seasonTotals.budgeted)],
+                  ["Committed", fmtMoney(seasonTotals.committed)],
+                  ["Paid", fmtMoney(seasonTotals.paid)],
+                  ["Revenue projected", fmtMoney(totalRevenueProjected)],
+                  ["Revenue actual (where entered)", fmtMoney(totalRevenueActual)],
+                  ["Overhead", fmtMoney(overheadTotals.budgeted)],
+                  ["Chorus trip", fmtMoney(tripTotals.budgeted)],
+                  [
+                    "Reserve balance",
+                    activeSeason.current_reserve_balance != null
+                      ? fmtMoney(activeSeason.current_reserve_balance)
+                      : "not entered",
+                  ],
+                ].map(([label, value]) => (
+                  <tr key={label} style={{ borderTop: "1px solid rgba(233,185,73,.15)" }}>
+                    <td style={{ padding: "8px 0", color: "#e3d9c6" }}>{label}</td>
+                    <td style={{ padding: "8px 0", textAlign: "right", fontWeight: 700, color: "#f0c66b" }}>
+                      {value}
+                    </td>
+                  </tr>
+                ))}
+                <tr style={{ borderTop: "2px solid rgba(233,185,73,.35)" }}>
+                  <td style={{ padding: "10px 0", fontWeight: 700 }}>
+                    {gap > 0 ? "Fundraising gap" : "Projected surplus"}
+                  </td>
+                  <td style={{ padding: "10px 0", textAlign: "right", fontWeight: 700, fontSize: 16 }}>
+                    {fmtMoney(Math.abs(gap))}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
             {warnings.length > 0 && (
               <div style={{ marginTop: 14 }}>
@@ -180,8 +200,18 @@ export default async function BudgetDashboard({
                     <div className={styles.showHead}>
                       <div>
                         <strong>{s.title}</strong>
-                        <div className={styles.muted} style={{ marginTop: 2 }}>
-                          Budgeted {fmtMoney(s.budgeted)} + overhead share {fmtMoney(overheadShares[s.id] ?? 0)} · Committed {fmtMoney(s.committed)} · Paid {fmtMoney(s.paid)}
+                        <div style={{ display: "flex", gap: 18, flexWrap: "wrap", marginTop: 4, fontSize: 13.5 }}>
+                          {[
+                            ["Budgeted", fmtMoney(s.budgeted)],
+                            ["Overhead share", fmtMoney(overheadShares[s.id] ?? 0)],
+                            ["Committed", fmtMoney(s.committed)],
+                            ["Paid", fmtMoney(s.paid)],
+                          ].map(([label, value]) => (
+                            <span key={label}>
+                              <span className={styles.muted}>{label}: </span>
+                              <span style={{ fontWeight: 700 }}>{value}</span>
+                            </span>
+                          ))}
                         </div>
                       </div>
                       <Link className={styles.editLink} href={`/admin/budget/shows/${s.id}`}>
