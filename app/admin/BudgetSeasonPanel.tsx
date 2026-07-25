@@ -101,21 +101,25 @@ export default function BudgetSeasonPanel({
             </label>
             <div className={styles.row2}>
               <label className={styles.label}>
-                Default contingency % <span className={styles.hint}>(10-15 recommended)</span>
+                Default contingency %
+                <div className={styles.hint}>10-15 recommended</div>
                 <input className={styles.input} type="number" step="0.5" name="contingency_default_percent" defaultValue={activeSeason.contingency_default_percent} />
               </label>
               <label className={styles.label}>
                 Dual-signature threshold ($)
+                <div className={styles.hint}>&nbsp;</div>
                 <input className={styles.input} type="number" step="1" name="dual_signature_threshold" defaultValue={activeSeason.dual_signature_threshold} />
               </label>
             </div>
             <div className={styles.row2}>
               <label className={styles.label}>
                 Reserve target (months)
+                <div className={styles.hint}>&nbsp;</div>
                 <input className={styles.input} type="number" step="0.5" name="reserve_target_months" defaultValue={activeSeason.reserve_target_months} />
               </label>
               <label className={styles.label}>
-                Current reserve balance ($) <span className={styles.hint}>(entered manually)</span>
+                Current reserve balance ($)
+                <div className={styles.hint}>entered manually</div>
                 <input className={styles.input} type="number" step="0.01" name="current_reserve_balance" defaultValue={activeSeason.current_reserve_balance ?? ""} />
               </label>
             </div>
