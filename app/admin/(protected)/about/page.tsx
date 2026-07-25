@@ -41,6 +41,17 @@ export default function AboutSitePage() {
       </div>
 
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
+        <h2 className={styles.h2}>AI usage</h2>
+        <p>
+          The delivered site contains no AI functionality and does not send
+          any user data to AI systems. If AI tools were used during
+          development, they were used off-platform and no sensitive,
+          confidential, or public-record content was entered into public AI
+          tools. The site itself is a standard non-AI application.
+        </p>
+      </div>
+
+      <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
         <h2 className={styles.h2}>What it costs</h2>
         <p className={styles.muted} style={{ marginBottom: 12 }}>
           Every piece of infrastructure below runs on a free plan — and not a
