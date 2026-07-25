@@ -47,7 +47,7 @@ export default async function SetupPage({
           )}
 
           <label className={styles.label}>
-            Setup key <span className={styles.hint}>(the server&rsquo;s ADMIN_PASSWORD)</span>
+            <span>Setup key <span className={styles.hint}>(the server&rsquo;s ADMIN_PASSWORD)</span></span>
             <input className={styles.input} type="password" name="setup_key" required />
           </label>
           <label className={styles.label}>
@@ -59,7 +59,7 @@ export default async function SetupPage({
             <input className={styles.input} type="email" name="email" required />
           </label>
           <label className={styles.label}>
-            Choose a password <span className={styles.hint}>(at least 8 characters)</span>
+            <span>Choose a password <span className={styles.hint}>(at least 8 characters)</span></span>
             <input className={styles.input} type="password" name="password" minLength={8} required />
           </label>
 

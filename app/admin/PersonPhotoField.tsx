@@ -51,7 +51,7 @@ export default function PersonPhotoField({
 
   return (
     <div className={styles.label}>
-      Photo <span className={styles.hint}>(optional)</span>
+      <span>Photo <span className={styles.hint}>(optional)</span></span>
       <input type="hidden" name="image_url" value={url} readOnly />
 
       <div className={styles.posterTabs}>

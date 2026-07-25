@@ -40,7 +40,7 @@ export default function AddAdminUserToggle() {
             <input className={styles.input} type="email" name="email" required />
           </label>
           <label className={styles.label}>
-            Initial password <span className={styles.hint}>(at least 8 characters)</span>
+            <span>Initial password <span className={styles.hint}>(at least 8 characters)</span></span>
             <input className={styles.input} type="password" name="password" minLength={8} required />
           </label>
           <button className={styles.btn} type="submit">

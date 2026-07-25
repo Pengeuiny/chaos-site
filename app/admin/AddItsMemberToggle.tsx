@@ -36,7 +36,7 @@ export default function AddItsMemberToggle() {
             </label>
           </div>
           <label className={styles.label}>
-            Contact email <span className={styles.hint}>(optional — most student officers don&rsquo;t list one)</span>
+            <span>Contact email <span className={styles.hint}>(optional — most student officers don&rsquo;t list one)</span></span>
             <input className={styles.input} type="email" name="email" />
           </label>
           <PersonPhotoField />

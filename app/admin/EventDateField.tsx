@@ -44,7 +44,7 @@ export default function EventDateField({
       ) : (
         <div className={styles.row2}>
           <label className={styles.label}>
-            Date &amp; time * <span className={styles.hint}>(Eastern)</span>
+            <span>Date &amp; time * <span className={styles.hint}>(Eastern)</span></span>
             <input
               className={styles.input}
               type="datetime-local"

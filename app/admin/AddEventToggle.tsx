@@ -52,7 +52,7 @@ export default function AddEventToggle({
           </label>
           <EventDateField />
           <label className={styles.label}>
-            Ticket URL <span className={styles.hint}>(optional)</span>
+            <span>Ticket URL <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="ticket_url" placeholder="https://…" />
           </label>
           <label className={styles.label}>

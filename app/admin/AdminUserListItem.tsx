@@ -47,7 +47,7 @@ export default function AdminUserListItem({ user }: { user: AdminUserRow }) {
         <form action={resetAdminUserPassword} className={styles.form} style={{ gap: 10 }}>
           <input type="hidden" name="id" value={user.id} />
           <label className={styles.label}>
-            New password for {user.name} <span className={styles.hint}>(at least 8 characters)</span>
+            <span>New password for {user.name} <span className={styles.hint}>(at least 8 characters)</span></span>
             <input className={styles.input} type="password" name="password" minLength={8} required />
           </label>
           <div className={styles.rowActions}>

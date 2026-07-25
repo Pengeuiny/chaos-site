@@ -51,7 +51,7 @@ export default function ShowFormFields({
 
       <div className={styles.row2}>
         <label className={styles.label}>
-          Slug <span className={styles.hint}>(optional)</span>
+          <span>Slug <span className={styles.hint}>(optional)</span></span>
           <input
             className={styles.input}
             name="slug"

@@ -53,7 +53,7 @@ export default function ItsMemberListItem({
             </label>
           </div>
           <label className={styles.label}>
-            Contact email <span className={styles.hint}>(optional)</span>
+            <span>Contact email <span className={styles.hint}>(optional)</span></span>
             <input
               className={styles.input}
               type="email"
