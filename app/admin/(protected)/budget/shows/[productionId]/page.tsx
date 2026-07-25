@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetLineItemsSection from "@/app/admin/BudgetLineItemsSection";
 import { allocateOverhead, fmtMoney, showFinancials } from "@/lib/budget";
-import type { BudgetExpense, BudgetLineItem, BudgetRevenueLine, BudgetSeason } from "@/lib/types";
+import type { BudgetCategory, BudgetExpense, BudgetLineItem, BudgetRevenueLine, BudgetSeason } from "@/lib/types";
 import styles from "../../../../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -50,14 +50,16 @@ export default async function ShowBudgetPage({
     );
   }
 
-  const [{ data: production }, { data: seasonsData }] = await Promise.all([
+  const [{ data: production }, { data: seasonsData }, { data: categoriesData }] = await Promise.all([
     admin.from("productions").select("id, title").eq("id", productionId).single(),
     admin.from("budget_seasons").select("*").order("created_at", { ascending: false }),
+    admin.from("budget_categories").select("*").order("sort_order", { ascending: true }).order("name", { ascending: true }),
   ]);
   if (!production) notFound();
 
   const seasons = (seasonsData as BudgetSeason[] | null) ?? [];
   const activeSeason = seasons.find((s) => s.is_active) ?? null;
+  const categories = ((categoriesData as BudgetCategory[] | null) ?? []).map((c) => c.name);
 
   let lineItems: LineItemWithExpenses[] = [];
   let fin: ReturnType<typeof showFinancials> | null = null;
@@ -191,6 +193,7 @@ export default async function ShowBudgetPage({
             productionId={production.id}
             dualSignatureThreshold={activeSeason.dual_signature_threshold}
             contingencyDefaultPercent={activeSeason.contingency_default_percent}
+            categories={categories}
             canEdit={canEdit}
           />
         )}

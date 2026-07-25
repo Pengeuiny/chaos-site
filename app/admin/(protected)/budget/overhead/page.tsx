@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetLineItemsSection from "@/app/admin/BudgetLineItemsSection";
 import { allocateOverhead, fmtMoney } from "@/lib/budget";
-import type { BudgetExpense, BudgetLineItem, BudgetSeason } from "@/lib/types";
+import type { BudgetCategory, BudgetExpense, BudgetLineItem, BudgetSeason } from "@/lib/types";
 import styles from "../../../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -46,12 +46,13 @@ export default async function OverheadBudgetPage({
     );
   }
 
-  const { data: seasonsData } = await admin
-    .from("budget_seasons")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [{ data: seasonsData }, { data: categoriesData }] = await Promise.all([
+    admin.from("budget_seasons").select("*").order("created_at", { ascending: false }),
+    admin.from("budget_categories").select("*").order("sort_order", { ascending: true }).order("name", { ascending: true }),
+  ]);
   const seasons = (seasonsData as BudgetSeason[] | null) ?? [];
   const activeSeason = seasons.find((s) => s.is_active) ?? null;
+  const categories = ((categoriesData as BudgetCategory[] | null) ?? []).map((c) => c.name);
 
   let overheadItems: LineItemWithExpenses[] = [];
   let showAllocation: { title: string; share: number }[] = [];
@@ -107,6 +108,7 @@ export default async function OverheadBudgetPage({
               scope="overhead"
               dualSignatureThreshold={activeSeason.dual_signature_threshold}
               contingencyDefaultPercent={activeSeason.contingency_default_percent}
+              categories={categories}
               canEdit={canEdit}
             />
 

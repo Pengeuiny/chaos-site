@@ -90,12 +90,24 @@ create table if not exists public.budget_seasons (
   created_at                  timestamptz not null default now()
 );
 
+-- Reusable, global category list for budget line items (e.g. "Royalties",
+-- "Costumes") so the same name is spelled consistently across every show
+-- and season instead of free-typed each time.
+create table if not exists public.budget_categories (
+  id          uuid primary key default gen_random_uuid(),
+  name        text not null,
+  sort_order  int not null default 0,
+  created_at  timestamptz not null default now()
+);
+create unique index if not exists budget_categories_name_lower_idx on public.budget_categories (lower(name));
+
 create table if not exists public.budget_line_items (
   id               uuid primary key default gen_random_uuid(),
   season_id        uuid not null references public.budget_seasons(id) on delete cascade,
   production_id    uuid references public.productions(id) on delete cascade,  -- null for overhead/trip lines
   scope            text not null check (scope in ('show', 'overhead', 'trip')),
-  category         text not null,      -- free text: royalties, set, costumes, charter_bus, insurance, ...
+  category         text not null,      -- denormalized category name, kept in sync with category_id
+  category_id      uuid references public.budget_categories(id) on delete set null,
   description      text,
   budgeted_amount  numeric not null default 0,
   is_contingency   boolean not null default false,
@@ -204,6 +216,7 @@ alter table public.people               enable row level security;
 alter table public.ticket_reservations  enable row level security;
 alter table public.volunteers           enable row level security;
 alter table public.budget_seasons       enable row level security;
+alter table public.budget_categories    enable row level security;
 alter table public.budget_line_items    enable row level security;
 alter table public.budget_expenses      enable row level security;
 alter table public.budget_revenue_lines enable row level security;

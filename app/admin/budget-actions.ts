@@ -33,6 +33,34 @@ function pathForScope(scope: string, production_id: string | null) {
   return "/admin/budget";
 }
 
+type AdminDb = NonNullable<ReturnType<typeof createAdminClient>>;
+
+/** Find an existing category by name (case-insensitive) or create it — this is how
+ * a newly typed category becomes a global option for every future line item. */
+async function resolveCategory(admin: AdminDb, name: string): Promise<{ id: string; name: string }> {
+  const { data: existing } = await admin
+    .from("budget_categories")
+    .select("id, name")
+    .ilike("name", name)
+    .maybeSingle();
+  if (existing) return existing;
+
+  const { data: created, error } = await admin
+    .from("budget_categories")
+    .insert({ name })
+    .select("id, name")
+    .single();
+  if (!error) return created;
+
+  // Lost a race with a concurrent insert of the same name — re-fetch.
+  const { data: retry } = await admin
+    .from("budget_categories")
+    .select("id, name")
+    .ilike("name", name)
+    .single();
+  return retry!;
+}
+
 // ---------------------------------------------------------------------------
 // Seasons
 // ---------------------------------------------------------------------------
@@ -165,13 +193,16 @@ export async function addLineItem(formData: FormData) {
   if (!category) redirect(`${path}?error=category`);
   if (scope === "show" && !production_id) redirect(`${path}?error=show`);
 
+  const resolvedCategory = await resolveCategory(admin, category);
+
   const { data, error } = await admin
     .from("budget_line_items")
     .insert({
       season_id,
       production_id: scope === "show" ? production_id : null,
       scope,
-      category,
+      category: resolvedCategory.name,
+      category_id: resolvedCategory.id,
       description: str(formData.get("description")),
       budgeted_amount: num(formData.get("budgeted_amount")),
       is_contingency: formData.get("is_contingency") === "on",
@@ -201,11 +232,14 @@ export async function updateLineItem(formData: FormData) {
   if (!id) redirect(`${path}?error=save`);
   if (!category) redirect(`${path}?error=category`);
 
+  const resolvedCategory = await resolveCategory(admin, category);
+
   const { data: before } = await admin.from("budget_line_items").select("*").eq("id", id).single();
   const { data: after, error } = await admin
     .from("budget_line_items")
     .update({
-      category,
+      category: resolvedCategory.name,
+      category_id: resolvedCategory.id,
       description: str(formData.get("description")),
       budgeted_amount: num(formData.get("budgeted_amount")),
       is_contingency: formData.get("is_contingency") === "on",
@@ -413,4 +447,67 @@ export async function deleteRevenueLine(formData: FormData) {
   revalidatePath("/admin/budget/revenue");
   revalidatePath("/admin/budget");
   redirect("/admin/budget/revenue?ok=revenue_deleted");
+}
+
+// ---------------------------------------------------------------------------
+// Categories (global, reusable across all shows/seasons)
+// ---------------------------------------------------------------------------
+
+export async function createCategory(formData: FormData) {
+  const actor = await requireRole([...BUDGET_ROLES]);
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/budget?error=nodb");
+
+  const name = str(formData.get("name"));
+  if (!name) redirect("/admin/budget?error=category");
+
+  const { data, error } = await admin.from("budget_categories").insert({ name }).select().single();
+  if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, { table: "budget_categories", rowId: data.id, action: "insert", after: data });
+  revalidatePath("/admin/budget");
+  redirect("/admin/budget?ok=category_added");
+}
+
+export async function renameCategory(formData: FormData) {
+  const actor = await requireRole([...BUDGET_ROLES]);
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/budget?error=nodb");
+
+  const id = str(formData.get("id"));
+  const name = str(formData.get("name"));
+  if (!id) redirect("/admin/budget?error=save");
+  if (!name) redirect("/admin/budget?error=category");
+
+  const { data: before } = await admin.from("budget_categories").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
+    .from("budget_categories")
+    .update({ name })
+    .eq("id", id)
+    .select()
+    .single();
+  if (error) redirect("/admin/budget?error=save");
+
+  // Keep the denormalized display name on existing line items in sync.
+  await admin.from("budget_line_items").update({ category: name }).eq("category_id", id);
+
+  await logAudit(admin, actor, { table: "budget_categories", rowId: id, action: "update", before, after });
+  revalidatePath("/admin/budget");
+  redirect("/admin/budget?ok=category_renamed");
+}
+
+export async function deleteCategory(formData: FormData) {
+  const actor = await requireRole([...BUDGET_ROLES]);
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/budget?error=nodb");
+
+  const id = str(formData.get("id"));
+  if (id) {
+    const { data: before } = await admin.from("budget_categories").select("*").eq("id", id).single();
+    // Line items keep their (now-unlinked) category text — deleting the
+    // shared category just stops offering it for new/edited line items.
+    await admin.from("budget_categories").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "budget_categories", rowId: id, action: "delete", before });
+  }
+  revalidatePath("/admin/budget");
+  redirect("/admin/budget?ok=category_deleted");
 }

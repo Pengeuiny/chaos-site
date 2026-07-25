@@ -168,7 +168,7 @@ function ExpenseList({
           </div>
           <div className={styles.row2}>
             <label className={styles.label}>
-              Vendor <span className={styles.hint}>(optional)</span>
+              <span>Vendor <span className={styles.hint}>(optional)</span></span>
               <input className={styles.input} name="vendor" />
             </label>
             <label className={styles.label}>
@@ -177,11 +177,11 @@ function ExpenseList({
             </label>
           </div>
           <label className={styles.label}>
-            Description <span className={styles.hint}>(optional)</span>
+            <span>Description <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="description" />
           </label>
           <label className={styles.label}>
-            Approved by <span className={styles.hint}>(optional — {fmtMoney(dualSignatureThreshold)}+ should have a second sign-off)</span>
+            <span>Approved by <span className={styles.hint}>(optional — {fmtMoney(dualSignatureThreshold)}+ should have a second sign-off)</span></span>
             <input className={styles.input} name="approved_by" />
           </label>
           <div className={styles.rowActions}>
@@ -223,7 +223,13 @@ function LineItemRow({
           <div className={styles.row2}>
             <label className={styles.label}>
               Category
-              <input className={styles.input} name="category" defaultValue={item.category} required />
+              <input
+                className={styles.input}
+                name="category"
+                list="budget-category-options"
+                defaultValue={item.category}
+                required
+              />
             </label>
             <label className={styles.label}>
               Budgeted amount
@@ -231,7 +237,7 @@ function LineItemRow({
             </label>
           </div>
           <label className={styles.label}>
-            Description <span className={styles.hint}>(optional — leave notes for next year)</span>
+            <span>Description <span className={styles.hint}>(optional — leave notes for next year)</span></span>
             <input className={styles.input} name="description" defaultValue={item.description ?? ""} />
           </label>
           <label className={styles.check}>
@@ -291,6 +297,7 @@ export default function BudgetLineItemsSection({
   productionId,
   dualSignatureThreshold,
   contingencyDefaultPercent,
+  categories,
   canEdit,
 }: {
   lineItems: LineItemWithExpenses[];
@@ -299,6 +306,7 @@ export default function BudgetLineItemsSection({
   productionId?: string | null;
   dualSignatureThreshold: number;
   contingencyDefaultPercent: number;
+  categories: string[];
   canEdit: boolean;
 }) {
   const [adding, setAdding] = useState(false);
@@ -311,6 +319,11 @@ export default function BudgetLineItemsSection({
 
   return (
     <div>
+      <datalist id="budget-category-options">
+        {categories.map((c) => (
+          <option key={c} value={c} />
+        ))}
+      </datalist>
       <p style={{ margin: "0 0 12px" }}>
         Budgeted <strong>{fmtMoney(budgetedTotal)}</strong> · Committed {fmtMoney(committed)} · Paid {fmtMoney(paid)} · Remaining{" "}
         {fmtMoney(budgetedTotal - committed - paid)}
@@ -350,7 +363,13 @@ export default function BudgetLineItemsSection({
           <div className={styles.row2}>
             <label className={styles.label}>
               Category
-              <input className={styles.input} name="category" placeholder="e.g. Royalties, Set, Costumes" required />
+              <input
+                className={styles.input}
+                name="category"
+                list="budget-category-options"
+                placeholder="e.g. Royalties, Set, Costumes"
+                required
+              />
             </label>
             <label className={styles.label}>
               Budgeted amount
@@ -358,7 +377,7 @@ export default function BudgetLineItemsSection({
             </label>
           </div>
           <label className={styles.label}>
-            Description <span className={styles.hint}>(optional)</span>
+            <span>Description <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="description" />
           </label>
           <label className={styles.check}>

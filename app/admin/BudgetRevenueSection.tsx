@@ -49,7 +49,7 @@ function RevenueRow({
               </select>
             </label>
             <label className={styles.label}>
-              Show <span className={styles.hint}>(optional — leave blank if season-wide)</span>
+              <span>Show <span className={styles.hint}>(optional — leave blank if season-wide)</span></span>
               <select className={styles.input} name="production_id" defaultValue={line.production_id ?? ""}>
                 <option value="">— Season-wide —</option>
                 {productions.map((p) => (
@@ -64,12 +64,12 @@ function RevenueRow({
               <input className={styles.input} type="number" step="0.01" name="projected_amount" defaultValue={line.projected_amount} required />
             </label>
             <label className={styles.label}>
-              Actual <span className={styles.hint}>(optional — fill in as it comes in)</span>
+              <span>Actual <span className={styles.hint}>(optional — fill in as it comes in)</span></span>
               <input className={styles.input} type="number" step="0.01" name="actual_amount" defaultValue={line.actual_amount ?? ""} />
             </label>
           </div>
           <label className={styles.label}>
-            Notes <span className={styles.hint}>(optional)</span>
+            <span>Notes <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="notes" defaultValue={line.notes ?? ""} />
           </label>
           <input type="hidden" name="sort_order" value={line.sort_order} />
@@ -168,7 +168,7 @@ export default function BudgetRevenueSection({
               </select>
             </label>
             <label className={styles.label}>
-              Show <span className={styles.hint}>(optional)</span>
+              <span>Show <span className={styles.hint}>(optional)</span></span>
               <select className={styles.input} name="production_id" defaultValue="">
                 <option value="">— Season-wide —</option>
                 {productions.map((p) => (
@@ -183,12 +183,12 @@ export default function BudgetRevenueSection({
               <input className={styles.input} type="number" step="0.01" name="projected_amount" required />
             </label>
             <label className={styles.label}>
-              Actual <span className={styles.hint}>(optional)</span>
+              <span>Actual <span className={styles.hint}>(optional)</span></span>
               <input className={styles.input} type="number" step="0.01" name="actual_amount" />
             </label>
           </div>
           <label className={styles.label}>
-            Notes <span className={styles.hint}>(optional)</span>
+            <span>Notes <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="notes" />
           </label>
           <div className={styles.rowActions}>

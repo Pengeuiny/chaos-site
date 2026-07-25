@@ -78,6 +78,13 @@ export type BudgetSeason = {
   created_at: string;
 };
 
+export type BudgetCategory = {
+  id: string;
+  name: string;
+  sort_order: number;
+  created_at: string;
+};
+
 export type BudgetLineItemScope = "show" | "overhead" | "trip";
 
 export type BudgetLineItem = {
@@ -86,6 +93,7 @@ export type BudgetLineItem = {
   production_id: string | null;
   scope: BudgetLineItemScope;
   category: string;
+  category_id: string | null;
   description: string | null;
   budgeted_amount: number;
   is_contingency: boolean;

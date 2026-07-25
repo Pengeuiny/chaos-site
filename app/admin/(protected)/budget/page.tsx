@@ -4,8 +4,9 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetSeasonPanel from "@/app/admin/BudgetSeasonPanel";
+import BudgetCategoriesPanel from "@/app/admin/BudgetCategoriesPanel";
 import { allocateOverhead, fmtMoney, showFinancials, thresholdWarnings } from "@/lib/budget";
-import type { BudgetLineItem, BudgetRevenueLine, BudgetSeason } from "@/lib/types";
+import type { BudgetCategory, BudgetLineItem, BudgetRevenueLine, BudgetSeason } from "@/lib/types";
 import styles from "../../admin.module.css";
 
 export const dynamic = "force-dynamic";
@@ -19,10 +20,14 @@ const OK: Record<string, string> = {
   season_updated: "Settings saved.",
   season_activated: "Active season switched.",
   season_deleted: "Season deleted.",
+  category_added: "Category added.",
+  category_renamed: "Category renamed.",
+  category_deleted: "Category deleted.",
 };
 const ERR: Record<string, string> = {
   nodb: "Supabase service-role key isn't configured (SUPABASE_SERVICE_ROLE_KEY).",
   name: "A season name is required.",
+  category: "A category name is required.",
   save: "Could not save.",
 };
 
@@ -40,14 +45,17 @@ export default async function BudgetDashboard({
   let productions: ProductionRow[] = [];
   let lineItems: LineItemRow[] = [];
   let revenueLines: BudgetRevenueLine[] = [];
+  let categories: BudgetCategory[] = [];
 
   if (admin) {
-    const [seasonsRes, productionsRes] = await Promise.all([
+    const [seasonsRes, productionsRes, categoriesRes] = await Promise.all([
       admin.from("budget_seasons").select("*").order("created_at", { ascending: false }),
       admin.from("productions").select("id, title, starts_on, sort_order").order("sort_order", { ascending: true }),
+      admin.from("budget_categories").select("*").order("sort_order", { ascending: true }).order("name", { ascending: true }),
     ]);
     seasons = (seasonsRes.data as BudgetSeason[] | null) ?? [];
     productions = (productionsRes.data as ProductionRow[] | null) ?? [];
+    categories = (categoriesRes.data as BudgetCategory[] | null) ?? [];
 
     const activeSeason = seasons.find((s) => s.is_active) ?? null;
     if (activeSeason) {
@@ -147,6 +155,11 @@ export default async function BudgetDashboard({
       <section className={styles.card} style={{ maxWidth: 820, marginBottom: 20 }}>
         <h2 className={styles.h2}>Seasons</h2>
         <BudgetSeasonPanel seasons={seasons} activeSeason={activeSeason} canEdit={canEdit} />
+      </section>
+
+      <section className={styles.card} style={{ maxWidth: 820, marginBottom: 20 }}>
+        <h2 className={styles.h2}>Categories</h2>
+        <BudgetCategoriesPanel categories={categories} canEdit={canEdit} />
       </section>
 
       {activeSeason && (
