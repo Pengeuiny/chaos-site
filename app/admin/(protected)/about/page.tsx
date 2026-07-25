@@ -42,13 +42,76 @@ export default function AboutSitePage() {
 
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
         <h2 className={styles.h2}>AI usage</h2>
-        <p>
-          The delivered site contains no AI functionality and does not send
-          any user data to AI systems. If AI tools were used during
-          development, they were used off-platform and no sensitive,
-          confidential, or public-record content was entered into public AI
-          tools. The site itself is a standard non-AI application.
-        </p>
+        <div className="ucps-ai-compliance" style={{ fontFamily: "Arial, sans-serif", lineHeight: 1.5 }}>
+          <section id="ucps-policy-528" style={{ marginBottom: "1.25rem" }}>
+            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+              UCPS Policy 5-28 — Technology in the Educational Program
+            </h3>
+            <p style={{ margin: "0 0 0.5rem 0" }}>
+              <strong>Relevant language:</strong> &ldquo;The board encourages
+              the use of generative AI by school system employees and
+              students&hellip;&rdquo;
+            </p>
+            <p style={{ margin: "0 0 0.5rem 0" }}>
+              <strong>Compliance note:</strong> This site contains no AI
+              functionality, no automated decision-making, and no
+              public-facing generative AI features. Any AI-assisted
+              development work was performed outside the live site and is
+              not exposed to users.
+            </p>
+            <p style={{ margin: 0 }}>
+              <a
+                href="https://go.boarddocs.com/nc/ucps/Board.nsf/files/DNJM46595FA9/%24file/Policy%205-28%20Technology%20in%20the%20Educational%20Program%20rev%2011-2025.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open UCPS Policy 5-28
+              </a>
+            </p>
+          </section>
+
+          <section id="ucps-integrity-civility" style={{ marginBottom: "1.25rem" }}>
+            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+              UCPS Integrity and Civility Policy
+            </h3>
+            <p style={{ margin: "0 0 0.5rem 0" }}>
+              <strong>Relevant language:</strong> &ldquo;work produced by
+              artificial intelligence and representing it as one&rsquo;s own
+              original work&rdquo;
+            </p>
+            <p style={{ margin: "0 0 0.5rem 0" }}>
+              <strong>Compliance note:</strong> No AI-generated content is
+              presented as original student, staff, or district-authored
+              work on this site. Any externally assisted content is
+              reviewed, edited, and owned by the site operator before
+              publication.
+            </p>
+            <p style={{ margin: 0 }}>
+              <a
+                href="https://go.boarddocs.com/nc/ucps/Board.nsf/files/D2LM9N5A2D70/%24file/Proposed%20New%20Policy%20-%20Integrity%20and%20Civility.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Open UCPS Integrity and Civility Policy
+              </a>
+            </p>
+          </section>
+
+          <section id="ucps-admin-summary">
+            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+              Administrative compliance summary
+            </h3>
+            <p style={{ margin: 0 }}>
+              This website is a standard non-AI site. It does not collect
+              sensitive district information for use in AI tools, does not
+              use AI to make decisions, and does not expose any AI-driven
+              user experience. The site is intended to fit within
+              UCPS&rsquo;s published approach that permits generative AI
+              under responsible-use expectations while preserving academic
+              and administrative integrity.
+            </p>
+          </section>
+        </div>
       </div>
 
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
