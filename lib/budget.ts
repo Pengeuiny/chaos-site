@@ -104,6 +104,52 @@ export function revenueDiversification(
   return { streams, total };
 }
 
+export type ShowFinancials = {
+  directBudgeted: number;
+  overheadShare: number;
+  totalCost: number;
+  committed: number;
+  paid: number;
+  showRevenueProjected: number;
+  showRevenueActual: number;
+  netProjected: number;
+  netActual: number;
+};
+
+/**
+ * A show's own cost vs. its own revenue — deliberately excludes season-wide
+ * revenue (donations, grants, ...) since that isn't earned by any one show
+ * and attributing it per-show would double-count across the season summary.
+ */
+export function showFinancials({
+  directBudgeted,
+  overheadShare,
+  committed,
+  paid,
+  revenueLines,
+}: {
+  directBudgeted: number;
+  overheadShare: number;
+  committed: number;
+  paid: number;
+  revenueLines: { projected_amount: number; actual_amount: number | null }[];
+}): ShowFinancials {
+  const totalCost = directBudgeted + overheadShare;
+  const showRevenueProjected = revenueLines.reduce((s, l) => s + l.projected_amount, 0);
+  const showRevenueActual = revenueLines.reduce((s, l) => s + (l.actual_amount ?? l.projected_amount), 0);
+  return {
+    directBudgeted,
+    overheadShare,
+    totalCost,
+    committed,
+    paid,
+    showRevenueProjected,
+    showRevenueActual,
+    netProjected: showRevenueProjected - totalCost,
+    netActual: showRevenueActual - (committed + paid),
+  };
+}
+
 export type ContingencyCheckResult = {
   contingencyAmount: number;
   otherLinesTotal: number;

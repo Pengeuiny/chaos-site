@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetSeasonPanel from "@/app/admin/BudgetSeasonPanel";
-import { allocateOverhead, fmtMoney, thresholdWarnings } from "@/lib/budget";
+import { allocateOverhead, fmtMoney, showFinancials, thresholdWarnings } from "@/lib/budget";
 import type { BudgetLineItem, BudgetRevenueLine, BudgetSeason } from "@/lib/types";
 import styles from "../../admin.module.css";
 
@@ -96,6 +96,19 @@ export default async function BudgetDashboard({
     activeSeason?.overhead_allocation_method ?? "percent_of_direct",
     shows.map((s) => ({ production_id: s.id, directTotal: s.budgeted })),
     overheadTotals.budgeted,
+  );
+
+  const showFinancialsById = new Map(
+    shows.map((s) => [
+      s.id,
+      showFinancials({
+        directBudgeted: s.budgeted,
+        overheadShare: overheadShares[s.id] ?? 0,
+        committed: s.committed,
+        paid: s.paid,
+        revenueLines: revenueLines.filter((r) => r.production_id === s.id),
+      }),
+    ]),
   );
 
   const totalRevenueProjected = revenueLines.reduce((s, l) => s + l.projected_amount, 0);
@@ -194,35 +207,49 @@ export default async function BudgetDashboard({
 
           <section className={styles.card} style={{ maxWidth: 820 }}>
             <h2 className={styles.h2}>Shows</h2>
+            <p className={styles.muted} style={{ marginTop: -6, marginBottom: 14 }}>
+              &ldquo;Net&rdquo; below only counts revenue tied to that specific show (e.g. its own
+              ticket sales) — season-wide revenue like donations or grants is in the season summary
+              above, not repeated per show.
+            </p>
             {shows.length === 0 ? (
               <p className={styles.muted}>No shows yet — add one from the Shows tab first.</p>
             ) : (
               <ul className={styles.showList}>
-                {shows.map((s) => (
-                  <li key={s.id} className={styles.showItem}>
-                    <div className={styles.showHead}>
-                      <div>
-                        <strong>{s.title}</strong>
-                        <div style={{ display: "flex", gap: 18, flexWrap: "wrap", marginTop: 4, fontSize: 13.5 }}>
-                          {[
-                            ["Budgeted", fmtMoney(s.budgeted)],
-                            ["Overhead share", fmtMoney(overheadShares[s.id] ?? 0)],
-                            ["Committed", fmtMoney(s.committed)],
-                            ["Paid", fmtMoney(s.paid)],
-                          ].map(([label, value]) => (
-                            <span key={label}>
-                              <span className={styles.muted}>{label}: </span>
-                              <span style={{ fontWeight: 700 }}>{value}</span>
+                {shows.map((s) => {
+                  const fin = showFinancialsById.get(s.id)!;
+                  return (
+                    <li key={s.id} className={styles.showItem}>
+                      <div className={styles.showHead}>
+                        <div>
+                          <strong>{s.title}</strong>
+                          <div style={{ display: "flex", gap: 18, flexWrap: "wrap", marginTop: 4, fontSize: 13.5 }}>
+                            {[
+                              ["Cost (direct + overhead)", fmtMoney(fin.totalCost)],
+                              ["Committed + paid", fmtMoney(fin.committed + fin.paid)],
+                              ["Show revenue", fmtMoney(fin.showRevenueActual)],
+                            ].map(([label, value]) => (
+                              <span key={label}>
+                                <span className={styles.muted}>{label}: </span>
+                                <span style={{ fontWeight: 700 }}>{value}</span>
+                              </span>
+                            ))}
+                            <span>
+                              <span className={styles.muted}>Net: </span>
+                              <span style={{ fontWeight: 700, color: fin.netActual >= 0 ? "#7fd992" : "#e07a7a" }}>
+                                {fin.netActual >= 0 ? "+" : "−"}
+                                {fmtMoney(Math.abs(fin.netActual))}
+                              </span>
                             </span>
-                          ))}
+                          </div>
                         </div>
+                        <Link className={styles.editLink} href={`/admin/budget/shows/${s.id}`}>
+                          Manage
+                        </Link>
                       </div>
-                      <Link className={styles.editLink} href={`/admin/budget/shows/${s.id}`}>
-                        Manage
-                      </Link>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>
