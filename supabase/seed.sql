@@ -8,6 +8,10 @@ begin;
 
 delete from public.productions; -- cascades to showtimes + cast_members
 delete from public.people;
+delete from public.budget_revenue_lines;
+delete from public.budget_expenses;
+delete from public.budget_line_items;
+delete from public.budget_seasons;
 
 -- ---------------------------------------------------------------------------
 -- Productions
@@ -93,5 +97,43 @@ insert into public.people (group_name, role, name, email, image_url, sort_order)
   ('its', 'Historian', 'Riley Washburn', null, 'https://static.wixstatic.com/media/e714f9_7533f75cc431428e8d0b55227304917f~mv2.jpeg/v1/fill/w_346,h_344,al_c,q_80,enc_avif,quality_auto/Riley%20Washburn%20Historian%20.jpeg', 5),
   ('its', 'Scribe', 'Genevieve Randall', null, 'https://static.wixstatic.com/media/e714f9_445a1ee198824c56aedbed5c5d590fc2~mv2.jpeg/v1/fill/w_346,h_344,al_c,q_80,enc_avif,quality_auto/Genevieve%20Randall%20Scribe.jpeg', 6),
   ('its', 'ICC Rep', 'Annabel Seawright', null, 'https://static.wixstatic.com/media/e714f9_c3a7b68c31c5421ca84cb51430771265~mv2.jpeg/v1/fill/w_346,h_344,al_c,q_80,enc_avif,quality_auto/Annabel%20Seawright%20ICC%20Rep.jpeg', 7);
+
+-- ---------------------------------------------------------------------------
+-- Budget: a starter season with a few example line items, so local dev
+-- (and a fresh admin) has something to look at instead of an empty screen.
+-- ---------------------------------------------------------------------------
+insert into public.budget_seasons (name, start_date, end_date, is_active, current_reserve_balance)
+values ('2026-27', '2026-07-01', '2027-06-30', true, 8000);
+
+insert into public.budget_line_items
+  (season_id, production_id, scope, category, description, budgeted_amount, is_contingency, sort_order)
+values
+  ((select id from public.budget_seasons where name = '2026-27'),
+   (select id from public.productions where slug = 'spring-mainstage-2026'),
+   'show', 'Royalties', 'Licensing for the spring musical', 3500, false, 1),
+  ((select id from public.budget_seasons where name = '2026-27'),
+   (select id from public.productions where slug = 'spring-mainstage-2026'),
+   'show', 'Set', 'Lumber, paint, hardware', 900, false, 2),
+  ((select id from public.budget_seasons where name = '2026-27'),
+   (select id from public.productions where slug = 'spring-mainstage-2026'),
+   'show', 'Costumes', 'Costuming for principal + ensemble', 500, false, 3),
+  ((select id from public.budget_seasons where name = '2026-27'),
+   (select id from public.productions where slug = 'spring-mainstage-2026'),
+   'show', 'Contingency', '~12% reserve', 550, true, 4),
+
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'overhead', 'Insurance', 'General liability', 900, false, 1),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'overhead', 'Storage', 'Set/costume storage unit', 1200, false, 2),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'overhead', 'Software', 'Accounting + ticketing tools', 300, false, 3),
+
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'trip', 'Charter bus', 'Round-trip coach', 1800, false, 1),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'trip', 'Contingency', '~12% trip reserve', 250, true, 2);
+
+insert into public.budget_revenue_lines (season_id, production_id, source_type, projected_amount, sort_order)
+values
+  ((select id from public.budget_seasons where name = '2026-27'),
+   (select id from public.productions where slug = 'spring-mainstage-2026'), 'tickets', 6000, 1),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'donations', 2500, 2),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'sponsorships', 1800, 3),
+  ((select id from public.budget_seasons where name = '2026-27'), null, 'fundraisers', 2200, 4);
 
 commit;

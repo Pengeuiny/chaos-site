@@ -59,3 +59,77 @@ export type ProductionWithDetails = Production & {
   showtimes: Showtime[];
   cast_members: CastMember[];
 };
+
+// Budget management — see docs/theater-budget.md and supabase/schema.sql
+
+export type OverheadAllocationMethod = "equal" | "percent_of_direct" | "participants";
+
+export type BudgetSeason = {
+  id: string;
+  name: string;
+  start_date: string | null;
+  end_date: string | null;
+  is_active: boolean;
+  overhead_allocation_method: OverheadAllocationMethod;
+  contingency_default_percent: number;
+  dual_signature_threshold: number;
+  reserve_target_months: number;
+  current_reserve_balance: number | null;
+  created_at: string;
+};
+
+export type BudgetLineItemScope = "show" | "overhead" | "trip";
+
+export type BudgetLineItem = {
+  id: string;
+  season_id: string;
+  production_id: string | null;
+  scope: BudgetLineItemScope;
+  category: string;
+  description: string | null;
+  budgeted_amount: number;
+  is_contingency: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+export type BudgetExpenseStatus = "committed" | "paid";
+
+export type BudgetExpense = {
+  id: string;
+  line_item_id: string;
+  amount: number;
+  status: BudgetExpenseStatus;
+  vendor: string | null;
+  description: string | null;
+  expense_date: string;
+  approved_by: string | null;
+  created_at: string;
+};
+
+export type BudgetRevenueSourceType =
+  | "tickets"
+  | "concessions"
+  | "program_ads"
+  | "merch"
+  | "donations"
+  | "sponsorships"
+  | "grants"
+  | "fundraisers"
+  | "other";
+
+export type BudgetRevenueLine = {
+  id: string;
+  season_id: string;
+  production_id: string | null;
+  source_type: BudgetRevenueSourceType;
+  projected_amount: number;
+  actual_amount: number | null;
+  notes: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+export type BudgetLineItemWithExpenses = BudgetLineItem & {
+  budget_expenses: BudgetExpense[];
+};
