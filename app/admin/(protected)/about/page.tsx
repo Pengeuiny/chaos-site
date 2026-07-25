@@ -43,62 +43,78 @@ export default function AboutSitePage() {
       <div className={styles.card} style={{ maxWidth: 820, marginTop: 20 }}>
         <h2 className={styles.h2}>AI usage</h2>
         <div className="ucps-ai-compliance" style={{ fontFamily: "Arial, sans-serif", lineHeight: 1.5 }}>
-          <section id="ucps-policy-528" style={{ marginBottom: "1.25rem" }}>
-            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+          <div id="ucps-policy-528" style={{ marginBottom: "1rem" }}>
+            <h3 style={{ margin: "0 0 6px 0", fontSize: 15 }}>
               UCPS Policy 5-28 — Technology in the Educational Program
             </h3>
-            <p style={{ margin: "0 0 0.5rem 0" }}>
-              <strong>Relevant language:</strong> &ldquo;The board encourages
-              the use of generative AI by school system employees and
-              students&hellip;&rdquo;
-            </p>
-            <p style={{ margin: "0 0 0.5rem 0" }}>
+            <blockquote
+              style={{
+                margin: "0 0 6px 0",
+                padding: "2px 0 2px 12px",
+                borderLeft: "3px solid rgba(233,185,73,.45)",
+                fontStyle: "italic",
+                color: "#e3d9c6",
+              }}
+            >
+              The board encourages the use of generative AI by school system
+              employees and students&hellip;
+            </blockquote>
+            <p style={{ margin: "0 0 4px 0" }}>
               <strong>Compliance note:</strong> This site contains no AI
               functionality, no automated decision-making, and no
               public-facing generative AI features. Any AI-assisted
               development work was performed outside the live site and is
               not exposed to users.
             </p>
-            <p style={{ margin: 0 }}>
+            <cite style={{ display: "block", fontStyle: "normal", fontSize: 12.5, color: "#9c8f7e" }}>
               <a
                 href="https://go.boarddocs.com/nc/ucps/Board.nsf/files/DNJM46595FA9/%24file/Policy%205-28%20Technology%20in%20the%20Educational%20Program%20rev%2011-2025.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Open UCPS Policy 5-28
+                Union County Public Schools Board of Education, Policy 5-28 —
+                Technology in the Educational Program (rev. Nov. 2025)
               </a>
-            </p>
-          </section>
+            </cite>
+          </div>
 
-          <section id="ucps-integrity-civility" style={{ marginBottom: "1.25rem" }}>
-            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+          <div id="ucps-integrity-civility" style={{ marginBottom: "1rem" }}>
+            <h3 style={{ margin: "0 0 6px 0", fontSize: 15 }}>
               UCPS Integrity and Civility Policy
             </h3>
-            <p style={{ margin: "0 0 0.5rem 0" }}>
-              <strong>Relevant language:</strong> &ldquo;work produced by
-              artificial intelligence and representing it as one&rsquo;s own
-              original work&rdquo;
-            </p>
-            <p style={{ margin: "0 0 0.5rem 0" }}>
+            <blockquote
+              style={{
+                margin: "0 0 6px 0",
+                padding: "2px 0 2px 12px",
+                borderLeft: "3px solid rgba(233,185,73,.45)",
+                fontStyle: "italic",
+                color: "#e3d9c6",
+              }}
+            >
+              Work produced by artificial intelligence and representing it as
+              one&rsquo;s own original work.
+            </blockquote>
+            <p style={{ margin: "0 0 4px 0" }}>
               <strong>Compliance note:</strong> No AI-generated content is
               presented as original student, staff, or district-authored
               work on this site. Any externally assisted content is
               reviewed, edited, and owned by the site operator before
               publication.
             </p>
-            <p style={{ margin: 0 }}>
+            <cite style={{ display: "block", fontStyle: "normal", fontSize: 12.5, color: "#9c8f7e" }}>
               <a
                 href="https://go.boarddocs.com/nc/ucps/Board.nsf/files/D2LM9N5A2D70/%24file/Proposed%20New%20Policy%20-%20Integrity%20and%20Civility.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Open UCPS Integrity and Civility Policy
+                Union County Public Schools Board of Education, Integrity and
+                Civility Policy (proposed)
               </a>
-            </p>
-          </section>
+            </cite>
+          </div>
 
-          <section id="ucps-admin-summary">
-            <h3 style={{ margin: "0 0 0.5rem 0" }}>
+          <div id="ucps-admin-summary">
+            <h3 style={{ margin: "0 0 6px 0", fontSize: 15 }}>
               Administrative compliance summary
             </h3>
             <p style={{ margin: 0 }}>
@@ -110,7 +126,7 @@ export default function AboutSitePage() {
               under responsible-use expectations while preserving academic
               and administrative integrity.
             </p>
-          </section>
+          </div>
         </div>
       </div>
 
