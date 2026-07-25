@@ -88,8 +88,8 @@ export default function AboutSitePage() {
         </table>
         <p style={{ marginTop: 14, fontWeight: 700 }}>Total: $0/month</p>
         <p className={styles.muted} style={{ marginTop: 14 }}>
-          <strong style={{ color: "#e3d9c6" }}>On the domain:</strong> the
-          site currently runs on a free vercel.app address. If CHAOS already
+          <strong style={{ color: "#e3d9c6" }}>On the domain:</strong>{" "}
+          The site currently runs on a free vercel.app address. If CHAOS already
           owns (or later buys) a custom domain — e.g. chschaos.org —
           it can be pointed at this site for free; Vercel doesn&rsquo;t
           charge anything to connect a domain you own, only domain
