@@ -24,15 +24,17 @@ function RevenueRow({
   productions,
   percentOfTotal,
   overConcentrated,
+  canEdit,
 }: {
   line: BudgetRevenueLine;
   productions: { id: string; title: string }[];
   percentOfTotal: number;
   overConcentrated: boolean;
+  canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
         <form action={updateRevenueLine} className={styles.form} style={{ gap: 8 }}>
@@ -93,13 +95,15 @@ function RevenueRow({
         )}
         {line.notes ? ` — ${line.notes}` : ""}
       </span>
-      <div className={styles.rowActions}>
-        <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-        <form action={deleteRevenueLine}>
-          <input type="hidden" name="id" value={line.id} />
-          <button className={styles.delSmall} type="submit">✕</button>
-        </form>
-      </div>
+      {canEdit && (
+        <div className={styles.rowActions}>
+          <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
+          <form action={deleteRevenueLine}>
+            <input type="hidden" name="id" value={line.id} />
+            <button className={styles.delSmall} type="submit">✕</button>
+          </form>
+        </div>
+      )}
     </li>
   );
 }
@@ -108,10 +112,12 @@ export default function BudgetRevenueSection({
   revenueLines,
   seasonId,
   productions,
+  canEdit,
 }: {
   revenueLines: BudgetRevenueLine[];
   seasonId: string;
   productions: { id: string; title: string }[];
+  canEdit: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const { streams, total } = revenueDiversification(revenueLines);
@@ -141,13 +147,14 @@ export default function BudgetRevenueSection({
                 productions={productions}
                 percentOfTotal={share?.percentOfTotal ?? 0}
                 overConcentrated={share?.overConcentrated ?? false}
+                canEdit={canEdit}
               />
             );
           })}
         </ul>
       )}
 
-      {adding ? (
+      {canEdit && (adding ? (
         <form action={addRevenueLine} className={styles.form} style={{ gap: 8, marginTop: 16 }}>
           <input type="hidden" name="season_id" value={seasonId} />
           <input type="hidden" name="sort_order" value={revenueLines.length} />
@@ -193,7 +200,7 @@ export default function BudgetRevenueSection({
         <button type="button" className={styles.btn} onClick={() => setAdding(true)}>
           + Add revenue line
         </button>
-      )}
+      ))}
     </div>
   );
 }

@@ -30,15 +30,17 @@ function ExpenseRow({
   scope,
   productionId,
   dualSignatureThreshold,
+  canEdit,
 }: {
   expense: BudgetExpense;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
+  canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
         <form action={updateExpense} className={styles.form} style={{ gap: 8 }}>
@@ -95,15 +97,17 @@ function ExpenseRow({
         {expense.vendor ? ` — ${expense.vendor}` : ""}
         {expense.description ? ` (${expense.description})` : ""}
       </span>
-      <div className={styles.rowActions}>
-        <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-        <form action={deleteExpense}>
-          <input type="hidden" name="id" value={expense.id} />
-          <input type="hidden" name="scope" value={scope} />
-          {productionId && <input type="hidden" name="production_id" value={productionId} />}
-          <button className={styles.delSmall} type="submit">✕</button>
-        </form>
-      </div>
+      {canEdit && (
+        <div className={styles.rowActions}>
+          <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
+          <form action={deleteExpense}>
+            <input type="hidden" name="id" value={expense.id} />
+            <input type="hidden" name="scope" value={scope} />
+            {productionId && <input type="hidden" name="production_id" value={productionId} />}
+            <button className={styles.delSmall} type="submit">✕</button>
+          </form>
+        </div>
+      )}
     </li>
   );
 }
@@ -113,11 +117,13 @@ function ExpenseList({
   scope,
   productionId,
   dualSignatureThreshold,
+  canEdit,
 }: {
   lineItem: LineItemWithExpenses;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
+  canEdit: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const { committed, paid } = expenseTotals(lineItem.budget_expenses);
@@ -137,11 +143,12 @@ function ExpenseList({
               scope={scope}
               productionId={productionId}
               dualSignatureThreshold={dualSignatureThreshold}
+              canEdit={canEdit}
             />
           ))}
         </ul>
       )}
-      {adding ? (
+      {canEdit && (adding ? (
         <form action={addExpense} className={styles.form} style={{ gap: 8, marginTop: 8 }}>
           <input type="hidden" name="line_item_id" value={lineItem.id} />
           <input type="hidden" name="scope" value={scope} />
@@ -186,7 +193,7 @@ function ExpenseList({
         <button type="button" className={styles.editLink} onClick={() => setAdding(true)} style={{ marginTop: 4 }}>
           + Log expense
         </button>
-      )}
+      ))}
     </div>
   );
 }
@@ -196,15 +203,17 @@ function LineItemRow({
   scope,
   productionId,
   dualSignatureThreshold,
+  canEdit,
 }: {
   item: LineItemWithExpenses;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
+  canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className={styles.showItem}>
         <form action={updateLineItem} className={styles.form} style={{ gap: 8 }}>
@@ -251,13 +260,17 @@ function LineItemRow({
         </div>
         <div className={styles.rowActions}>
           <span style={{ fontWeight: 700 }}>{fmtMoney(item.budgeted_amount)}</span>
-          <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-          <form action={deleteLineItem}>
-            <input type="hidden" name="id" value={item.id} />
-            <input type="hidden" name="scope" value={scope} />
-            {productionId && <input type="hidden" name="production_id" value={productionId} />}
-            <button className={styles.delSmall} type="submit">✕</button>
-          </form>
+          {canEdit && (
+            <>
+              <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
+              <form action={deleteLineItem}>
+                <input type="hidden" name="id" value={item.id} />
+                <input type="hidden" name="scope" value={scope} />
+                {productionId && <input type="hidden" name="production_id" value={productionId} />}
+                <button className={styles.delSmall} type="submit">✕</button>
+              </form>
+            </>
+          )}
         </div>
       </div>
       <ExpenseList
@@ -265,6 +278,7 @@ function LineItemRow({
         scope={scope}
         productionId={productionId}
         dualSignatureThreshold={dualSignatureThreshold}
+        canEdit={canEdit}
       />
     </li>
   );
@@ -277,6 +291,7 @@ export default function BudgetLineItemsSection({
   productionId,
   dualSignatureThreshold,
   contingencyDefaultPercent,
+  canEdit,
 }: {
   lineItems: LineItemWithExpenses[];
   seasonId: string;
@@ -284,6 +299,7 @@ export default function BudgetLineItemsSection({
   productionId?: string | null;
   dualSignatureThreshold: number;
   contingencyDefaultPercent: number;
+  canEdit: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const pid = productionId ?? null;
@@ -319,12 +335,13 @@ export default function BudgetLineItemsSection({
               scope={scope}
               productionId={pid}
               dualSignatureThreshold={dualSignatureThreshold}
+              canEdit={canEdit}
             />
           ))}
         </ul>
       )}
 
-      {adding ? (
+      {canEdit && (adding ? (
         <form action={addLineItem} className={styles.form} style={{ gap: 8, marginTop: 16 }}>
           <input type="hidden" name="season_id" value={seasonId} />
           <input type="hidden" name="scope" value={scope} />
@@ -356,7 +373,7 @@ export default function BudgetLineItemsSection({
         <button type="button" className={styles.btn} onClick={() => setAdding(true)}>
           + Add line item
         </button>
-      )}
+      ))}
     </div>
   );
 }

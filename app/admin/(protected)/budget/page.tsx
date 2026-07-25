@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetSeasonPanel from "@/app/admin/BudgetSeasonPanel";
@@ -30,6 +31,8 @@ export default async function BudgetDashboard({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "treasurer";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
 
@@ -117,7 +120,7 @@ export default async function BudgetDashboard({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="budget" />
+      <AdminTabs active="budget" role={me.role} />
 
       {ok && OK[ok] && <div className={styles.ok}>{OK[ok]}</div>}
       {error && <div className={styles.error}>{ERR[error] ?? "Something went wrong."}</div>}
@@ -130,7 +133,7 @@ export default async function BudgetDashboard({
 
       <section className={styles.card} style={{ maxWidth: 820, marginBottom: 20 }}>
         <h2 className={styles.h2}>Seasons</h2>
-        <BudgetSeasonPanel seasons={seasons} activeSeason={activeSeason} />
+        <BudgetSeasonPanel seasons={seasons} activeSeason={activeSeason} canEdit={canEdit} />
       </section>
 
       {activeSeason && (

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import AdminTabs from "@/app/admin/AdminTabs";
 import pkg from "@/package.json";
 import styles from "../../admin.module.css";
@@ -17,11 +18,12 @@ export const metadata: Metadata = { title: "About This Site · CHS CHAOS Admin" 
  * Claude, working from this repo's AGENTS.md/CLAUDE.md instructions) has to
  * edit by hand when it changes.
  */
-export default function AboutSitePage() {
+export default async function AboutSitePage() {
+  const me = await requireAdmin();
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="about" />
+      <AdminTabs active="about" role={me.role} />
 
       <div className={styles.card} style={{ maxWidth: 820 }}>
         <h2 className={styles.h2}>What this is</h2>
@@ -225,9 +227,11 @@ export default function AboutSitePage() {
           Admin login
         </h3>
         <p className={styles.muted} style={{ marginBottom: 16 }}>
-          A single shared admin password (not individual accounts), checked
-          server-side, backed by a signed session cookie. No third-party
-          auth service.
+          Individual accounts (email + password) via Supabase Auth — no
+          shared password. Each account has a role (Admin, Editor,
+          Treasurer, or Viewer) that controls what it can edit vs. only
+          view, and every change made anywhere in the admin (who, what,
+          before/after) is recorded in the Activity log.
         </p>
 
         <h3 style={{ color: "#e3d9c6", fontSize: 15, margin: "0 0 6px" }}>

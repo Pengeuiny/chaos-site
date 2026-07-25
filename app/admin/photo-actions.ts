@@ -7,7 +7,7 @@
 
 import { randomUUID } from "crypto";
 import sharp from "sharp";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireRole } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 function str(v: FormDataEntryValue | null) {
@@ -26,7 +26,7 @@ const MAX_PHOTO_BYTES = 12 * 1024 * 1024; // 12MB, ahead of the resize step
 export async function ingestPersonPhoto(
   formData: FormData,
 ): Promise<{ url?: string; error?: string }> {
-  await requireAdmin();
+  await requireRole(["admin", "editor"]);
   const admin = createAdminClient();
   if (!admin) return { error: "Storage isn't configured." };
 

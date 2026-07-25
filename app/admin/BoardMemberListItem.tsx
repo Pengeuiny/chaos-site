@@ -18,14 +18,16 @@ export default function BoardMemberListItem({
   person,
   isFirst,
   isLast,
+  canEdit,
 }: {
   person: Person;
   isFirst: boolean;
   isLast: boolean;
+  canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
         <form action={updateBoardMember} className={styles.form} style={{ gap: 10 }}>
@@ -91,35 +93,37 @@ export default function BoardMemberListItem({
           {person.email && <> · {person.email}</>}
         </span>
       </span>
-      <div className={styles.rowActions}>
-        <form action={moveBoardMember}>
-          <input type="hidden" name="id" value={person.id} />
-          <input type="hidden" name="direction" value="up" />
-          <button className={styles.moveBtn} type="submit" disabled={isFirst} title="Move up">
-            ▲
+      {canEdit && (
+        <div className={styles.rowActions}>
+          <form action={moveBoardMember}>
+            <input type="hidden" name="id" value={person.id} />
+            <input type="hidden" name="direction" value="up" />
+            <button className={styles.moveBtn} type="submit" disabled={isFirst} title="Move up">
+              ▲
+            </button>
+          </form>
+          <form action={moveBoardMember}>
+            <input type="hidden" name="id" value={person.id} />
+            <input type="hidden" name="direction" value="down" />
+            <button className={styles.moveBtn} type="submit" disabled={isLast} title="Move down">
+              ▼
+            </button>
+          </form>
+          <button
+            type="button"
+            className={styles.editLink}
+            onClick={() => setEditing(true)}
+          >
+            Edit
           </button>
-        </form>
-        <form action={moveBoardMember}>
-          <input type="hidden" name="id" value={person.id} />
-          <input type="hidden" name="direction" value="down" />
-          <button className={styles.moveBtn} type="submit" disabled={isLast} title="Move down">
-            ▼
-          </button>
-        </form>
-        <button
-          type="button"
-          className={styles.editLink}
-          onClick={() => setEditing(true)}
-        >
-          Edit
-        </button>
-        <form action={deleteBoardMember}>
-          <input type="hidden" name="id" value={person.id} />
-          <button className={styles.delSmall} type="submit">
-            ✕
-          </button>
-        </form>
-      </div>
+          <form action={deleteBoardMember}>
+            <input type="hidden" name="id" value={person.id} />
+            <button className={styles.delSmall} type="submit">
+              ✕
+            </button>
+          </form>
+        </div>
+      )}
     </li>
   );
 }

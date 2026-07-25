@@ -2,8 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireRole } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAudit } from "@/lib/audit";
+
+const BUDGET_ROLES = ["admin", "treasurer"] as const;
 
 function str(v: FormDataEntryValue | null) {
   const s = (v ?? "").toString().trim();
@@ -35,7 +38,7 @@ function pathForScope(scope: string, production_id: string | null) {
 // ---------------------------------------------------------------------------
 
 export async function createSeason(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -47,25 +50,30 @@ export async function createSeason(formData: FormData) {
     .select("id", { count: "exact", head: true });
   const isFirstSeason = (count ?? 0) === 0;
 
-  const { error } = await admin.from("budget_seasons").insert({
-    name,
-    start_date: str(formData.get("start_date")),
-    end_date: str(formData.get("end_date")),
-    is_active: isFirstSeason,
-    overhead_allocation_method: str(formData.get("overhead_allocation_method")) || "percent_of_direct",
-    contingency_default_percent: num(formData.get("contingency_default_percent")) || 12.5,
-    dual_signature_threshold: num(formData.get("dual_signature_threshold")) || 250,
-    reserve_target_months: num(formData.get("reserve_target_months")) || 3,
-    current_reserve_balance: numOrNull(formData.get("current_reserve_balance")),
-  });
+  const { data, error } = await admin
+    .from("budget_seasons")
+    .insert({
+      name,
+      start_date: str(formData.get("start_date")),
+      end_date: str(formData.get("end_date")),
+      is_active: isFirstSeason,
+      overhead_allocation_method: str(formData.get("overhead_allocation_method")) || "percent_of_direct",
+      contingency_default_percent: num(formData.get("contingency_default_percent")) || 12.5,
+      dual_signature_threshold: num(formData.get("dual_signature_threshold")) || 250,
+      reserve_target_months: num(formData.get("reserve_target_months")) || 3,
+      current_reserve_balance: numOrNull(formData.get("current_reserve_balance")),
+    })
+    .select()
+    .single();
 
   if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, { table: "budget_seasons", rowId: data.id, action: "insert", after: data });
   revalidatePath("/admin/budget");
   redirect("/admin/budget?ok=season_added");
 }
 
 export async function updateSeason(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -74,7 +82,8 @@ export async function updateSeason(formData: FormData) {
   if (!id) redirect("/admin/budget?error=save");
   if (!name) redirect("/admin/budget?error=name");
 
-  const { error } = await admin
+  const { data: before } = await admin.from("budget_seasons").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("budget_seasons")
     .update({
       name,
@@ -86,34 +95,53 @@ export async function updateSeason(formData: FormData) {
       reserve_target_months: num(formData.get("reserve_target_months")) || 3,
       current_reserve_balance: numOrNull(formData.get("current_reserve_balance")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, { table: "budget_seasons", rowId: id, action: "update", before, after });
   revalidatePath("/admin/budget");
   redirect("/admin/budget?ok=season_updated");
 }
 
 export async function setActiveSeason(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
   const id = str(formData.get("id"));
   if (!id) redirect("/admin/budget?error=save");
 
   await admin.from("budget_seasons").update({ is_active: false }).neq("id", id);
-  const { error } = await admin.from("budget_seasons").update({ is_active: true }).eq("id", id);
+  const { data: after, error } = await admin
+    .from("budget_seasons")
+    .update({ is_active: true })
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, {
+    table: "budget_seasons",
+    rowId: id,
+    action: "update",
+    before: { is_active: false },
+    after,
+  });
   revalidatePath("/admin/budget");
   redirect("/admin/budget?ok=season_activated");
 }
 
 export async function deleteSeason(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("budget_seasons").delete().eq("id", id); // cascades
+  if (id) {
+    const { data: before } = await admin.from("budget_seasons").select("*").eq("id", id).single();
+    await admin.from("budget_seasons").delete().eq("id", id); // cascades
+    await logAudit(admin, actor, { table: "budget_seasons", rowId: id, action: "delete", before });
+  }
   revalidatePath("/admin/budget");
   redirect("/admin/budget?ok=season_deleted");
 }
@@ -123,7 +151,7 @@ export async function deleteSeason(formData: FormData) {
 // ---------------------------------------------------------------------------
 
 export async function addLineItem(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -137,25 +165,30 @@ export async function addLineItem(formData: FormData) {
   if (!category) redirect(`${path}?error=category`);
   if (scope === "show" && !production_id) redirect(`${path}?error=show`);
 
-  const { error } = await admin.from("budget_line_items").insert({
-    season_id,
-    production_id: scope === "show" ? production_id : null,
-    scope,
-    category,
-    description: str(formData.get("description")),
-    budgeted_amount: num(formData.get("budgeted_amount")),
-    is_contingency: formData.get("is_contingency") === "on",
-    sort_order: num(formData.get("sort_order")),
-  });
+  const { data, error } = await admin
+    .from("budget_line_items")
+    .insert({
+      season_id,
+      production_id: scope === "show" ? production_id : null,
+      scope,
+      category,
+      description: str(formData.get("description")),
+      budgeted_amount: num(formData.get("budgeted_amount")),
+      is_contingency: formData.get("is_contingency") === "on",
+      sort_order: num(formData.get("sort_order")),
+    })
+    .select()
+    .single();
 
   if (error) redirect(`${path}?error=save`);
+  await logAudit(admin, actor, { table: "budget_line_items", rowId: data.id, action: "insert", after: data });
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=line_added`);
 }
 
 export async function updateLineItem(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -168,7 +201,8 @@ export async function updateLineItem(formData: FormData) {
   if (!id) redirect(`${path}?error=save`);
   if (!category) redirect(`${path}?error=category`);
 
-  const { error } = await admin
+  const { data: before } = await admin.from("budget_line_items").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("budget_line_items")
     .update({
       category,
@@ -177,16 +211,19 @@ export async function updateLineItem(formData: FormData) {
       is_contingency: formData.get("is_contingency") === "on",
       sort_order: num(formData.get("sort_order")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect(`${path}?error=save`);
+  await logAudit(admin, actor, { table: "budget_line_items", rowId: id, action: "update", before, after });
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=line_updated`);
 }
 
 export async function deleteLineItem(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -195,7 +232,11 @@ export async function deleteLineItem(formData: FormData) {
   const production_id = str(formData.get("production_id"));
   const path = pathForScope(scope, production_id);
 
-  if (id) await admin.from("budget_line_items").delete().eq("id", id); // cascades expenses
+  if (id) {
+    const { data: before } = await admin.from("budget_line_items").select("*").eq("id", id).single();
+    await admin.from("budget_line_items").delete().eq("id", id); // cascades expenses
+    await logAudit(admin, actor, { table: "budget_line_items", rowId: id, action: "delete", before });
+  }
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=line_deleted`);
@@ -206,7 +247,7 @@ export async function deleteLineItem(formData: FormData) {
 // ---------------------------------------------------------------------------
 
 export async function addExpense(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -217,24 +258,29 @@ export async function addExpense(formData: FormData) {
 
   if (!line_item_id) redirect(`${path}?error=save`);
 
-  const { error } = await admin.from("budget_expenses").insert({
-    line_item_id,
-    amount: num(formData.get("amount")),
-    status: str(formData.get("status")) || "committed",
-    vendor: str(formData.get("vendor")),
-    description: str(formData.get("description")),
-    expense_date: str(formData.get("expense_date")) || new Date().toISOString().slice(0, 10),
-    approved_by: str(formData.get("approved_by")),
-  });
+  const { data, error } = await admin
+    .from("budget_expenses")
+    .insert({
+      line_item_id,
+      amount: num(formData.get("amount")),
+      status: str(formData.get("status")) || "committed",
+      vendor: str(formData.get("vendor")),
+      description: str(formData.get("description")),
+      expense_date: str(formData.get("expense_date")) || new Date().toISOString().slice(0, 10),
+      approved_by: str(formData.get("approved_by")),
+    })
+    .select()
+    .single();
 
   if (error) redirect(`${path}?error=save`);
+  await logAudit(admin, actor, { table: "budget_expenses", rowId: data.id, action: "insert", after: data });
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=expense_added`);
 }
 
 export async function updateExpense(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -245,7 +291,8 @@ export async function updateExpense(formData: FormData) {
 
   if (!id) redirect(`${path}?error=save`);
 
-  const { error } = await admin
+  const { data: before } = await admin.from("budget_expenses").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("budget_expenses")
     .update({
       amount: num(formData.get("amount")),
@@ -255,16 +302,19 @@ export async function updateExpense(formData: FormData) {
       expense_date: str(formData.get("expense_date")) || new Date().toISOString().slice(0, 10),
       approved_by: str(formData.get("approved_by")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect(`${path}?error=save`);
+  await logAudit(admin, actor, { table: "budget_expenses", rowId: id, action: "update", before, after });
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=expense_updated`);
 }
 
 export async function deleteExpense(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget?error=nodb");
 
@@ -273,7 +323,11 @@ export async function deleteExpense(formData: FormData) {
   const production_id = str(formData.get("production_id"));
   const path = pathForScope(scope, production_id);
 
-  if (id) await admin.from("budget_expenses").delete().eq("id", id);
+  if (id) {
+    const { data: before } = await admin.from("budget_expenses").select("*").eq("id", id).single();
+    await admin.from("budget_expenses").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "budget_expenses", rowId: id, action: "delete", before });
+  }
   revalidatePath(path);
   revalidatePath("/admin/budget");
   redirect(`${path}?ok=expense_deleted`);
@@ -284,7 +338,7 @@ export async function deleteExpense(formData: FormData) {
 // ---------------------------------------------------------------------------
 
 export async function addRevenueLine(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget/revenue?error=nodb");
 
@@ -293,24 +347,29 @@ export async function addRevenueLine(formData: FormData) {
   if (!season_id) redirect("/admin/budget/revenue?error=season");
   if (!source_type) redirect("/admin/budget/revenue?error=source");
 
-  const { error } = await admin.from("budget_revenue_lines").insert({
-    season_id,
-    production_id: str(formData.get("production_id")),
-    source_type,
-    projected_amount: num(formData.get("projected_amount")),
-    actual_amount: numOrNull(formData.get("actual_amount")),
-    notes: str(formData.get("notes")),
-    sort_order: num(formData.get("sort_order")),
-  });
+  const { data, error } = await admin
+    .from("budget_revenue_lines")
+    .insert({
+      season_id,
+      production_id: str(formData.get("production_id")),
+      source_type,
+      projected_amount: num(formData.get("projected_amount")),
+      actual_amount: numOrNull(formData.get("actual_amount")),
+      notes: str(formData.get("notes")),
+      sort_order: num(formData.get("sort_order")),
+    })
+    .select()
+    .single();
 
   if (error) redirect("/admin/budget/revenue?error=save");
+  await logAudit(admin, actor, { table: "budget_revenue_lines", rowId: data.id, action: "insert", after: data });
   revalidatePath("/admin/budget/revenue");
   revalidatePath("/admin/budget");
   redirect("/admin/budget/revenue?ok=revenue_added");
 }
 
 export async function updateRevenueLine(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget/revenue?error=nodb");
 
@@ -319,7 +378,8 @@ export async function updateRevenueLine(formData: FormData) {
   if (!id) redirect("/admin/budget/revenue?error=save");
   if (!source_type) redirect("/admin/budget/revenue?error=source");
 
-  const { error } = await admin
+  const { data: before } = await admin.from("budget_revenue_lines").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("budget_revenue_lines")
     .update({
       production_id: str(formData.get("production_id")),
@@ -329,20 +389,27 @@ export async function updateRevenueLine(formData: FormData) {
       notes: str(formData.get("notes")),
       sort_order: num(formData.get("sort_order")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/budget/revenue?error=save");
+  await logAudit(admin, actor, { table: "budget_revenue_lines", rowId: id, action: "update", before, after });
   revalidatePath("/admin/budget/revenue");
   revalidatePath("/admin/budget");
   redirect("/admin/budget/revenue?ok=revenue_updated");
 }
 
 export async function deleteRevenueLine(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...BUDGET_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/budget/revenue?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("budget_revenue_lines").delete().eq("id", id);
+  if (id) {
+    const { data: before } = await admin.from("budget_revenue_lines").select("*").eq("id", id).single();
+    await admin.from("budget_revenue_lines").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "budget_revenue_lines", rowId: id, action: "delete", before });
+  }
   revalidatePath("/admin/budget/revenue");
   revalidatePath("/admin/budget");
   redirect("/admin/budget/revenue?ok=revenue_deleted");

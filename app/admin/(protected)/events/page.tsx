@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { toEasternLocalInput } from "@/lib/format";
 import AdminTabs from "@/app/admin/AdminTabs";
@@ -39,6 +40,8 @@ export default async function EventsTab({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "editor";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
 
@@ -60,7 +63,7 @@ export default async function EventsTab({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="events" />
+      <AdminTabs active="events" role={me.role} />
 
       {ok && OK[ok] && <div className={styles.ok}>{OK[ok]}</div>}
       {error && <div className={styles.error}>{ERR[error] ?? "Something went wrong."}</div>}
@@ -72,7 +75,9 @@ export default async function EventsTab({
       )}
 
       <section className={styles.card} style={{ maxWidth: 720 }}>
-        <AddEventToggle shows={shows.map((s) => ({ id: s.id, title: s.title }))} />
+        {canEdit && (
+          <AddEventToggle shows={shows.map((s) => ({ id: s.id, title: s.title }))} />
+        )}
 
         <details className={styles.helpBox} style={{ margin: "16px 0" }}>
           <summary>Where do I get a performance&rsquo;s Ticket URL?</summary>
@@ -124,6 +129,7 @@ export default async function EventsTab({
                           key={e.id}
                           event={e}
                           localInput={e.starts_at ? toEasternLocalInput(e.starts_at) : ""}
+                          canEdit={canEdit}
                         />
                       ))}
                   </ul>

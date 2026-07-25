@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { socialConfigured } from "@/lib/social";
 import SocialComposer from "@/app/admin/SocialComposer";
@@ -18,6 +19,8 @@ type Show = {
 };
 
 export default async function SocialPage() {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "editor";
   const admin = createAdminClient();
   const platforms = socialConfigured();
 
@@ -39,7 +42,7 @@ export default async function SocialPage() {
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="social" />
+      <AdminTabs active="social" role={me.role} />
 
       {!admin && (
         <div className={styles.error}>
@@ -101,7 +104,9 @@ export default async function SocialPage() {
 
       <section className={styles.card} style={{ maxWidth: 640 }}>
         <h2 className={styles.h2}>Publish an event</h2>
-        {shows.length === 0 ? (
+        {!canEdit ? (
+          <p className={styles.muted}>Your role doesn&rsquo;t have permission to publish posts.</p>
+        ) : shows.length === 0 ? (
           <p className={styles.muted}>Create a show first.</p>
         ) : (
           <SocialComposer shows={shows} platforms={platforms} />

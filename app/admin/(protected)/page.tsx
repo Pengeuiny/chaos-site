@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createShow, deleteShow } from "@/app/admin/actions";
 import ShowFormFields from "@/app/admin/ShowFormFields";
@@ -36,6 +37,8 @@ export default async function AdminDashboard({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "editor";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
 
@@ -55,7 +58,7 @@ export default async function AdminDashboard({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="shows" />
+      <AdminTabs active="shows" role={me.role} />
 
       {ok && OK[ok] && <div className={styles.ok}>{OK[ok]}</div>}
       {error && <div className={styles.error}>{ERR[error] ?? "Something went wrong."}</div>}
@@ -68,15 +71,17 @@ export default async function AdminDashboard({
 
       <div className={styles.grid}>
         {/* CREATE SHOW */}
-        <section className={styles.card}>
-          <h2 className={styles.h2}>Create a show</h2>
-          <form action={createShow} className={styles.form}>
-            <ShowFormFields />
-            <button className={styles.btn} type="submit">
-              Create show
-            </button>
-          </form>
-        </section>
+        {canEdit && (
+          <section className={styles.card}>
+            <h2 className={styles.h2}>Create a show</h2>
+            <form action={createShow} className={styles.form}>
+              <ShowFormFields />
+              <button className={styles.btn} type="submit">
+                Create show
+              </button>
+            </form>
+          </section>
+        )}
 
         {/* SHOWS LIST */}
         <section className={styles.card}>
@@ -92,17 +97,19 @@ export default async function AdminDashboard({
                       <strong>{s.title}</strong>{" "}
                       <span className={styles.badge}>{s.program}</span>
                     </div>
-                    <div className={styles.rowActions}>
-                      <Link className={styles.editLink} href={`/admin/shows/${s.id}`}>
-                        Edit
-                      </Link>
-                      <form action={deleteShow}>
-                        <input type="hidden" name="id" value={s.id} />
-                        <button className={styles.del} type="submit" title="Delete show">
-                          Delete
-                        </button>
-                      </form>
-                    </div>
+                    {canEdit && (
+                      <div className={styles.rowActions}>
+                        <Link className={styles.editLink} href={`/admin/shows/${s.id}`}>
+                          Edit
+                        </Link>
+                        <form action={deleteShow}>
+                          <input type="hidden" name="id" value={s.id} />
+                          <button className={styles.del} type="submit" title="Delete show">
+                            Delete
+                          </button>
+                        </form>
+                      </div>
+                    )}
                   </div>
                 </li>
               ))}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetRevenueSection from "@/app/admin/BudgetRevenueSection";
@@ -28,6 +29,8 @@ export default async function RevenueBudgetPage({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "treasurer";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
   if (!admin) {
@@ -63,7 +66,7 @@ export default async function RevenueBudgetPage({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="budget" />
+      <AdminTabs active="budget" role={me.role} />
       <div style={{ marginBottom: 18 }}>
         <Link className={styles.topLink} href="/admin/budget">← Back to Budget</Link>
       </div>
@@ -76,7 +79,12 @@ export default async function RevenueBudgetPage({
         {!activeSeason ? (
           <p className={styles.muted}>No active budget season — create one on the Budget tab first.</p>
         ) : (
-          <BudgetRevenueSection revenueLines={revenueLines} seasonId={activeSeason.id} productions={productions} />
+          <BudgetRevenueSection
+            revenueLines={revenueLines}
+            seasonId={activeSeason.id}
+            productions={productions}
+            canEdit={canEdit}
+          />
         )}
       </section>
     </>

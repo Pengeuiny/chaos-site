@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import AddBoardMemberToggle from "@/app/admin/AddBoardMemberToggle";
@@ -34,6 +35,8 @@ export default async function BoardTab({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "editor";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
 
@@ -54,7 +57,7 @@ export default async function BoardTab({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="board" />
+      <AdminTabs active="board" role={me.role} />
 
       {ok && OK[ok] && <div className={styles.ok}>{OK[ok]}</div>}
       {error && <div className={styles.error}>{ERR[error] ?? "Something went wrong."}</div>}
@@ -66,7 +69,7 @@ export default async function BoardTab({
       )}
 
       <section className={styles.card} style={{ maxWidth: 640 }}>
-        <AddBoardMemberToggle />
+        {canEdit && <AddBoardMemberToggle />}
 
         {people.length === 0 ? (
           <p className={styles.muted}>No board members yet.</p>
@@ -78,6 +81,7 @@ export default async function BoardTab({
                 person={p}
                 isFirst={i === 0}
                 isLast={i === people.length - 1}
+                canEdit={canEdit}
               />
             ))}
           </ul>

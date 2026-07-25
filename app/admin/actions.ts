@@ -2,16 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import {
-  adminConfigured,
-  verifyPassword,
-  startSession,
-  endSession,
-  requireAdmin,
-} from "@/lib/admin-auth";
+import { requireRole } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { logAudit } from "@/lib/audit";
 import { easternWallToUtcIso } from "@/lib/format";
 import { postToFacebook, postToInstagram, type PostResult } from "@/lib/social";
+
+const CONTENT_ROLES = ["admin", "editor"] as const;
 
 function slugify(s: string) {
   return s
@@ -27,15 +25,19 @@ function str(v: FormDataEntryValue | null) {
 }
 
 export async function login(formData: FormData) {
-  if (!adminConfigured()) redirect("/admin/login?error=config");
+  const email = str(formData.get("email"));
   const password = (formData.get("password") ?? "").toString();
-  if (!verifyPassword(password)) redirect("/admin/login?error=1");
-  await startSession();
+  if (!email || !password) redirect("/admin/login?error=1");
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) redirect("/admin/login?error=1");
   redirect("/admin");
 }
 
 export async function logout() {
-  await endSession();
+  const supabase = await createClient();
+  await supabase.auth.signOut();
   redirect("/admin/login");
 }
 
@@ -66,7 +68,7 @@ function showFieldsFrom(formData: FormData) {
 }
 
 export async function createShow(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin?error=nodb");
 
@@ -77,17 +79,18 @@ export async function createShow(formData: FormData) {
   if (!fields.dates_tbd && (!fields.starts_on || !fields.ends_on))
     redirect("/admin?error=dates");
 
-  const { error } = await admin.from("productions").insert(fields);
+  const { data, error } = await admin.from("productions").insert(fields).select().single();
   if (error) {
     const code = error.code === "23505" ? "dupe" : "show";
     redirect(`/admin?error=${code}`);
   }
+  await logAudit(admin, actor, { table: "productions", rowId: data.id, action: "insert", after: data });
   revalidatePath("/");
   redirect("/admin?ok=show");
 }
 
 export async function updateShow(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin?error=nodb");
 
@@ -101,18 +104,25 @@ export async function updateShow(formData: FormData) {
   if (!fields.dates_tbd && (!fields.starts_on || !fields.ends_on))
     redirect(`/admin/shows/${id}?error=dates`);
 
-  const { error } = await admin.from("productions").update(fields).eq("id", id);
+  const { data: before } = await admin.from("productions").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
+    .from("productions")
+    .update(fields)
+    .eq("id", id)
+    .select()
+    .single();
   if (error) {
     const code = error.code === "23505" ? "dupe" : "show";
     redirect(`/admin/shows/${id}?error=${code}`);
   }
+  await logAudit(admin, actor, { table: "productions", rowId: id, action: "update", before, after });
   revalidatePath("/");
   revalidatePath(`/shows/${fields.slug}`);
   redirect("/admin?ok=updated");
 }
 
 export async function addEvent(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/events?error=nodb");
 
@@ -124,16 +134,21 @@ export async function addEvent(formData: FormData) {
   if (!starts_tbd && !local) redirect("/admin/events?error=when");
   if (starts_tbd && !label) redirect("/admin/events?error=label");
 
-  const { error } = await admin.from("showtimes").insert({
-    production_id,
-    starts_at: starts_tbd || !local ? null : easternWallToUtcIso(local),
-    starts_tbd,
-    label,
-    ticket_url: str(formData.get("ticket_url")),
-    sort_order: Number(formData.get("sort_order") || 0),
-  });
+  const { data, error } = await admin
+    .from("showtimes")
+    .insert({
+      production_id,
+      starts_at: starts_tbd || !local ? null : easternWallToUtcIso(local),
+      starts_tbd,
+      label,
+      ticket_url: str(formData.get("ticket_url")),
+      sort_order: Number(formData.get("sort_order") || 0),
+    })
+    .select()
+    .single();
 
   if (error) redirect("/admin/events?error=event");
+  await logAudit(admin, actor, { table: "showtimes", rowId: data.id, action: "insert", after: data });
   revalidatePath("/");
   redirect("/admin/events?ok=event");
 }
@@ -148,7 +163,7 @@ export async function publishSocialPost(formData: FormData): Promise<{
   instagram?: PostResult;
   error?: string;
 }> {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) return { error: "Storage isn't configured." };
 
@@ -172,11 +187,17 @@ export async function publishSocialPost(formData: FormData): Promise<{
   const result: { facebook?: PostResult; instagram?: PostResult } = {};
   if (wantFacebook) result.facebook = await postToFacebook(imageUrl, caption);
   if (wantInstagram) result.instagram = await postToInstagram(imageUrl, caption);
+  await logAudit(admin, actor, {
+    table: "social_posts",
+    rowId: production_id,
+    action: "insert",
+    after: { caption, facebook: wantFacebook, instagram: wantInstagram, result },
+  });
   return result;
 }
 
 export async function updateEvent(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/events?error=nodb");
 
@@ -188,7 +209,8 @@ export async function updateEvent(formData: FormData) {
   if (!starts_tbd && !local) redirect("/admin/events?error=when");
   if (starts_tbd && !label) redirect("/admin/events?error=label");
 
-  const { error } = await admin
+  const { data: before } = await admin.from("showtimes").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("showtimes")
     .update({
       starts_at: starts_tbd || !local ? null : easternWallToUtcIso(local),
@@ -197,29 +219,40 @@ export async function updateEvent(formData: FormData) {
       ticket_url: str(formData.get("ticket_url")),
       sort_order: Number(formData.get("sort_order") || 0),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/events?error=event");
+  await logAudit(admin, actor, { table: "showtimes", rowId: id, action: "update", before, after });
   revalidatePath("/");
   redirect("/admin/events?ok=event");
 }
 
 export async function deleteEvent(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/events?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("showtimes").delete().eq("id", id);
+  if (id) {
+    const { data: before } = await admin.from("showtimes").select("*").eq("id", id).single();
+    await admin.from("showtimes").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "showtimes", rowId: id, action: "delete", before });
+  }
   revalidatePath("/");
   redirect("/admin/events?ok=deleted");
 }
 
 export async function deleteShow(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("productions").delete().eq("id", id); // cascades
+  if (id) {
+    const { data: before } = await admin.from("productions").select("*").eq("id", id).single();
+    await admin.from("productions").delete().eq("id", id); // cascades
+    await logAudit(admin, actor, { table: "productions", rowId: id, action: "delete", before });
+  }
   revalidatePath("/");
   redirect("/admin?ok=deleted");
 }

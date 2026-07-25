@@ -2,8 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/admin-auth";
+import { requireRole } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAudit } from "@/lib/audit";
+
+const CONTENT_ROLES = ["admin", "editor"] as const;
 
 function str(v: FormDataEntryValue | null) {
   const s = (v ?? "").toString().trim();
@@ -11,7 +14,7 @@ function str(v: FormDataEntryValue | null) {
 }
 
 export async function addBoardMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/board?error=nodb");
 
@@ -28,22 +31,27 @@ export async function addBoardMember(formData: FormData) {
     .limit(1);
   const sort_order = ((last?.[0]?.sort_order as number | undefined) ?? 0) + 1;
 
-  const { error } = await admin.from("people").insert({
-    group_name: "board",
-    name,
-    role,
-    email: str(formData.get("email")),
-    image_url: str(formData.get("image_url")),
-    sort_order,
-  });
+  const { data, error } = await admin
+    .from("people")
+    .insert({
+      group_name: "board",
+      name,
+      role,
+      email: str(formData.get("email")),
+      image_url: str(formData.get("image_url")),
+      sort_order,
+    })
+    .select()
+    .single();
 
   if (error) redirect("/admin/board?error=save");
+  await logAudit(admin, actor, { table: "people", rowId: data.id, action: "insert", after: data });
   revalidatePath("/");
   redirect("/admin/board?ok=added");
 }
 
 export async function updateBoardMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/board?error=nodb");
 
@@ -54,7 +62,8 @@ export async function updateBoardMember(formData: FormData) {
   if (!name) redirect("/admin/board?error=name");
   if (!role) redirect("/admin/board?error=role");
 
-  const { error } = await admin
+  const { data: before } = await admin.from("people").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("people")
     .update({
       name,
@@ -62,26 +71,33 @@ export async function updateBoardMember(formData: FormData) {
       email: str(formData.get("email")),
       image_url: str(formData.get("image_url")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/board?error=save");
+  await logAudit(admin, actor, { table: "people", rowId: id, action: "update", before, after });
   revalidatePath("/");
   redirect("/admin/board?ok=updated");
 }
 
 export async function deleteBoardMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/board?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("people").delete().eq("id", id);
+  if (id) {
+    const { data: before } = await admin.from("people").select("*").eq("id", id).single();
+    await admin.from("people").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "people", rowId: id, action: "delete", before });
+  }
   revalidatePath("/");
   redirect("/admin/board?ok=deleted");
 }
 
 /** Swap a board member's sort_order with the neighbor above/below it. */
 export async function moveBoardMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/board?error=nodb");
 
@@ -105,6 +121,13 @@ export async function moveBoardMember(formData: FormData) {
     const b = list[swapIdx];
     await admin.from("people").update({ sort_order: b.sort_order }).eq("id", a.id);
     await admin.from("people").update({ sort_order: a.sort_order }).eq("id", b.id);
+    await logAudit(admin, actor, {
+      table: "people",
+      rowId: a.id,
+      action: "update",
+      before: { a, b },
+      after: { a: { ...a, sort_order: b.sort_order }, b: { ...b, sort_order: a.sort_order } },
+    });
   }
 
   revalidatePath("/");
@@ -112,7 +135,7 @@ export async function moveBoardMember(formData: FormData) {
 }
 
 export async function addItsMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/its?error=nodb");
 
@@ -129,22 +152,27 @@ export async function addItsMember(formData: FormData) {
     .limit(1);
   const sort_order = ((last?.[0]?.sort_order as number | undefined) ?? 0) + 1;
 
-  const { error } = await admin.from("people").insert({
-    group_name: "its",
-    name,
-    role,
-    email: str(formData.get("email")),
-    image_url: str(formData.get("image_url")),
-    sort_order,
-  });
+  const { data, error } = await admin
+    .from("people")
+    .insert({
+      group_name: "its",
+      name,
+      role,
+      email: str(formData.get("email")),
+      image_url: str(formData.get("image_url")),
+      sort_order,
+    })
+    .select()
+    .single();
 
   if (error) redirect("/admin/its?error=save");
+  await logAudit(admin, actor, { table: "people", rowId: data.id, action: "insert", after: data });
   revalidatePath("/");
   redirect("/admin/its?ok=added");
 }
 
 export async function updateItsMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/its?error=nodb");
 
@@ -155,7 +183,8 @@ export async function updateItsMember(formData: FormData) {
   if (!name) redirect("/admin/its?error=name");
   if (!role) redirect("/admin/its?error=role");
 
-  const { error } = await admin
+  const { data: before } = await admin.from("people").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
     .from("people")
     .update({
       name,
@@ -163,26 +192,33 @@ export async function updateItsMember(formData: FormData) {
       email: str(formData.get("email")),
       image_url: str(formData.get("image_url")),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single();
 
   if (error) redirect("/admin/its?error=save");
+  await logAudit(admin, actor, { table: "people", rowId: id, action: "update", before, after });
   revalidatePath("/");
   redirect("/admin/its?ok=updated");
 }
 
 export async function deleteItsMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/its?error=nodb");
   const id = str(formData.get("id"));
-  if (id) await admin.from("people").delete().eq("id", id);
+  if (id) {
+    const { data: before } = await admin.from("people").select("*").eq("id", id).single();
+    await admin.from("people").delete().eq("id", id);
+    await logAudit(admin, actor, { table: "people", rowId: id, action: "delete", before });
+  }
   revalidatePath("/");
   redirect("/admin/its?ok=deleted");
 }
 
 /** Swap an ITS board member's sort_order with the neighbor above/below it. */
 export async function moveItsMember(formData: FormData) {
-  await requireAdmin();
+  const actor = await requireRole([...CONTENT_ROLES]);
   const admin = createAdminClient();
   if (!admin) redirect("/admin/its?error=nodb");
 
@@ -206,6 +242,13 @@ export async function moveItsMember(formData: FormData) {
     const b = list[swapIdx];
     await admin.from("people").update({ sort_order: b.sort_order }).eq("id", a.id);
     await admin.from("people").update({ sort_order: a.sort_order }).eq("id", b.id);
+    await logAudit(admin, actor, {
+      table: "people",
+      rowId: a.id,
+      action: "update",
+      before: { a, b },
+      after: { a: { ...a, sort_order: b.sort_order }, b: { ...b, sort_order: a.sort_order } },
+    });
   }
 
   revalidatePath("/");

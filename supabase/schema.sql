@@ -133,6 +133,37 @@ create table if not exists public.budget_revenue_lines (
 create index if not exists budget_revenue_season_idx on public.budget_revenue_lines(season_id);
 
 -- ---------------------------------------------------------------------------
+-- Admin identity: per-user accounts, roles, and an audit trail
+-- ---------------------------------------------------------------------------
+-- Identity/passwords live in Supabase's own auth.users (managed by Supabase
+-- Auth); this table just extends it with the app-specific role/name, the
+-- standard Supabase pattern for a "profiles" companion table.
+create table if not exists public.admin_profiles (
+  id          uuid primary key references auth.users(id) on delete cascade,
+  name        text not null,
+  role        text not null check (role in ('admin', 'editor', 'treasurer', 'viewer')),
+  is_active   boolean not null default true,
+  created_at  timestamptz not null default now()
+);
+
+-- One row per mutation anywhere in the admin — who changed what, and the
+-- before/after values. admin_user_name is denormalized so the log still
+-- reads correctly even if that person's account is later removed.
+create table if not exists public.audit_log (
+  id              uuid primary key default gen_random_uuid(),
+  admin_user_id   uuid references auth.users(id) on delete set null,
+  admin_user_name text,
+  table_name      text not null,
+  row_id          uuid,
+  action          text not null check (action in ('insert', 'update', 'delete')),
+  before          jsonb,
+  after           jsonb,
+  created_at      timestamptz not null default now()
+);
+create index if not exists audit_log_table_row_idx on public.audit_log(table_name, row_id);
+create index if not exists audit_log_created_idx on public.audit_log(created_at desc);
+
+-- ---------------------------------------------------------------------------
 -- Intake: ticket reservations / RSVPs
 -- ---------------------------------------------------------------------------
 create table if not exists public.ticket_reservations (
@@ -176,8 +207,10 @@ alter table public.budget_seasons       enable row level security;
 alter table public.budget_line_items    enable row level security;
 alter table public.budget_expenses      enable row level security;
 alter table public.budget_revenue_lines enable row level security;
--- Budget tables have no public policies at all — real financial data, so
--- only the service-role admin client (which bypasses RLS) can read/write it.
+alter table public.admin_profiles       enable row level security;
+alter table public.audit_log            enable row level security;
+-- Budget, admin identity, and audit tables have no public policies at all —
+-- only the service-role admin client (which bypasses RLS) can read/write them.
 
 -- Public, read-only access to content tables
 create policy "Public read productions"  on public.productions  for select using (true);

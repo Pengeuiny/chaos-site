@@ -11,7 +11,7 @@ const ALLOCATION_LABELS = {
   participants: "By participant/head count",
 } as const;
 
-function SeasonRow({ season }: { season: BudgetSeason }) {
+function SeasonRow({ season, canEdit }: { season: BudgetSeason; canEdit: boolean }) {
   return (
     <li className={styles.eventItem}>
       <span>
@@ -19,18 +19,20 @@ function SeasonRow({ season }: { season: BudgetSeason }) {
         {season.is_active && <span className={styles.badge} style={{ marginLeft: 8 }}>Active</span>}
         {season.start_date && season.end_date ? ` — ${season.start_date} to ${season.end_date}` : ""}
       </span>
-      <div className={styles.rowActions}>
-        {!season.is_active && (
-          <form action={setActiveSeason}>
+      {canEdit && (
+        <div className={styles.rowActions}>
+          {!season.is_active && (
+            <form action={setActiveSeason}>
+              <input type="hidden" name="id" value={season.id} />
+              <button className={styles.editLink} type="submit">Make active</button>
+            </form>
+          )}
+          <form action={deleteSeason}>
             <input type="hidden" name="id" value={season.id} />
-            <button className={styles.editLink} type="submit">Make active</button>
+            <button className={styles.delSmall} type="submit">✕</button>
           </form>
-        )}
-        <form action={deleteSeason}>
-          <input type="hidden" name="id" value={season.id} />
-          <button className={styles.delSmall} type="submit">✕</button>
-        </form>
-      </div>
+        </div>
+      )}
     </li>
   );
 }
@@ -38,9 +40,11 @@ function SeasonRow({ season }: { season: BudgetSeason }) {
 export default function BudgetSeasonPanel({
   seasons,
   activeSeason,
+  canEdit,
 }: {
   seasons: BudgetSeason[];
   activeSeason: BudgetSeason | null;
+  canEdit: boolean;
 }) {
   const [addingSeason, setAddingSeason] = useState(false);
 
@@ -49,41 +53,42 @@ export default function BudgetSeasonPanel({
       {seasons.length > 0 && (
         <ul className={styles.eventList} style={{ borderTop: "none", paddingTop: 0, marginBottom: 16 }}>
           {seasons.map((s) => (
-            <SeasonRow key={s.id} season={s} />
+            <SeasonRow key={s.id} season={s} canEdit={canEdit} />
           ))}
         </ul>
       )}
 
-      {addingSeason ? (
-        <form action={createSeason} className={styles.form} style={{ gap: 8, marginBottom: 20 }}>
-          <div className={styles.row2}>
-            <label className={styles.label}>
-              Season name
-              <input className={styles.input} name="name" placeholder="e.g. 2027-28" required />
-            </label>
+      {canEdit &&
+        (addingSeason ? (
+          <form action={createSeason} className={styles.form} style={{ gap: 8, marginBottom: 20 }}>
             <div className={styles.row2}>
               <label className={styles.label}>
-                Start
-                <input className={styles.input} type="date" name="start_date" />
+                Season name
+                <input className={styles.input} name="name" placeholder="e.g. 2027-28" required />
               </label>
-              <label className={styles.label}>
-                End
-                <input className={styles.input} type="date" name="end_date" />
-              </label>
+              <div className={styles.row2}>
+                <label className={styles.label}>
+                  Start
+                  <input className={styles.input} type="date" name="start_date" />
+                </label>
+                <label className={styles.label}>
+                  End
+                  <input className={styles.input} type="date" name="end_date" />
+                </label>
+              </div>
             </div>
-          </div>
-          <div className={styles.rowActions}>
-            <button className={styles.btn} style={{ margin: 0 }} type="submit">Create season</button>
-            <button type="button" className={styles.editLink} onClick={() => setAddingSeason(false)}>Cancel</button>
-          </div>
-        </form>
-      ) : (
-        <button type="button" className={styles.editLink} onClick={() => setAddingSeason(true)} style={{ marginBottom: 20 }}>
-          + New season
-        </button>
-      )}
+            <div className={styles.rowActions}>
+              <button className={styles.btn} style={{ margin: 0 }} type="submit">Create season</button>
+              <button type="button" className={styles.editLink} onClick={() => setAddingSeason(false)}>Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <button type="button" className={styles.editLink} onClick={() => setAddingSeason(true)} style={{ marginBottom: 20 }}>
+            + New season
+          </button>
+        ))}
 
-      {activeSeason && (
+      {activeSeason && canEdit && (
         <>
           <h3 className={styles.h2} style={{ fontSize: 16 }}>Settings for {activeSeason.name}</h3>
           <form action={updateSeason} className={styles.form} style={{ gap: 10 }}>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import BudgetLineItemsSection from "@/app/admin/BudgetLineItemsSection";
@@ -31,6 +32,8 @@ export default async function TripBudgetPage({
 }: {
   searchParams: Promise<{ ok?: string; error?: string }>;
 }) {
+  const me = await requireAdmin();
+  const canEdit = me.role === "admin" || me.role === "treasurer";
   const { ok, error } = await searchParams;
   const admin = createAdminClient();
   if (!admin) {
@@ -62,7 +65,7 @@ export default async function TripBudgetPage({
   return (
     <>
       <h1 className={styles.h1}>Dashboard</h1>
-      <AdminTabs active="budget" />
+      <AdminTabs active="budget" role={me.role} />
       <div style={{ marginBottom: 18 }}>
         <Link className={styles.topLink} href="/admin/budget">← Back to Budget</Link>
       </div>
@@ -81,6 +84,7 @@ export default async function TripBudgetPage({
             scope="trip"
             dualSignatureThreshold={activeSeason.dual_signature_threshold}
             contingencyDefaultPercent={activeSeason.contingency_default_percent}
+            canEdit={canEdit}
           />
         )}
       </section>

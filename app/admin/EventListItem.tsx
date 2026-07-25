@@ -19,13 +19,15 @@ type EventRow = {
 export default function EventListItem({
   event,
   localInput,
+  canEdit,
 }: {
   event: EventRow;
   localInput: string;
+  canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
-  if (editing) {
+  if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
         <form action={updateEvent} className={styles.form} style={{ gap: 10 }}>
@@ -93,21 +95,23 @@ export default function EventListItem({
           </a>
         )}
       </span>
-      <div className={styles.rowActions}>
-        <button
-          type="button"
-          className={styles.editLink}
-          onClick={() => setEditing(true)}
-        >
-          Edit
-        </button>
-        <form action={deleteEvent}>
-          <input type="hidden" name="id" value={event.id} />
-          <button className={styles.delSmall} type="submit">
-            ✕
+      {canEdit && (
+        <div className={styles.rowActions}>
+          <button
+            type="button"
+            className={styles.editLink}
+            onClick={() => setEditing(true)}
+          >
+            Edit
           </button>
-        </form>
-      </div>
+          <form action={deleteEvent}>
+            <input type="hidden" name="id" value={event.id} />
+            <button className={styles.delSmall} type="submit">
+              ✕
+            </button>
+          </form>
+        </div>
+      )}
     </li>
   );
 }
