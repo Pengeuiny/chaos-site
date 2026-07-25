@@ -1,10 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { addRevenueLine, updateRevenueLine, deleteRevenueLine } from "./budget-actions";
 import { fmtMoney, revenueDiversification } from "@/lib/budget";
 import type { BudgetRevenueLine, BudgetRevenueSourceType } from "@/lib/types";
 import styles from "./admin.module.css";
+
+/** Once a season is approved, every edit gets an extra "are you sure" —
+ * guards against an accidental change to the numbers being tracked toward. */
+function confirmIfApproved(e: FormEvent<HTMLFormElement>, isApproved: boolean, what: string) {
+  if (isApproved && !window.confirm(`This season's budget is approved — ${what} will be permanently logged. Are you sure?`)) {
+    e.preventDefault();
+  }
+}
 
 const SOURCE_LABELS: Record<BudgetRevenueSourceType, string> = {
   tickets: "Tickets",
@@ -25,19 +33,26 @@ function RevenueRow({
   percentOfTotal,
   overConcentrated,
   canEdit,
+  isApproved,
 }: {
   line: BudgetRevenueLine;
   productions: { id: string; title: string }[];
   percentOfTotal: number;
   overConcentrated: boolean;
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
   if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
-        <form action={updateRevenueLine} className={styles.form} style={{ gap: 8 }}>
+        <form
+          action={updateRevenueLine}
+          className={styles.form}
+          style={{ gap: 8 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "saving this revenue line")}
+        >
           <input type="hidden" name="id" value={line.id} />
           <div className={styles.row2}>
             <label className={styles.label}>
@@ -98,7 +113,10 @@ function RevenueRow({
       {canEdit && (
         <div className={styles.rowActions}>
           <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-          <form action={deleteRevenueLine}>
+          <form
+            action={deleteRevenueLine}
+            onSubmit={(e) => confirmIfApproved(e, isApproved, "deleting this revenue line")}
+          >
             <input type="hidden" name="id" value={line.id} />
             <button className={styles.delSmall} type="submit">✕</button>
           </form>
@@ -113,11 +131,13 @@ export default function BudgetRevenueSection({
   seasonId,
   productions,
   canEdit,
+  isApproved,
 }: {
   revenueLines: BudgetRevenueLine[];
   seasonId: string;
   productions: { id: string; title: string }[];
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const { streams, total } = revenueDiversification(revenueLines);
@@ -148,6 +168,7 @@ export default function BudgetRevenueSection({
                 percentOfTotal={share?.percentOfTotal ?? 0}
                 overConcentrated={share?.overConcentrated ?? false}
                 canEdit={canEdit}
+                isApproved={isApproved}
               />
             );
           })}
@@ -155,7 +176,12 @@ export default function BudgetRevenueSection({
       )}
 
       {canEdit && (adding ? (
-        <form action={addRevenueLine} className={styles.form} style={{ gap: 8, marginTop: 16 }}>
+        <form
+          action={addRevenueLine}
+          className={styles.form}
+          style={{ gap: 8, marginTop: 16 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "adding this revenue line")}
+        >
           <input type="hidden" name="season_id" value={seasonId} />
           <input type="hidden" name="sort_order" value={revenueLines.length} />
           <div className={styles.row2}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import {
   addLineItem,
   updateLineItem,
@@ -14,6 +14,14 @@ import type { BudgetExpense, BudgetLineItem, BudgetLineItemScope } from "@/lib/t
 import styles from "./admin.module.css";
 
 type LineItemWithExpenses = BudgetLineItem & { budget_expenses: BudgetExpense[] };
+
+/** Once a season is approved, every edit gets an extra "are you sure" —
+ * guards against an accidental change to the numbers being tracked toward. */
+function confirmIfApproved(e: FormEvent<HTMLFormElement>, isApproved: boolean, what: string) {
+  if (isApproved && !window.confirm(`This season's budget is approved — ${what} will be permanently logged. Are you sure?`)) {
+    e.preventDefault();
+  }
+}
 
 function expenseTotals(expenses: BudgetExpense[]) {
   let committed = 0;
@@ -31,19 +39,26 @@ function ExpenseRow({
   productionId,
   dualSignatureThreshold,
   canEdit,
+  isApproved,
 }: {
   expense: BudgetExpense;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
   if (editing && canEdit) {
     return (
       <li className={styles.eventItem} style={{ display: "block" }}>
-        <form action={updateExpense} className={styles.form} style={{ gap: 8 }}>
+        <form
+          action={updateExpense}
+          className={styles.form}
+          style={{ gap: 8 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "saving this expense")}
+        >
           <input type="hidden" name="id" value={expense.id} />
           <input type="hidden" name="scope" value={scope} />
           {productionId && <input type="hidden" name="production_id" value={productionId} />}
@@ -100,7 +115,10 @@ function ExpenseRow({
       {canEdit && (
         <div className={styles.rowActions}>
           <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-          <form action={deleteExpense}>
+          <form
+            action={deleteExpense}
+            onSubmit={(e) => confirmIfApproved(e, isApproved, "deleting this expense")}
+          >
             <input type="hidden" name="id" value={expense.id} />
             <input type="hidden" name="scope" value={scope} />
             {productionId && <input type="hidden" name="production_id" value={productionId} />}
@@ -118,12 +136,14 @@ function ExpenseList({
   productionId,
   dualSignatureThreshold,
   canEdit,
+  isApproved,
 }: {
   lineItem: LineItemWithExpenses;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const { committed, paid } = expenseTotals(lineItem.budget_expenses);
@@ -144,12 +164,18 @@ function ExpenseList({
               productionId={productionId}
               dualSignatureThreshold={dualSignatureThreshold}
               canEdit={canEdit}
+              isApproved={isApproved}
             />
           ))}
         </ul>
       )}
       {canEdit && (adding ? (
-        <form action={addExpense} className={styles.form} style={{ gap: 8, marginTop: 8 }}>
+        <form
+          action={addExpense}
+          className={styles.form}
+          style={{ gap: 8, marginTop: 8 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "logging this expense")}
+        >
           <input type="hidden" name="line_item_id" value={lineItem.id} />
           <input type="hidden" name="scope" value={scope} />
           {productionId && <input type="hidden" name="production_id" value={productionId} />}
@@ -204,19 +230,26 @@ function LineItemRow({
   productionId,
   dualSignatureThreshold,
   canEdit,
+  isApproved,
 }: {
   item: LineItemWithExpenses;
   scope: BudgetLineItemScope;
   productionId: string | null;
   dualSignatureThreshold: number;
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [editing, setEditing] = useState(false);
 
   if (editing && canEdit) {
     return (
       <li className={styles.showItem}>
-        <form action={updateLineItem} className={styles.form} style={{ gap: 8 }}>
+        <form
+          action={updateLineItem}
+          className={styles.form}
+          style={{ gap: 8 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "saving this line item")}
+        >
           <input type="hidden" name="id" value={item.id} />
           <input type="hidden" name="scope" value={scope} />
           {productionId && <input type="hidden" name="production_id" value={productionId} />}
@@ -269,7 +302,10 @@ function LineItemRow({
           {canEdit && (
             <>
               <button type="button" className={styles.editLink} onClick={() => setEditing(true)}>Edit</button>
-              <form action={deleteLineItem}>
+              <form
+                action={deleteLineItem}
+                onSubmit={(e) => confirmIfApproved(e, isApproved, "deleting this line item")}
+              >
                 <input type="hidden" name="id" value={item.id} />
                 <input type="hidden" name="scope" value={scope} />
                 {productionId && <input type="hidden" name="production_id" value={productionId} />}
@@ -285,6 +321,7 @@ function LineItemRow({
         productionId={productionId}
         dualSignatureThreshold={dualSignatureThreshold}
         canEdit={canEdit}
+        isApproved={isApproved}
       />
     </li>
   );
@@ -299,6 +336,7 @@ export default function BudgetLineItemsSection({
   contingencyDefaultPercent,
   categories,
   canEdit,
+  isApproved,
 }: {
   lineItems: LineItemWithExpenses[];
   seasonId: string;
@@ -308,6 +346,7 @@ export default function BudgetLineItemsSection({
   contingencyDefaultPercent: number;
   categories: string[];
   canEdit: boolean;
+  isApproved: boolean;
 }) {
   const [adding, setAdding] = useState(false);
   const pid = productionId ?? null;
@@ -349,13 +388,19 @@ export default function BudgetLineItemsSection({
               productionId={pid}
               dualSignatureThreshold={dualSignatureThreshold}
               canEdit={canEdit}
+              isApproved={isApproved}
             />
           ))}
         </ul>
       )}
 
       {canEdit && (adding ? (
-        <form action={addLineItem} className={styles.form} style={{ gap: 8, marginTop: 16 }}>
+        <form
+          action={addLineItem}
+          className={styles.form}
+          style={{ gap: 8, marginTop: 16 }}
+          onSubmit={(e) => confirmIfApproved(e, isApproved, "adding this line item")}
+        >
           <input type="hidden" name="season_id" value={seasonId} />
           <input type="hidden" name="scope" value={scope} />
           {pid && <input type="hidden" name="production_id" value={pid} />}

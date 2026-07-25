@@ -174,6 +174,51 @@ export async function deleteSeason(formData: FormData) {
   redirect("/admin/budget?ok=season_deleted");
 }
 
+/** Locks in the season as the target being tracked toward — edits after this
+ * still require the same role, but the UI makes the treasurer confirm each one. */
+export async function approveSeason(formData: FormData) {
+  const actor = await requireRole([...BUDGET_ROLES]);
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/budget?error=nodb");
+  const id = str(formData.get("id"));
+  if (!id) redirect("/admin/budget?error=save");
+
+  const { data: before } = await admin.from("budget_seasons").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
+    .from("budget_seasons")
+    .update({ status: "approved", approved_at: new Date().toISOString(), approved_by: actor.name })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, { table: "budget_seasons", rowId: id, action: "update", before, after });
+  revalidatePath("/admin/budget");
+  redirect("/admin/budget?ok=season_approved");
+}
+
+/** Reopens an approved season for free editing — for correcting a premature approval. */
+export async function rollbackSeason(formData: FormData) {
+  const actor = await requireRole([...BUDGET_ROLES]);
+  const admin = createAdminClient();
+  if (!admin) redirect("/admin/budget?error=nodb");
+  const id = str(formData.get("id"));
+  if (!id) redirect("/admin/budget?error=save");
+
+  const { data: before } = await admin.from("budget_seasons").select("*").eq("id", id).single();
+  const { data: after, error } = await admin
+    .from("budget_seasons")
+    .update({ status: "draft", approved_at: null, approved_by: null })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) redirect("/admin/budget?error=save");
+  await logAudit(admin, actor, { table: "budget_seasons", rowId: id, action: "update", before, after });
+  revalidatePath("/admin/budget");
+  redirect("/admin/budget?ok=season_rolled_back");
+}
+
 // ---------------------------------------------------------------------------
 // Line items (show / overhead / trip)
 // ---------------------------------------------------------------------------

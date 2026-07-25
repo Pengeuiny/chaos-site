@@ -195,6 +195,7 @@ export default async function ShowBudgetPage({
             contingencyDefaultPercent={activeSeason.contingency_default_percent}
             categories={categories}
             canEdit={canEdit}
+            isApproved={activeSeason.status === "approved"}
           />
         )}
       </section>

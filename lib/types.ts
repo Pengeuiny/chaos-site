@@ -64,6 +64,8 @@ export type ProductionWithDetails = Production & {
 
 export type OverheadAllocationMethod = "equal" | "percent_of_direct" | "participants";
 
+export type BudgetSeasonStatus = "draft" | "approved";
+
 export type BudgetSeason = {
   id: string;
   name: string;
@@ -75,6 +77,9 @@ export type BudgetSeason = {
   dual_signature_threshold: number;
   reserve_target_months: number;
   current_reserve_balance: number | null;
+  status: BudgetSeasonStatus;
+  approved_at: string | null;
+  approved_by: string | null;
   created_at: string;
 };
 

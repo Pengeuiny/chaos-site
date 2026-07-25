@@ -84,6 +84,7 @@ export default async function RevenueBudgetPage({
             seasonId={activeSeason.id}
             productions={productions}
             canEdit={canEdit}
+            isApproved={activeSeason.status === "approved"}
           />
         )}
       </section>

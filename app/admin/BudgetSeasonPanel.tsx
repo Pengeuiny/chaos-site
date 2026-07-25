@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { createSeason, updateSeason, setActiveSeason, deleteSeason } from "./budget-actions";
+import {
+  createSeason,
+  updateSeason,
+  setActiveSeason,
+  deleteSeason,
+  approveSeason,
+  rollbackSeason,
+} from "./budget-actions";
 import type { BudgetSeason } from "@/lib/types";
 import styles from "./admin.module.css";
 
@@ -11,12 +18,27 @@ const ALLOCATION_LABELS = {
   participants: "By participant/head count",
 } as const;
 
+/** Once a season is approved, every edit gets an extra "are you sure" —
+ * guards against an accidental change to the numbers being tracked toward. */
+function confirmIfApproved(e: React.FormEvent<HTMLFormElement>, isApproved: boolean, what: string) {
+  if (isApproved && !window.confirm(`This season's budget is approved — ${what} will be permanently logged. Are you sure?`)) {
+    e.preventDefault();
+  }
+}
+
 function SeasonRow({ season, canEdit }: { season: BudgetSeason; canEdit: boolean }) {
+  const isApproved = season.status === "approved";
   return (
     <li className={styles.eventItem}>
       <span>
         <strong>{season.name}</strong>
         {season.is_active && <span className={styles.badge} style={{ marginLeft: 8 }}>Active</span>}
+        <span
+          className={styles.badge}
+          style={{ marginLeft: 8, background: isApproved ? undefined : "rgba(156,143,126,.25)" }}
+        >
+          {isApproved ? "Approved" : "Draft"}
+        </span>
         {season.start_date && season.end_date ? ` — ${season.start_date} to ${season.end_date}` : ""}
       </span>
       {canEdit && (
@@ -27,7 +49,10 @@ function SeasonRow({ season, canEdit }: { season: BudgetSeason; canEdit: boolean
               <button className={styles.editLink} type="submit">Make active</button>
             </form>
           )}
-          <form action={deleteSeason}>
+          <form
+            action={deleteSeason}
+            onSubmit={(e) => confirmIfApproved(e, isApproved, "deleting this season")}
+          >
             <input type="hidden" name="id" value={season.id} />
             <button className={styles.delSmall} type="submit">✕</button>
           </form>
@@ -90,8 +115,55 @@ export default function BudgetSeasonPanel({
 
       {activeSeason && canEdit && (
         <>
-          <h3 className={styles.h2} style={{ fontSize: 16 }}>Settings for {activeSeason.name}</h3>
-          <form action={updateSeason} className={styles.form} style={{ gap: 10 }}>
+          <div className={styles.rowActions} style={{ marginBottom: 14, justifyContent: "space-between" }}>
+            <h3 className={styles.h2} style={{ fontSize: 16, margin: 0 }}>Settings for {activeSeason.name}</h3>
+            {activeSeason.status === "approved" ? (
+              <form
+                action={rollbackSeason}
+                onSubmit={(e) => {
+                  if (
+                    !window.confirm(
+                      "Roll this season back to draft? Edits will no longer require a confirmation prompt, and this will be logged.",
+                    )
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="id" value={activeSeason.id} />
+                <button className={styles.editLink} type="submit">Roll back to draft</button>
+              </form>
+            ) : (
+              <form
+                action={approveSeason}
+                onSubmit={(e) => {
+                  if (
+                    !window.confirm(
+                      "Approve this season's budget? This locks it in as the target being tracked toward — further edits will require confirmation, and this will be logged.",
+                    )
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="id" value={activeSeason.id} />
+                <button className={styles.btn} style={{ margin: 0 }} type="submit">Approve budget</button>
+              </form>
+            )}
+          </div>
+          {activeSeason.status === "approved" && (
+            <p className={styles.muted} style={{ marginTop: -8, marginBottom: 12 }}>
+              Approved{activeSeason.approved_by ? ` by ${activeSeason.approved_by}` : ""}
+              {activeSeason.approved_at ? ` on ${activeSeason.approved_at.slice(0, 10)}` : ""}. Further
+              changes will ask for confirmation.
+            </p>
+          )}
+          <form
+            action={updateSeason}
+            className={styles.form}
+            style={{ gap: 10 }}
+            onSubmit={(e) => confirmIfApproved(e, activeSeason.status === "approved", "saving these settings")}
+          >
             <input type="hidden" name="id" value={activeSeason.id} />
             <input type="hidden" name="name" value={activeSeason.name} />
             <input type="hidden" name="start_date" value={activeSeason.start_date ?? ""} />

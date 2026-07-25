@@ -87,6 +87,9 @@ create table if not exists public.budget_seasons (
   dual_signature_threshold    numeric not null default 250,
   reserve_target_months       numeric not null default 3,
   current_reserve_balance     numeric,                          -- manually entered; we can't read a bank account
+  status                      text not null default 'draft' check (status in ('draft', 'approved')),
+  approved_at                 timestamptz,
+  approved_by                 text,
   created_at                  timestamptz not null default now()
 );
 

@@ -110,6 +110,7 @@ export default async function OverheadBudgetPage({
               contingencyDefaultPercent={activeSeason.contingency_default_percent}
               categories={categories}
               canEdit={canEdit}
+              isApproved={activeSeason.status === "approved"}
             />
 
             {showAllocation.length > 0 && (

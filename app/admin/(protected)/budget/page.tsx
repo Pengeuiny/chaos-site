@@ -20,6 +20,8 @@ const OK: Record<string, string> = {
   season_updated: "Settings saved.",
   season_activated: "Active season switched.",
   season_deleted: "Season deleted.",
+  season_approved: "Budget approved.",
+  season_rolled_back: "Season rolled back to draft.",
   category_added: "Category added.",
   category_renamed: "Category renamed.",
   category_deleted: "Category deleted.",
