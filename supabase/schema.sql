@@ -47,6 +47,8 @@ create table if not exists public.showtimes (
   starts_tbd    boolean not null default false,    -- opt-in: no real date/time yet
   label         text,                              -- also doubles as the display text when starts_tbd
   ticket_url    text,                              -- deep-link straight to this date's checkout
+  is_performance boolean not null default true,    -- false for auditions/callbacks/tech week/etc. —
+                                                    -- still on the calendar, collapsed on the show page
   sort_order    int not null default 0
 );
 create index if not exists showtimes_production_idx on public.showtimes(production_id);

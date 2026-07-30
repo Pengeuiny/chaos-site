@@ -12,6 +12,7 @@ type EventRow = {
   starts_tbd: boolean;
   label: string | null;
   ticket_url: string | null;
+  is_performance: boolean;
   sort_order: number;
 };
 
@@ -45,6 +46,13 @@ export default function EventListItem({
               placeholder="https://…"
               defaultValue={event.ticket_url ?? ""}
             />
+          </label>
+          <label className={styles.check}>
+            <input type="checkbox" name="is_performance" defaultChecked={event.is_performance} />{" "}
+            Public performance
+            <span className={styles.hint}>
+              {" "}(uncheck for auditions/callbacks/tech week/informational meetings)
+            </span>
           </label>
           <label className={styles.label}>
             Sort order
@@ -82,6 +90,11 @@ export default function EventListItem({
             {fmtDay(event.starts_at)} · {fmtTime(event.starts_at)}
             {event.label ? ` — ${event.label}` : ""}
           </>
+        )}
+        {!event.is_performance && (
+          <span className={styles.hint} style={{ marginLeft: 6 }}>
+            (prep date)
+          </span>
         )}
         {event.ticket_url && (
           <a

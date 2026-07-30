@@ -34,6 +34,7 @@ export type Showtime = {
   starts_tbd: boolean;
   label: string | null;
   ticket_url: string | null;
+  is_performance: boolean;
   sort_order: number;
 };
 

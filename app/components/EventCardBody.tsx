@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-const MAX_CHIPS = 4;
-
 /**
  * The collapsible part of EventHero's info card: synopsis clamped to 4
- * lines, performance chips capped at 4, with a single "Show more" toggle
- * that reveals both in full. Split out from EventHero (a server component)
- * since expand/collapse needs client state.
+ * lines with its own "Show more" toggle, performance dates always shown in
+ * full (the main thing a visitor cares about), and audition/callback/tech
+ * week/etc. dates tucked behind a separate "Audition & Prep Dates" toggle
+ * since they're only relevant to students trying out, not ticket buyers.
+ * Split out from EventHero (a server component) since expand/collapse
+ * needs client state.
  */
 export default function EventCardBody({
   tagline,
@@ -16,15 +17,18 @@ export default function EventCardBody({
   castNote,
   cast,
   chips,
+  prepChips,
 }: {
   tagline?: string | null;
   synopsis?: string | null;
   castNote?: ReactNode;
   cast?: ReactNode;
   chips: ReactNode[];
+  prepChips?: ReactNode[];
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [synExpanded, setSynExpanded] = useState(false);
   const [clamped, setClamped] = useState(false);
+  const [showPrep, setShowPrep] = useState(false);
   const synRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -32,32 +36,42 @@ export default function EventCardBody({
     if (el) setClamped(el.scrollHeight > el.clientHeight + 1);
   }, [synopsis]);
 
-  const hasMoreChips = chips.length > MAX_CHIPS;
-  const visibleChips = expanded ? chips : chips.slice(0, MAX_CHIPS);
-  const showToggle = clamped || hasMoreChips;
+  const hasPrepChips = (prepChips?.length ?? 0) > 0;
 
   return (
     <>
       {tagline && <p className="tagline">{tagline}</p>}
       {synopsis && (
-        <p ref={synRef} className={`syn${expanded ? "" : " syn-clamp"}`}>
+        <p ref={synRef} className={`syn${synExpanded ? "" : " syn-clamp"}`}>
           {synopsis}
         </p>
+      )}
+      {clamped && (
+        <button
+          type="button"
+          className="show-more"
+          onClick={() => setSynExpanded((e) => !e)}
+        >
+          {synExpanded ? "Show less ↑" : "Show more ↓"}
+        </button>
       )}
 
       {castNote}
       {cast}
 
-      {chips.length > 0 && <div className="chips">{visibleChips}</div>}
+      {chips.length > 0 && <div className="chips">{chips}</div>}
 
-      {showToggle && (
-        <button
-          type="button"
-          className="show-more"
-          onClick={() => setExpanded((e) => !e)}
-        >
-          {expanded ? "Show less ↑" : "Show more ↓"}
-        </button>
+      {hasPrepChips && (
+        <>
+          <button
+            type="button"
+            className="show-more"
+            onClick={() => setShowPrep((s) => !s)}
+          >
+            {showPrep ? "Hide Audition & Prep Dates ↑" : "Show Audition & Prep Dates ↓"}
+          </button>
+          {showPrep && <div className="chips">{prepChips}</div>}
+        </>
       )}
     </>
   );

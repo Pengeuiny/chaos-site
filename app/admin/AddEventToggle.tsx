@@ -55,6 +55,14 @@ export default function AddEventToggle({
             <span>Ticket URL <span className={styles.hint}>(optional)</span></span>
             <input className={styles.input} name="ticket_url" placeholder="https://…" />
           </label>
+          <label className={styles.check}>
+            <input type="checkbox" name="is_performance" defaultChecked />{" "}
+            Public performance
+            <span className={styles.hint}>
+              {" "}(uncheck for auditions/callbacks/tech week/informational meetings — still shows on
+              the calendar, just collapsed under &ldquo;Audition &amp; Prep Dates&rdquo; on the show page)
+            </span>
+          </label>
           <label className={styles.label}>
             Sort order
             <input className={styles.input} type="number" name="sort_order" defaultValue={0} />

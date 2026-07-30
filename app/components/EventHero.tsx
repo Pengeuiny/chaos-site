@@ -19,6 +19,29 @@ export default function EventHero({
   const dates = characterizeShow(p).dateLabel;
   const accent = p.accent || "#173568";
 
+  const chipFor = (st: ProductionWithDetails["showtimes"][number]) => {
+    const href = st.ticket_url || p.ticket_url;
+    let label: string;
+    if (st.starts_tbd || !st.starts_at) {
+      label = st.label || "Date TBA";
+    } else {
+      const t = parts(st.starts_at);
+      label = `${st.label ? `${st.label} — ` : ""}${MON[t.month]} ${t.day} · ${fmtTime(st.starts_at)}`;
+    }
+    return href ? (
+      <a key={st.id} className="chip" href={href} target="_blank" rel="noopener">
+        🎟 {label}
+      </a>
+    ) : (
+      <span key={st.id} className="chip disabled">
+        {label}
+      </span>
+    );
+  };
+
+  const performanceChips = p.showtimes.filter((st) => st.is_performance).map(chipFor);
+  const prepChips = p.showtimes.filter((st) => !st.is_performance).map(chipFor);
+
   const titleArt = (
     <div
       className="event-media-fallback"
@@ -80,31 +103,8 @@ export default function EventHero({
               </div>
             ) : null
           }
-          chips={p.showtimes.map((st) => {
-            const href = st.ticket_url || p.ticket_url;
-            let label: string;
-            if (st.starts_tbd || !st.starts_at) {
-              label = st.label || "Date TBA";
-            } else {
-              const t = parts(st.starts_at);
-              label = `${st.label ? `${st.label} — ` : ""}${MON[t.month]} ${t.day} · ${fmtTime(st.starts_at)}`;
-            }
-            return href ? (
-              <a
-                key={st.id}
-                className="chip"
-                href={href}
-                target="_blank"
-                rel="noopener"
-              >
-                🎟 {label}
-              </a>
-            ) : (
-              <span key={st.id} className="chip disabled">
-                {label}
-              </span>
-            );
-          })}
+          chips={performanceChips}
+          prepChips={prepChips}
         />
       </div>
     </div>

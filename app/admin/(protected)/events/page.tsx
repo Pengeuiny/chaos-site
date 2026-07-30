@@ -19,6 +19,7 @@ type Row = {
     starts_tbd: boolean;
     label: string | null;
     ticket_url: string | null;
+    is_performance: boolean;
     sort_order: number;
   }[];
 };
@@ -52,7 +53,7 @@ export default async function EventsTab({
     const { data } = await admin
       .from("productions")
       .select(
-        "id, title, showtimes(id, starts_at, starts_tbd, label, ticket_url, sort_order)",
+        "id, title, showtimes(id, starts_at, starts_tbd, label, ticket_url, is_performance, sort_order)",
       )
       .order("sort_order", { ascending: true });
     // eslint-disable-next-line react-hooks/purity -- temporary perf diagnostic

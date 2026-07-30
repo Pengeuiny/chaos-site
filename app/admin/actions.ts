@@ -143,6 +143,7 @@ export async function addEvent(formData: FormData) {
       starts_tbd,
       label,
       ticket_url: str(formData.get("ticket_url")),
+      is_performance: formData.get("is_performance") === "on",
       sort_order: Number(formData.get("sort_order") || 0),
     })
     .select()
@@ -218,6 +219,7 @@ export async function updateEvent(formData: FormData) {
       starts_tbd,
       label,
       ticket_url: str(formData.get("ticket_url")),
+      is_performance: formData.get("is_performance") === "on",
       sort_order: Number(formData.get("sort_order") || 0),
     })
     .eq("id", id)
