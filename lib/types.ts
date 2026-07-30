@@ -22,6 +22,7 @@ export type Production = {
   date_range: string | null;
   has_microsite: boolean;
   cast_is_sample: boolean;
+  is_performance: boolean;
   sort_order: number;
   created_at: string;
 };

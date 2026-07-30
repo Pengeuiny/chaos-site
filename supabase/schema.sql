@@ -32,6 +32,9 @@ create table if not exists public.productions (
   date_range    text,                              -- free-text label, used only when dates_tbd
   has_microsite boolean not null default false,
   cast_is_sample boolean not null default false,   -- show "sample cast" note
+  is_performance boolean not null default true,    -- false for fundraisers/festivals/community events —
+                                                    -- still shows on the calendar, excluded from "Now
+                                                    -- Showing" and "This Season's Shows"
 
   sort_order    int not null default 0,
   created_at    timestamptz not null default now()

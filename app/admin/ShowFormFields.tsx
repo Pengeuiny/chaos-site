@@ -149,6 +149,18 @@ export default function ShowFormFields({
       <label className={styles.check}>
         <input
           type="checkbox"
+          name="is_performance"
+          defaultChecked={d?.is_performance ?? true}
+        />{" "}
+        Is a performance
+        <span className={styles.hint}>
+          {" "}(uncheck for fundraisers, festivals, community events — still shows on the
+          calendar, just not in &ldquo;Now Showing&rdquo; or &ldquo;This Season&rsquo;s Shows&rdquo;)
+        </span>
+      </label>
+      <label className={styles.check}>
+        <input
+          type="checkbox"
           name="has_microsite"
           defaultChecked={d?.has_microsite ?? false}
         />{" "}

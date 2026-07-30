@@ -63,6 +63,7 @@ function showFieldsFrom(formData: FormData) {
     date_range: dates_tbd ? str(formData.get("date_range")) : null,
     has_microsite: formData.get("has_microsite") === "on",
     cast_is_sample: formData.get("cast_is_sample") === "on",
+    is_performance: formData.get("is_performance") === "on",
     sort_order: Number(formData.get("sort_order") || 0),
   };
 }

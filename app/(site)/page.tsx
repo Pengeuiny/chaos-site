@@ -21,6 +21,11 @@ export default async function Home() {
   const board = people.filter((p) => p.group_name === "board");
   const its = people.filter((p) => p.group_name === "its");
 
+  // "Now Showing" and "This Season's Shows" are real performances only —
+  // fundraisers/festivals/community events still appear on the calendar
+  // below (which uses the unfiltered `productions` list) but not here.
+  const performances = productions.filter((p) => p.is_performance);
+
   const events: CalEvent[] = productions
     .flatMap((p) =>
       p.showtimes
@@ -38,9 +43,9 @@ export default async function Home() {
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
 
   const now = new Date().toISOString();
-  let featured = productions[0] ?? null;
+  let featured = performances[0] ?? null;
   let featuredNext: string | null = null;
-  for (const p of productions) {
+  for (const p of performances) {
     for (const st of p.showtimes) {
       if (
         st.starts_at &&
@@ -87,7 +92,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="season">
-            {productions
+            {performances
               .filter((p) => p.id !== featured?.id)
               .map((p) => (
                 <ShowCard key={p.id} p={p} />
