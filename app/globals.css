@@ -237,6 +237,8 @@ section{position:relative;padding:64px 0}
 .event-list-col{
   background:var(--velvet-2);border:1px solid rgba(233,185,73,.18);border-radius:var(--r);
   display:flex;flex-direction:column;overflow:hidden;
+  max-height:600px; /* safety cap so a huge event list can never render unbounded-tall
+                       before/without the JS height-match to the calendar taking effect */
 }
 .event-list-filter{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
