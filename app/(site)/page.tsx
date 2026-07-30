@@ -5,7 +5,8 @@ import ShowCard from "@/app/components/ShowCard";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
 import EventHero from "@/app/components/EventHero";
-import Calendar, { type CalEvent } from "@/app/components/Calendar";
+import EventsExplorer from "@/app/components/EventsExplorer";
+import type { CalEvent } from "@/app/components/Calendar";
 
 // Cache the rendered page and refresh it in the background at most once a
 // minute, instead of re-rendering (and re-querying Supabase) on every single
@@ -25,10 +26,13 @@ export default async function Home() {
       p.showtimes
         .filter((st) => !st.starts_tbd && st.starts_at)
         .map((st) => ({
+          id: st.id,
+          production_id: p.id,
           slug: p.slug,
           title: p.title,
           starts_at: st.starts_at as string,
           label: st.label,
+          ticket_url: st.ticket_url || p.ticket_url,
         })),
     )
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
@@ -103,9 +107,9 @@ export default async function Home() {
               </h2>
             </div>
           </div>
-          <div className="split">
-            <Calendar events={events} />
-            <div className="ticket-dues-stack">
+          <EventsExplorer
+            events={events}
+            belowCalendar={
               <div className="panel lined panel-pad">
                 <h3>Event Tickets</h3>
                 <p>
@@ -126,8 +130,8 @@ export default async function Home() {
                   </a>
                 </div>
               </div>
-            </div>
-          </div>
+            }
+          />
 
           <div className="sec-head" style={{ marginTop: 40, marginBottom: 18 }}>
             <div>

@@ -1,24 +1,33 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { MONTHS, parts } from "@/lib/format";
+import { MONTHS, parts, dateKey } from "@/lib/format";
 
 export type CalEvent = {
+  id: string;
+  production_id: string;
   slug: string;
   title: string;
   starts_at: string;
   label: string | null;
+  ticket_url: string | null;
 };
 
-export default function Calendar({ events }: { events: CalEvent[] }) {
-  const router = useRouter();
+export default function Calendar({
+  events,
+  selectedDate,
+  onSelectDay,
+}: {
+  events: CalEvent[];
+  selectedDate: string | null;
+  onSelectDay: (day: string) => void;
+}) {
   const now = useMemo(() => new Date().toISOString(), []);
   const nowParts = parts(now);
 
   // Pre-compute the timezone-correct calendar parts for every event once.
   const ev = useMemo(
-    () => events.map((e) => ({ ...e, p: parts(e.starts_at) })),
+    () => events.map((e) => ({ ...e, p: parts(e.starts_at), key: dateKey(e.starts_at) })),
     [events],
   );
 
@@ -89,15 +98,21 @@ export default function Calendar({ events }: { events: CalEvent[] }) {
           const has = byDay[d];
           const today = isToday(d) ? " today" : "";
           if (has) {
+            const key = has[0].key;
+            const selected = selectedDate === key ? " selected" : "";
             return (
               <div
                 key={d}
-                className={`day has${today}`}
-                title={has[0].title}
-                onClick={() => router.push(`/shows/${has[0].slug}`)}
+                className={`day has${today}${selected}`}
+                title={has.map((e) => e.title).join(", ")}
+                onClick={() => onSelectDay(key)}
               >
                 {d}
-                <span className="dot" />
+                {has.length > 1 ? (
+                  <span className="daycount">{has.length}</span>
+                ) : (
+                  <span className="dot" />
+                )}
               </div>
             );
           }

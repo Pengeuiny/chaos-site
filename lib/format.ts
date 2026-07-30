@@ -43,6 +43,12 @@ export function fmtTime(iso: string) {
   return `${p.hour}:${p.minute} ${p.dayPeriod}`;
 }
 
+/** Eastern-timezone "YYYY-MM-DD" key for grouping/matching events by calendar day. */
+export function dateKey(iso: string): string {
+  const p = parts(iso);
+  return `${p.year}-${String(p.month + 1).padStart(2, "0")}-${String(p.day).padStart(2, "0")}`;
+}
+
 export function fmtDay(iso: string) {
   const p = parts(iso);
   return `${MON[p.month]} ${p.day}, ${p.year}`;
