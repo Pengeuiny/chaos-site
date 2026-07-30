@@ -230,7 +230,7 @@ section{position:relative;padding:64px 0}
 .day.selected{background:var(--crimson);border-color:var(--brass)}
 
 /* calendar + scrollable event list */
-.cal-split{align-items:flex-start}
+.split.cal-split{align-items:flex-start}
 .cal-col{display:flex;flex-direction:column;gap:20px}
 .event-list-col{
   background:var(--velvet-2);border:1px solid rgba(233,185,73,.18);border-radius:var(--r);
