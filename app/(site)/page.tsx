@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getProductions, getPeople } from "@/lib/queries";
 import { TICKETS, PASSES, FLEX_PASS_TIERS } from "@/lib/links";
-import ShowCard from "@/app/components/ShowCard";
+import SeasonGrid from "@/app/components/SeasonGrid";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
 import EventHero from "@/app/components/EventHero";
@@ -83,21 +83,7 @@ export default async function Home() {
       {/* SEASON */}
       <section id="season">
         <div className="wrap">
-          <div className="sec-head">
-            <div>
-              <div className="k">The Lineup</div>
-              <h2>
-                This Season&rsquo;s <span className="gold">Shows</span>
-              </h2>
-            </div>
-          </div>
-          <div className="season">
-            {performances
-              .filter((p) => p.id !== featured?.id)
-              .map((p) => (
-                <ShowCard key={p.id} p={p} />
-              ))}
-          </div>
+          <SeasonGrid productions={performances.filter((p) => p.id !== featured?.id)} />
         </div>
       </section>
 
