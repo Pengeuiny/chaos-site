@@ -428,3 +428,29 @@ footer small{color:var(--ivory-dim);font-size:13px}
   .bulb,.marquee{animation:none}
   html{scroll-behavior:auto}
 }
+
+/* review badges — mark spots changed per the president's feedback doc */
+.change-badge{position:relative;display:inline-flex;align-items:center;cursor:help;outline:none;vertical-align:middle}
+.change-badge-inline{margin-left:7px}
+.change-badge-corner{position:absolute;top:-9px;right:-9px;z-index:20}
+.change-badge-mark{
+  display:inline-block;width:10px;height:10px;border-radius:50%;
+  background:#33d17a;box-shadow:0 0 0 2px rgba(13,3,7,.85),0 0 9px rgba(51,209,122,.8);
+}
+.change-badge-corner .change-badge-mark{width:13px;height:13px}
+.change-badge-tip{
+  position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%);
+  background:#0d0307;border:1px solid rgba(233,185,73,.4);color:var(--ivory);
+  font-family:var(--font-space-mono);font-size:11.5px;line-height:1.45;font-weight:400;
+  text-transform:none;letter-spacing:normal;
+  padding:10px 13px;border-radius:8px;width:max-content;max-width:240px;
+  box-shadow:0 14px 34px rgba(0,0,0,.55);
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .08s ease;z-index:60;
+}
+.change-badge-tip::after{
+  content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-bottom-color:rgba(233,185,73,.4);
+}
+.change-badge:hover .change-badge-tip,
+.change-badge:focus .change-badge-tip,
+.change-badge:focus-visible .change-badge-tip{opacity:1;visibility:visible}

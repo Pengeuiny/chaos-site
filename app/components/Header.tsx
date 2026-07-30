@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { PASSES, DUES } from "@/lib/links";
+import ChangeBadge from "@/app/components/ChangeBadge";
 
 const NAV = [
   { href: "/#home", label: "Home" },
@@ -29,7 +30,10 @@ export default function Header() {
           </div>
           <div>
             <b>CHS&nbsp;CHAOS</b>
-            <small>Cuthbertson Booster Club</small>
+            <small>
+              Cuthbertson Booster Club
+              <ChangeBadge note={'President feedback: rename "Cuthbertson Boosters" to "Cuthbertson Booster Club".'} />
+            </small>
           </div>
         </Link>
         <button
@@ -43,6 +47,9 @@ export default function Header() {
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>
               {n.label}
+              {n.label === "Chorus" && (
+                <ChangeBadge note='President feedback: add a "Chorus" top nav link so Theatre, ITS, and Chorus are all covered.' />
+              )}
             </Link>
           ))}
           <a href={DUES} target="_blank" rel="noopener" onClick={() => setOpen(false)}>
@@ -50,14 +57,20 @@ export default function Header() {
           </a>
         </nav>
         <div className="header-ctas">
-          <a
-            className="btn btn-ghost"
-            href={DUES}
-            target="_blank"
-            rel="noopener"
-          >
-            Pay Dues
-          </a>
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <a
+              className="btn btn-ghost"
+              href={DUES}
+              target="_blank"
+              rel="noopener"
+            >
+              Pay Dues
+            </a>
+            <ChangeBadge
+              variant="corner"
+              note="President feedback: add a spot near the top for parents to easily pay dues."
+            />
+          </span>
           <a
             className="btn btn-gold cta-glow"
             href={PASSES}

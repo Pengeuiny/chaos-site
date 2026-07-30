@@ -6,6 +6,7 @@ import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
 import EventHero from "@/app/components/EventHero";
 import EventsExplorer from "@/app/components/EventsExplorer";
+import ChangeBadge from "@/app/components/ChangeBadge";
 import type { CalEvent } from "@/app/components/Calendar";
 
 // Cache the rendered page and refresh it in the background at most once a
@@ -67,7 +68,10 @@ export default async function Home() {
             {Array.from({ length: 9 }).map((_, i) => (
               <span className="bulb" key={i} />
             ))}
-            <span className="lbl">Now Showing</span>
+            <span className="lbl">
+              Now Showing
+              <ChangeBadge note='President feedback: rename "Now Playing" to "Now Showing".' />
+            </span>
           </div>
           {featured ? (
             <EventHero production={featured} />
@@ -106,9 +110,13 @@ export default async function Home() {
                 <p>
                   Reserved seating for every mainstage show — all handled
                   securely through our box office (Ludus).
+                  <ChangeBadge note='President feedback: add "(Ludus)" after "box office".' />
                 </p>
                 <ul className="bullets">
-                  <li>Booster members get early access and discounted tickets</li>
+                  <li>
+                    Booster members get early access and discounted tickets
+                    <ChangeBadge note='President feedback: add "Booster" before "members" (may change once Flex Pass naming is finalized).' />
+                  </li>
                 </ul>
                 <div className="pb-cta">
                   <a
@@ -310,7 +318,15 @@ export default async function Home() {
           </p>
           <div className="people">
             {board.map((p) => (
-              <PersonCard key={p.id} p={p} />
+              <PersonCard
+                key={p.id}
+                p={p}
+                badge={
+                  p.role === "Co-VP of Chorus"
+                    ? "President feedback: add a Co-VP of Chorus role to the Board."
+                    : undefined
+                }
+              />
             ))}
           </div>
 
@@ -324,7 +340,15 @@ export default async function Home() {
           </div>
           <div className="people">
             {its.map((p) => (
-              <PersonCard key={p.id} p={p} />
+              <PersonCard
+                key={p.id}
+                p={p}
+                badge={
+                  p.role === "Co-President" && p.name === "TBD"
+                    ? "President feedback: ITS President is now Co-President — add a second placeholder for the role."
+                    : undefined
+                }
+              />
             ))}
           </div>
         </div>
@@ -356,11 +380,18 @@ export default async function Home() {
                   ucpsvolunteers.com
                 </a>{" "}
                 to be an approved volunteer.
+                <ChangeBadge note="President feedback: add the UCPS Volunteer link (“Please register with ucpsvolunteers.com to be an approved volunteer”)." />
               </p>
               <div className="pb-cta" style={{ marginTop: 14 }}>
-                <a className="btn btn-primary" href="mailto:info@chschaos.org">
-                  Email to Volunteer
-                </a>
+                <span style={{ position: "relative", display: "inline-block" }}>
+                  <a className="btn btn-primary" href="mailto:info@chschaos.org">
+                    Email to Volunteer
+                  </a>
+                  <ChangeBadge
+                    variant="corner"
+                    note="President feedback: the volunteer section should click through to an email."
+                  />
+                </span>
                 <a
                   className="btn btn-gold cta-glow"
                   href={PASSES}
@@ -377,7 +408,10 @@ export default async function Home() {
                 <li>Backstage, set, and costume crews</li>
                 <li>Concessions and front-of-house</li>
                 <li>Fundraising and corporate partnerships</li>
-                <li>Design - Playbills, T-shirts, Flyers and more</li>
+                <li>
+                  Design - Playbills, T-shirts, Flyers and more
+                  <ChangeBadge note='President feedback: remove "open board positions" and add a Design role instead.' />
+                </li>
               </ul>
             </div>
           </div>
@@ -401,6 +435,7 @@ export default async function Home() {
               <a className="line" href="mailto:info@chschaos.org">
                 ✉ info@chschaos.org
               </a>
+              <ChangeBadge note="President feedback: only show info@chschaos.org; remove the individual officer emails." />
               <div className="socials">
                 <a
                   href="https://www.facebook.com/CHSCHAOS"
