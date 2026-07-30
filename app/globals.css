@@ -440,7 +440,7 @@ footer small{color:var(--ivory-dim);font-size:13px}
 .change-badge-corner .change-badge-mark{width:13px;height:13px}
 .change-badge-tip{
   position:absolute;top:calc(100% + 9px);left:50%;transform:translateX(-50%);
-  background:#0d0307;border:1px solid rgba(233,185,73,.4);color:var(--ivory);
+  background:#e8e6e2;border:1px solid rgba(0,0,0,.15);color:#1a1a1a;
   font-family:var(--font-space-mono);font-size:11.5px;line-height:1.45;font-weight:400;
   text-transform:none;letter-spacing:normal;
   padding:10px 13px;border-radius:8px;width:max-content;max-width:240px;
@@ -449,7 +449,7 @@ footer small{color:var(--ivory-dim);font-size:13px}
 }
 .change-badge-tip::after{
   content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
-  border:5px solid transparent;border-bottom-color:rgba(233,185,73,.4);
+  border:5px solid transparent;border-bottom-color:#e8e6e2;
 }
 .change-badge:hover .change-badge-tip,
 .change-badge:focus .change-badge-tip,
