@@ -117,7 +117,8 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
   .cta-glow::before{animation:none}
 }
 .navtoggle{display:none;grid-column:3;justify-self:end;background:none;border:1.5px solid rgba(233,185,73,.4);color:var(--brass);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:18px}
-.bar .row .btn{grid-column:3;justify-self:end;flex-shrink:0;padding:11px 24px}
+.header-ctas{grid-column:3;justify-self:end;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.header-ctas .btn{padding:11px 20px}
 
 /* hero */
 .hero{padding:78px 0 60px;position:relative}
@@ -342,7 +343,7 @@ footer small{color:var(--ivory-dim);font-size:13px}
   nav.links{display:none}
   nav.links.open{display:flex;position:absolute;top:70px;left:0;right:0;flex-direction:column;background:#0d0307;padding:16px 24px;border-bottom:1px solid rgba(233,185,73,.25)}
   .navtoggle{display:block}
-  .bar .row .btn{display:none}
+  .header-ctas{display:none}
   .mission{grid-template-columns:1fr}
   .season{grid-template-columns:1fr}
   .people{grid-template-columns:repeat(2,1fr)}

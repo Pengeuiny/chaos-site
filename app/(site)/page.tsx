@@ -58,7 +58,7 @@ export default async function Home() {
             {Array.from({ length: 9 }).map((_, i) => (
               <span className="bulb" key={i} />
             ))}
-            <span className="lbl">Now Playing</span>
+            <span className="lbl">Now Showing</span>
           </div>
           {featured ? (
             <EventHero production={featured} />
@@ -110,10 +110,10 @@ export default async function Home() {
                 <h3>Event Tickets</h3>
                 <p>
                   Reserved seating for every mainstage show — all handled
-                  securely through our box office.
+                  securely through our box office (Ludus).
                 </p>
                 <ul className="bullets">
-                  <li>Members get early access and discounted tickets</li>
+                  <li>Booster members get early access and discounted tickets</li>
                 </ul>
                 <div className="pb-cta">
                   <a
@@ -355,10 +355,17 @@ export default async function Home() {
                 thrive. Donate your time — or just a few hours — and make a
                 lasting impact.
               </p>
+              <p style={{ color: "var(--ivory-dim)" }}>
+                For parent volunteers: please register with{" "}
+                <a href="https://ucpsvolunteers.com/" target="_blank" rel="noopener">
+                  ucpsvolunteers.com
+                </a>{" "}
+                to be an approved volunteer.
+              </p>
               <div className="pb-cta" style={{ marginTop: 14 }}>
-                <Link className="btn btn-primary" href="/#contact">
-                  Contact the Board
-                </Link>
+                <a className="btn btn-primary" href="mailto:info@chschaos.org">
+                  Email to Volunteer
+                </a>
                 <a
                   className="btn btn-gold cta-glow"
                   href={PASSES}
@@ -375,18 +382,8 @@ export default async function Home() {
                 <li>Backstage, set, and costume crews</li>
                 <li>Concessions and front-of-house</li>
                 <li>Fundraising and corporate partnerships</li>
-                <li>Open board positions — lead a committee</li>
+                <li>Design - Playbills, T-shirts, Flyers and more</li>
               </ul>
-              <p
-                style={{
-                  margin: 0,
-                  fontFamily: "'Space Mono'",
-                  fontSize: 13,
-                  color: "var(--crimson-deep)",
-                }}
-              >
-                Open board positions available now.
-              </p>
             </div>
           </div>
         </div>
@@ -409,18 +406,6 @@ export default async function Home() {
               <a className="line" href="mailto:info@chschaos.org">
                 ✉ info@chschaos.org
               </a>
-              <a className="line" href="mailto:president@chschaos.org">
-                President · president@chschaos.org
-              </a>
-              <a className="line" href="mailto:treasurer@chschaos.org">
-                Treasurer · treasurer@chschaos.org
-              </a>
-              <a className="line" href="mailto:vptheatre@chschaos.org">
-                VP Theatre · vptheatre@chschaos.org
-              </a>
-              <a className="line" href="mailto:vpchorus@chschaos.org">
-                VP Chorus · vpchorus@chschaos.org
-              </a>
               <div className="socials">
                 <a
                   href="https://www.facebook.com/CHSCHAOS"
@@ -437,14 +422,6 @@ export default async function Home() {
                   aria-label="Instagram"
                 >
                   ⌾
-                </a>
-                <a
-                  href="https://www.x.com/chs_chaos"
-                  target="_blank"
-                  rel="noopener"
-                  aria-label="X"
-                >
-                  ✕
                 </a>
               </div>
             </div>

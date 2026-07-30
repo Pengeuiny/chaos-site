@@ -205,7 +205,7 @@ export default function NemoPage() {
       <footer className={styles.footer}>
         <div className={styles.fb}>CHS CHAOS</div>
         <small>
-          Cuthbertson High School Theatre &amp; Chorus Boosters · Waxhaw, NC ·
+          Cuthbertson High School Theatre &amp; Chorus Booster Club · Waxhaw, NC ·
           info@chschaos.org
         </small>
       </footer>

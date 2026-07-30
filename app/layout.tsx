@@ -32,7 +32,7 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CHS CHAOS — Cuthbertson High School Theatre & Chorus Boosters",
+  title: "CHS CHAOS — Cuthbertson High School Theatre & Chorus Booster Club",
   description:
     "CHS CHAOS supports the theatre and choral programs at Cuthbertson High School in Waxhaw, NC. Tickets, events, volunteering, and more.",
 };

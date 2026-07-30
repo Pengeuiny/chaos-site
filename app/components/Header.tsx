@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { PASSES } from "@/lib/links";
+import { PASSES, DUES } from "@/lib/links";
 
 const NAV = [
   { href: "/#home", label: "Home" },
@@ -10,6 +10,7 @@ const NAV = [
   { href: "/#calendar", label: "Calendar" },
   { href: "/#calendar", label: "Event Tickets" },
   { href: "/#theatre", label: "Theatre & ITS" },
+  { href: "/#chorus", label: "Chorus" },
   { href: "/#mission", label: "About" },
   { href: "/#volunteer", label: "Volunteer" },
   { href: "/#contact", label: "Contact" },
@@ -24,11 +25,11 @@ export default function Header() {
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
           <div className="mark">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/chaos-logo.png" alt="CHS CHAOS" />
+            <img src="/chaos-logo.png" alt="CHS CHAOS" width={48} height={48} />
           </div>
           <div>
             <b>CHS&nbsp;CHAOS</b>
-            <small>Cuthbertson Boosters</small>
+            <small>Cuthbertson Booster Club</small>
           </div>
         </Link>
         <button
@@ -44,15 +45,28 @@ export default function Header() {
               {n.label}
             </Link>
           ))}
+          <a href={DUES} target="_blank" rel="noopener" onClick={() => setOpen(false)}>
+            Pay Dues
+          </a>
         </nav>
-        <a
-          className="btn btn-gold cta-glow"
-          href={PASSES}
-          target="_blank"
-          rel="noopener"
-        >
-          Get a Flex Pass
-        </a>
+        <div className="header-ctas">
+          <a
+            className="btn btn-ghost"
+            href={DUES}
+            target="_blank"
+            rel="noopener"
+          >
+            Pay Dues
+          </a>
+          <a
+            className="btn btn-gold cta-glow"
+            href={PASSES}
+            target="_blank"
+            rel="noopener"
+          >
+            Get a Flex Pass
+          </a>
+        </div>
       </div>
     </header>
   );
