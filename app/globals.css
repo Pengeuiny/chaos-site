@@ -310,7 +310,7 @@ section{position:relative;padding:64px 0}
 
 /* split */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
-.split .panel-pad{padding:34px}
+.split .panel-pad,.below-calendar .panel-pad{padding:34px}
 
 /* membership tiers */
 .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
@@ -322,8 +322,8 @@ section{position:relative;padding:64px 0}
 .tier .tier-benefits{list-style:none;padding:0;margin:0 0 20px;flex:1}
 .tier .tier-benefits li{font-size:13.5px;color:var(--ivory-dim);padding:6px 0 6px 20px;position:relative}
 .tier .tier-benefits li:before{content:"✓";position:absolute;left:0;color:var(--gel)}
-.split .panel-pad h3{font-family:var(--font-anton);font-size:34px;text-transform:uppercase;color:var(--crimson-deep);margin-bottom:14px}
-.split .panel-pad p{color:#4a3a2e;font-size:15.5px;margin:0 0 14px}
+.split .panel-pad h3,.below-calendar .panel-pad h3{font-family:var(--font-anton);font-size:34px;text-transform:uppercase;color:var(--crimson-deep);margin-bottom:14px}
+.split .panel-pad p,.below-calendar .panel-pad p{color:#4a3a2e;font-size:15.5px;margin:0 0 14px}
 .bullets{list-style:none;padding:0;margin:0 0 18px}
 .bullets li{padding:8px 0 8px 26px;position:relative;color:#3a2c22;font-size:15px;border-bottom:1px dashed var(--paper-line)}
 .bullets li:before{content:"★";position:absolute;left:0;color:var(--crimson)}
