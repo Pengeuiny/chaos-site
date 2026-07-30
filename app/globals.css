@@ -231,7 +231,9 @@ section{position:relative;padding:64px 0}
 
 /* calendar + scrollable event list */
 .split.cal-split{align-items:flex-start}
-.cal-col{display:flex;flex-direction:column;gap:20px}
+.cal-col{display:flex;flex-direction:column}
+.below-calendar{display:flex;justify-content:center;margin-top:32px}
+.below-calendar .panel-pad{max-width:560px;width:100%}
 .event-list-col{
   background:var(--velvet-2);border:1px solid rgba(233,185,73,.18);border-radius:var(--r);
   display:flex;flex-direction:column;overflow:hidden;

@@ -8,8 +8,8 @@ import EventList from "@/app/components/EventList";
  * Composes the calendar + the scrollable event list side by side, the list
  * matching the calendar's own rendered height exactly (which varies month to
  * month — 5 vs 6 week rows — so it's measured live rather than hardcoded).
- * `belowCalendar` renders in the same column, underneath the calendar,
- * outside the height-matched pair (e.g. the Event Tickets panel).
+ * `belowCalendar` renders centered underneath the whole calendar+list row
+ * (e.g. the Event Tickets panel).
  */
 export default function EventsExplorer({
   events,
@@ -43,19 +43,21 @@ export default function EventsExplorer({
   }, []);
 
   return (
-    <div className="split cal-split">
-      <div className="cal-col">
-        <div ref={calRef}>
-          <Calendar events={events} selectedDate={selectedDate} onSelectDay={setSelectedDate} />
+    <>
+      <div className="split cal-split">
+        <div className="cal-col">
+          <div ref={calRef}>
+            <Calendar events={events} selectedDate={selectedDate} onSelectDay={setSelectedDate} />
+          </div>
         </div>
-        {belowCalendar}
+        <EventList
+          events={events}
+          selectedDate={selectedDate}
+          onClearFilter={() => setSelectedDate(null)}
+          maxHeight={isDesktop ? calHeight : null}
+        />
       </div>
-      <EventList
-        events={events}
-        selectedDate={selectedDate}
-        onClearFilter={() => setSelectedDate(null)}
-        maxHeight={isDesktop ? calHeight : null}
-      />
-    </div>
+      {belowCalendar && <div className="below-calendar">{belowCalendar}</div>}
+    </>
   );
 }
