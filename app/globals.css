@@ -403,7 +403,14 @@ footer small{color:var(--ivory-dim);font-size:13px}
    doesn't fit (e.g. "Event Tickets" truncating) instead of wrapping. */
 @media(max-width:1150px){
   nav.links{display:none}
-  nav.links.open{display:flex;position:absolute;top:70px;left:0;right:0;flex-direction:column;background:#0d0307;padding:16px 24px;border-bottom:1px solid rgba(233,185,73,.25)}
+  nav.links.open{
+    display:flex;position:absolute;top:70px;right:16px;left:auto;
+    flex-direction:column;align-items:flex-end;min-width:200px;
+    background:#0d0307;padding:14px 18px;border-radius:12px;
+    border:1px solid rgba(233,185,73,.25);
+    box-shadow:0 20px 50px rgba(0,0,0,.55);
+  }
+  nav.links.open a{text-align:right;width:100%}
   .navtoggle{display:block}
   .header-ctas{display:none}
 }
