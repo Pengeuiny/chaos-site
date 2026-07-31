@@ -64,7 +64,7 @@ header.bar{
 .brand{display:flex;align-items:center;gap:12px;cursor:pointer;justify-self:start}
 .brand b{font-family:var(--font-anton);font-size:23px;letter-spacing:.06em;line-height:1}
 .brand small{display:block;font-family:var(--font-space-mono);font-size:9.5px;letter-spacing:.32em;color:var(--brass-soft);text-transform:uppercase;margin-top:2px}
-nav.links{grid-column:2;justify-self:center;display:flex;gap:4px;flex-wrap:wrap}
+nav.links{grid-column:2;justify-self:center;display:flex;gap:4px;flex-wrap:wrap;min-width:0}
 nav.links a{
   font-size:13.5px;font-weight:600;letter-spacing:.02em;padding:9px 12px;border-radius:9px;color:var(--ivory-dim);
   transition:.18s;white-space:nowrap;
@@ -114,7 +114,7 @@ nav.links a:hover{color:var(--velvet);background:var(--brass)}
 /* hero */
 .hero{padding:78px 0 60px;position:relative}
 .emblem{
-  position:absolute;top:-28px;left:24px;width:220px;height:auto;
+  position:absolute;top:20px;left:24px;width:220px;height:auto;
   opacity:.9;pointer-events:none;z-index:1;user-select:none;
 }
 @media(max-width:1500px){
@@ -396,17 +396,26 @@ footer small{color:var(--ivory-dim);font-size:13px}
   .event-head,.event-card{grid-column:1;text-align:center}
   .event-card{text-align:left}
 }
-@media(max-width:680px){
+/* The nav has grown to 9 links + 2 CTA buttons — that stops fitting in
+   one row well before "mobile" width, so it collapses to the hamburger
+   menu much earlier than the rest of the mobile-only layout rules
+   below. Without this, body{overflow-x:hidden} silently clips whatever
+   doesn't fit (e.g. "Event Tickets" truncating) instead of wrapping. */
+@media(max-width:1150px){
   nav.links{display:none}
   nav.links.open{display:flex;position:absolute;top:70px;left:0;right:0;flex-direction:column;background:#0d0307;padding:16px 24px;border-bottom:1px solid rgba(233,185,73,.25)}
   .navtoggle{display:block}
   .header-ctas{display:none}
+}
+@media(max-width:680px){
   .mission{grid-template-columns:1fr}
   .season{grid-template-columns:1fr}
   .people{grid-template-columns:repeat(2,1fr)}
   .teacher{grid-template-columns:1fr}
   .cast{grid-template-columns:1fr}
   .event-list-col{max-height:400px;margin-top:24px}
+  footer .frow{text-align:center}
+  footer .frow > div{text-align:center !important}
 }
 @media(prefers-reduced-motion:reduce){
   .bulb,.marquee{animation:none}
