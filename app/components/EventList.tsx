@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { MON, parts, fmtTime, dateKey } from "@/lib/format";
 import type { CalEvent } from "@/app/components/Calendar";
@@ -11,7 +11,7 @@ function fmtDateKey(key: string) {
   return `${MON[m - 1]} ${d}, ${y}`;
 }
 
-function EventRow({ event, onBuyBlocked }: { event: CalEvent; onBuyBlocked: (title: string) => void }) {
+function EventRow({ event }: { event: CalEvent }) {
   const router = useRouter();
   const p = parts(event.starts_at);
 
@@ -31,7 +31,7 @@ function EventRow({ event, onBuyBlocked }: { event: CalEvent; onBuyBlocked: (tit
           {event.label ? ` · ${event.label}` : ""}
         </div>
       </div>
-      {event.ticket_url ? (
+      {event.ticket_url && (
         <a
           className="event-row-buy"
           href={event.ticket_url}
@@ -41,17 +41,6 @@ function EventRow({ event, onBuyBlocked }: { event: CalEvent; onBuyBlocked: (tit
         >
           Buy Tickets
         </a>
-      ) : (
-        <button
-          type="button"
-          className="event-row-buy disabled"
-          onClick={(e) => {
-            e.stopPropagation();
-            onBuyBlocked(event.title);
-          }}
-        >
-          Buy Tickets
-        </button>
       )}
     </div>
   );
@@ -68,8 +57,6 @@ export default function EventList({
   onClearFilter: () => void;
   maxHeight?: number | null;
 }) {
-  const [blockedTitle, setBlockedTitle] = useState<string | null>(null);
-
   const visible = useMemo(() => {
     if (!selectedDate) {
       const now = new Date().toISOString();
@@ -100,26 +87,9 @@ export default function EventList({
         {visible.length === 0 ? (
           <p className="event-list-empty">No events on this date.</p>
         ) : (
-          visible.map((e) => (
-            <EventRow key={e.id} event={e} onBuyBlocked={setBlockedTitle} />
-          ))
+          visible.map((e) => <EventRow key={e.id} event={e} />)
         )}
       </div>
-
-      {blockedTitle && (
-        <div className="ticket-modal-overlay" onClick={() => setBlockedTitle(null)}>
-          <div className="ticket-modal" onClick={(e) => e.stopPropagation()}>
-            <h4>Not on sale yet</h4>
-            <p>
-              Tickets for <strong>{blockedTitle}</strong> aren&rsquo;t on sale
-              yet — check back soon, or contact the board for updates.
-            </p>
-            <button type="button" className="btn btn-gold" onClick={() => setBlockedTitle(null)}>
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
