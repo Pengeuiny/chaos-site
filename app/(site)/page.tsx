@@ -63,6 +63,8 @@ export default async function Home() {
       {/* HERO */}
       <section className="hero" id="home">
         <div className="wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="emblem" src="/chaos-emblem.png" alt="" aria-hidden="true" />
           <div className="bulbs">
             {Array.from({ length: 9 }).map((_, i) => (
               <span className="bulb" key={i} />
