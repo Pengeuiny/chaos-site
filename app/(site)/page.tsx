@@ -237,10 +237,16 @@ export default async function Home() {
             </div>
           </div>
           <div className="teacher">
-            <SmartImg
-              src="https://static.wixstatic.com/media/5b4780_1876f3d536a8465593d1f518bf336d97~mv2.jpeg/v1/fill/w_400,h_540,al_c,q_85,enc_avif,quality_auto/Kauffman.jpeg"
-              alt="Theatre Director"
-            />
+            <div className="teacher-photo">
+              <SmartImg
+                src="https://static.wixstatic.com/media/5b4780_1876f3d536a8465593d1f518bf336d97~mv2.jpeg/v1/fill/w_400,h_540,al_c,q_85,enc_avif,quality_auto/Kauffman.jpeg"
+                alt="Theatre Director"
+              />
+              <div className="teacher-photo-bar">
+                <div className="nm">Victoria Kaufmann</div>
+                <div className="role">Theatre Director</div>
+              </div>
+            </div>
             <div className="t-body">
               <h3>Welcome to CHS Theatre</h3>
               <p>
@@ -267,10 +273,16 @@ export default async function Home() {
             </div>
           </div>
           <div className="teacher">
-            <SmartImg
-              src="https://static.wixstatic.com/media/5b4780_85d0b7e681444b3e893fa99a654a5e68~mv2.jpg/v1/fill/w_400,h_540,al_c,q_85,enc_avif,quality_auto/Waynick_edited_edited.jpg"
-              alt="Chorus Director"
-            />
+            <div className="teacher-photo">
+              <SmartImg
+                src="https://static.wixstatic.com/media/5b4780_85d0b7e681444b3e893fa99a654a5e68~mv2.jpg/v1/fill/w_400,h_540,al_c,q_85,enc_avif,quality_auto/Waynick_edited_edited.jpg"
+                alt="Chorus Director"
+              />
+              <div className="teacher-photo-bar">
+                <div className="nm">Rachel Waynick</div>
+                <div className="role">Chorus Director</div>
+              </div>
+            </div>
             <div className="t-body">
               <h3>Welcome to CHS Chorus</h3>
               <p>

@@ -288,9 +288,14 @@ section{position:relative;padding:64px 0}
 /* teacher block */
 .teacher{display:grid;grid-template-columns:300px 1fr;gap:30px;align-items:center;
   background:rgba(246,239,226,.04);border:1px solid rgba(233,185,73,.16);border-radius:var(--r);padding:26px;margin-bottom:36px}
-.teacher img{border-radius:12px;width:100%;aspect-ratio:3/4;object-fit:cover}
+.teacher img{border-radius:12px;width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
 .teacher .t-body h3{font-family:var(--font-anton);font-size:30px;color:var(--brass);margin-bottom:6px;text-transform:uppercase}
 .teacher .t-body p{color:var(--ivory-dim);font-size:15.5px}
+.teacher-photo{position:relative;border-radius:12px;overflow:hidden}
+.teacher-photo-bar{position:absolute;left:0;right:0;bottom:0;padding:16px 16px 13px;
+  background:linear-gradient(to top,rgba(10,8,6,.92),rgba(10,8,6,.55) 65%,transparent);text-align:left}
+.teacher-photo-bar .nm{font-family:var(--font-fraunces);font-size:17px;font-weight:600;color:var(--ivory)}
+.teacher-photo-bar .role{font-family:var(--font-space-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gel);margin-top:4px}
 
 /* split */
 .split{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}

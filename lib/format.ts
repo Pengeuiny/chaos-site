@@ -166,11 +166,12 @@ export function characterizeShow(
     ends_on: string | null;
     dates_tbd: boolean;
     date_range: string | null;
-    showtimes?: { starts_at: string | null }[];
+    showtimes?: { starts_at: string | null; is_performance: boolean }[];
   },
   now: string = new Date().toISOString().slice(0, 10),
 ): ShowStatus {
   const knownDates = (p.showtimes ?? [])
+    .filter((s) => s.is_performance)
     .map((s) => s.starts_at)
     .filter((s): s is string => Boolean(s))
     .map((s) => s.slice(0, 10))
