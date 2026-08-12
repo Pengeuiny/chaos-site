@@ -20,7 +20,7 @@ export default function EventHero({
   const accent = p.accent || "#173568";
 
   const chipFor = (st: ProductionWithDetails["showtimes"][number]) => {
-    const href = st.ticket_url || p.ticket_url;
+    const href = st.is_performance ? st.ticket_url || p.ticket_url : null;
     let label: string;
     if (st.starts_tbd || !st.starts_at) {
       label = st.label || "Date TBA";
