@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { MONTHS, parts, dateKey } from "@/lib/format";
+import type { Program } from "@/lib/types";
 
 export type CalEvent = {
   id: string;
   production_id: string;
   slug: string;
+  program: Program;
   title: string;
   starts_at: string;
   label: string | null;

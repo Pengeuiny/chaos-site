@@ -34,6 +34,7 @@ export default async function Home() {
           id: st.id,
           production_id: p.id,
           slug: p.slug,
+          program: p.program,
           title: p.title,
           starts_at: st.starts_at as string,
           label: st.label,

@@ -85,7 +85,9 @@ export default function EventList({
       )}
       <div className="event-list">
         {visible.length === 0 ? (
-          <p className="event-list-empty">No events on this date.</p>
+          <p className="event-list-empty">
+            {selectedDate ? "No events on this date." : "No upcoming events."}
+          </p>
         ) : (
           visible.map((e) => <EventRow key={e.id} event={e} />)
         )}
