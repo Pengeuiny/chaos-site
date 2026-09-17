@@ -1,0 +1,116 @@
+# Second-pass admin pages: forms and settings the link crawl skipped or never reached.
+# All are GET views; nothing here submits or changes state.
+/admin/add_show.php
+/admin/shows.php?launch_showtimes_popup=1&show_id=200547314
+/admin/shows/200547314/pricing/event
+/admin/edit_price.php?price_id=636301&show_id=200547314
+/admin/shows/200547314/add-ons/type
+/admin/add_discount.php?show_id=200547314
+/admin/add_discount.php?global=1
+/admin/add_access_code.php?show_id=200547314&type=ticket
+/admin/arrival_times.php?show_id=200549079&manual_add=1
+/admin/choose_message_type.php?show_id=200549079&time_id=381849
+/admin/printables.php?show_id=200549079&time_id=381849
+/admin/upload_ad.php?show_id=200549079
+/admin/shows/archived
+/admin/show.php?show_id=200549079&time_id=381849&page=add_ons
+/admin/show.php?show_id=200549079&time_id=381849&page=check_ins
+/admin/reports.php?page=patrons&show_id=200549079&time_id=381849
+/admin/order.php?code=LBDLWKAXB8PUL6W7
+/admin/patron.php?id=2151232023
+/admin/pass.php?code=P8758878
+/admin/donation.php?id=851539
+# Collections (dues / fees)
+/admin/collection.php
+/admin/collections/create
+/admin/collections/200547750/edit
+/admin/collection_submissions.php?collection_id=200547750
+/admin/select.php?show_id=200547750&time_id=378552
+/admin/category_manager.php?classes=1
+/admin/class_plans.php
+# Fundraising
+/admin/donation_settings.php
+/admin/recurring-donations
+/admin/donations/share
+/admin/fundraisers/create
+/admin/donation-levels/create
+/admin/donation-categories/create
+# Marketing
+/admin/mailing_lists.php
+/admin/mailing-lists/create
+/admin/marketing_settings.php
+/admin/marketing_plans.php
+# Concessions / retail
+/admin/retail/point-of-sale
+/admin/retail/items/create
+/admin/retail/items/4009/edit
+/admin/retail/reports/transactions
+/admin/retail/tag-manager
+/admin/retail/tax-manager
+/admin/retail/group-manager
+# Patrons
+/admin/audiences/create
+/admin/audience.php?all_patrons=1
+/admin/csv_importer.php?model=patrons
+/admin/patron-duplicates
+# Reports
+/admin/reports.php?page=summary&subpage=cash_basis&show_id=200549079&time_id=&start_date=&end_date=
+/admin/reports.php?page=revenue&subpage=daily_sales&show_id=&time_id=&start_date=2026/08/16&end_date=2026/09/16
+/admin/reports.php?page=passes&status=all&pass_type=flex
+/admin/reports/donations/donor-summary?start_date=08%2F16%2F2026&end_date=09%2F16%2F2026
+/admin/reports/donations/lapsed?start_date=08%2F16%2F2026&end_date=09%2F16%2F2026
+/admin/reports/volunteers?opportunity_id=9281
+# Seating charts
+/admin/edit_chart.php?id=16791
+/admin/seating_chart_capacity.php?id=16791
+/admin/reservation_templates.php?chart_id=16791
+/admin/seating-charts/16791/version-history
+/admin/seating_chart_logs.php?id=16791
+/admin/seating_chart_settings.php?id=16791
+# Passes
+/admin/add_pass.php
+/admin/add_pass.php?edit=1&pass_id=11810
+/admin/passes_share.php
+/admin/sort_passes.php
+/admin/pass_renewals.php
+/admin/passes/11810/triggers
+/admin/passes/11810/discounts
+/admin/passes/11810/notices
+/admin/passes/11810/share
+# Students
+/admin/student_add.php
+/admin/csv_importer.php?model=students
+/admin/students_settings.php
+/admin/student.php?student_id=75144
+# Volunteers
+/admin/volunteers/
+/admin/volunteers/approvals
+/admin/volunteers/volunteers.php
+/admin/settings/volunteers/roles
+/admin/settings/volunteers
+/admin/volunteers/opportunities/create
+/admin/settings/volunteers/share
+/admin/volunteers/index.php?action=edit&id=9281
+/admin/volunteers/index.php?action=opportunity_dashboard&opportunity_id=9281
+/admin/volunteers/volunteers.php?opportunity_id=9281
+/admin/volunteers/index.php?action=report&volunteers_start_date=2026/09/16&volunteers_end_date=2026/09/16
+# Forms
+/admin/create_form.php
+/admin/form_dashboard.php?form_id=21917&tab=submissions
+# Settings (More menu + gear)
+/admin/settings/general
+/admin/admins
+/admin/users.php
+/admin/settings/event-notifications
+/admin/settings/design-tool
+/admin/settings/design-tool?tab=tabs
+/admin/splash_page.php
+/admin/policies
+/admin/fees.php
+/admin/taxes.php
+/admin/settings/labs
+/admin/settings/advanced
+/admin/add_other_payment_option.php
+/admin/go-live
+/admin/videos/onboarding/view
+/admin/shop

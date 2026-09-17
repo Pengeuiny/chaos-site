@@ -1,0 +1,15 @@
+/admin/admins
+/admin/users.php
+/admin/settings/event-notifications
+/admin/settings/design-tool
+/admin/settings/design-tool?tab=tabs
+/admin/splash_page.php
+/admin/policies
+/admin/fees.php
+/admin/taxes.php
+/admin/settings/labs
+/admin/settings/advanced
+/admin/add_other_payment_option.php
+/admin/go-live
+/admin/videos/onboarding/view
+/admin/shop

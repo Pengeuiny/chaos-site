@@ -62,11 +62,16 @@ export default async function AboutSitePage() {
               employees and students&hellip;
             </blockquote>
             <p style={{ margin: "0 0 4px 0" }}>
-              <strong>Compliance note:</strong> This site contains no AI
-              functionality, no automated decision-making, and no
-              public-facing generative AI features. Any AI-assisted
-              development work was performed outside the live site and is
-              not exposed to users.
+              <strong>Compliance note:</strong> The public site contains no
+              AI functionality and no public-facing generative AI features.
+              One admin-only tool (the Ludus tab) uses a generative AI model
+              to read a board-maintained spreadsheet of fees and events and
+              draft what to set up in the ticketing system. The model runs
+              locally on a board member&rsquo;s own computer, not on a cloud
+              AI service; a board member reviews and approves every item
+              before anything is created; no decisions are automated; and
+              no student or district data is involved. Any AI-assisted
+              development work was performed outside the live site.
             </p>
             <cite style={{ display: "block", fontStyle: "normal", fontSize: 12.5, color: "#9c8f7e" }}>
               <a
@@ -99,9 +104,11 @@ export default async function AboutSitePage() {
             <p style={{ margin: "0 0 4px 0" }}>
               <strong>Compliance note:</strong> No AI-generated content is
               presented as original student, staff, or district-authored
-              work on this site. Any externally assisted content is
-              reviewed, edited, and owned by the site operator before
-              publication.
+              work on this site. The Ludus tab&rsquo;s AI drafts are internal
+              working proposals, visible only to logged-in admins, and are
+              reviewed, edited, and approved by a board member before they
+              take effect. Any externally assisted content is reviewed,
+              edited, and owned by the site operator before publication.
             </p>
             <cite style={{ display: "block", fontStyle: "normal", fontSize: 12.5, color: "#9c8f7e" }}>
               <a
@@ -120,10 +127,12 @@ export default async function AboutSitePage() {
               Administrative compliance summary
             </h3>
             <p style={{ margin: 0 }}>
-              This website is a standard non-AI site. It does not collect
-              sensitive district information for use in AI tools, does not
-              use AI to make decisions, and does not expose any AI-driven
-              user experience. The site is intended to fit within
+              The public website is a standard non-AI site. It does not
+              collect sensitive district information for use in AI tools,
+              does not use AI to make decisions, and does not expose any
+              AI-driven user experience. The only AI use is an internal,
+              admin-only drafting aid (described above) with a human
+              approving every result. The site is intended to fit within
               UCPS&rsquo;s published approach that permits generative AI
               under responsible-use expectations while preserving academic
               and administrative integrity.
@@ -157,6 +166,9 @@ export default async function AboutSitePage() {
               ["Domain", "vercel.app subdomain", "see note below"],
               ["Ticketing & payments", "Ludus (existing box office)", "external — not billed here"],
               ["Social posting", "Meta Graph API", "free API"],
+              ["Ludus setup worker", "A board member's home computer (\"dgxbox\")", "self-hosted"],
+              ["AI model for the Ludus tab", "Ollama, running on that same computer", "local, no API"],
+              ["Fee/event spreadsheet", "Google Sheets", "free"],
             ].map(([what, provider, plan]) => (
               <tr key={what} style={{ borderTop: "1px solid rgba(233,185,73,.15)" }}>
                 <td style={{ padding: "8px 8px 8px 0" }}>{what}</td>
@@ -232,6 +244,30 @@ export default async function AboutSitePage() {
           Treasurer, or Viewer) that controls what it can edit vs. only
           view, and every change made anywhere in the admin (who, what,
           before/after) is recorded in the Activity log.
+        </p>
+
+        <h3 style={{ color: "#e3d9c6", fontSize: 15, margin: "0 0 6px" }}>
+          Ludus automation
+        </h3>
+        <p className={styles.muted} style={{ marginBottom: 16 }}>
+          The Ludus tab lets the board set up participation fees and similar
+          items in the CHAOS box office (Ludus) from a shared Google Sheet
+          instead of clicking through Ludus by hand. The site syncs the sheet
+          into Supabase (<code>ludus_rows</code>). A small worker program on
+          a board member&rsquo;s home computer polls the site every few
+          minutes (<code>/api/ludus/worker/*</code>, protected by a shared
+          secret, <code>LUDUS_WORKER_TOKEN</code>), asks a locally-run AI
+          model to turn each new row into a concrete proposal, and posts the
+          proposals back. A board member approves or edits each proposal on
+          the Ludus tab; only then does the worker log into Ludus with a
+          real browser and create the item — always switched <em>Off</em>,
+          with a screenshot of every step stored in the public{" "}
+          <code>ludus-screenshots</code> bucket. The worker has to live on a
+          home computer rather than on Vercel because Ludus sits behind a
+          bot check that blocks datacenter browsers. Code:{" "}
+          <code>tools/ludus-worker</code> (the worker) and{" "}
+          <code>tools/ludus-docs</code> (the screen-capture harness used to
+          document Ludus).
         </p>
 
         <h3 style={{ color: "#e3d9c6", fontSize: 15, margin: "0 0 6px" }}>

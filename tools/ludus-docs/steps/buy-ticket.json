@@ -1,0 +1,4 @@
+[
+  { "goto": "https://cuthbertsontheatre.ludus.com/index.php?sections=events", "shot": "events-list" },
+  { "click": "button:has-text('Get Tickets')", "shot": "ticket-selection" }
+]

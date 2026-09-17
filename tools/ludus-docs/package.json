@@ -1,0 +1,14 @@
+{
+  "name": "ludus-docs",
+  "private": true,
+  "type": "module",
+  "description": "Playwright harness that walks the CHAOS Ludus box office so internal docs can be written from real screens.",
+  "scripts": {
+    "login": "node login.mjs",
+    "explore": "node explore.mjs",
+    "walk": "node walk.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.58.0"
+  }
+}
