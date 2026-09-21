@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getProductions, getPeople } from "@/lib/queries";
-import { TICKETS, PASSES, FLEX_PASS_TIERS } from "@/lib/links";
+import { TICKETS, PASSES, FLEX_PASS_TIERS, FACEBOOK, INSTAGRAM } from "@/lib/links";
 import SeasonGrid from "@/app/components/SeasonGrid";
 import PersonCard from "@/app/components/PersonCard";
 import SmartImg from "@/app/components/SmartImg";
@@ -418,7 +418,7 @@ export default async function Home() {
               </a>
               <div className="socials">
                 <a
-                  href="https://www.facebook.com/profile.php?id=61553584894959"
+                  href={FACEBOOK}
                   target="_blank"
                   rel="noopener"
                   aria-label="Facebook"
@@ -426,7 +426,7 @@ export default async function Home() {
                   f
                 </a>
                 <a
-                  href="https://www.instagram.com/chs_chaos/"
+                  href={INSTAGRAM}
                   target="_blank"
                   rel="noopener"
                   aria-label="Instagram"

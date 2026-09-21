@@ -1,3 +1,11 @@
+// CHAOS social profiles. The Facebook page has no vanity name, so it's linked
+// by its numeric page ID — a plain path that redirects to the page and, unlike
+// the legacy profile.php?id= form, behaves the same in Facebook's in-app
+// browser. The Ludus box office is configured with the same two handles, so
+// both sites point at the same places.
+export const FACEBOOK = "https://www.facebook.com/61553584894959";
+export const INSTAGRAM = "https://www.instagram.com/chs_chaos/";
+
 // External box-office links (Ludus). Centralized so every CTA stays in sync.
 export const TICKETS =
   "https://cuthbertsontheatre.ludus.com/index.php?sections=events";
