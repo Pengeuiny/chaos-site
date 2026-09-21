@@ -418,7 +418,7 @@ export default async function Home() {
               </a>
               <div className="socials">
                 <a
-                  href="https://www.facebook.com/CHSCHAOS"
+                  href="https://www.facebook.com/profile.php?id=61553584894959"
                   target="_blank"
                   rel="noopener"
                   aria-label="Facebook"
