@@ -132,6 +132,10 @@ export default function ShowFormFields({
           rows={4}
           defaultValue={d?.synopsis ?? ""}
         />
+        <span className={styles.hint}>
+          Line breaks are kept. Wrap text in **double asterisks** to bold it —
+          handy for a content advisory.
+        </span>
       </label>
 
       <label className={styles.label}>
