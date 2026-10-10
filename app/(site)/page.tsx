@@ -38,7 +38,7 @@ export default async function Home() {
           title: p.title,
           starts_at: st.starts_at as string,
           label: st.label,
-          ticket_url: st.is_performance ? st.ticket_url || p.ticket_url : null,
+          ticket_url: st.is_performance ? st.ticket_url : null,
         })),
     )
     .sort((a, b) => (a.starts_at < b.starts_at ? -1 : 1));
