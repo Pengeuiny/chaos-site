@@ -32,6 +32,7 @@ create table if not exists public.productions (
   date_range    text,                              -- free-text label, used only when dates_tbd
   has_microsite boolean not null default false,
   cast_is_sample boolean not null default false,   -- show "sample cast" note
+  cast_footnote text,                              -- explains asterisks in the cast list
   is_performance boolean not null default true,    -- false for fundraisers/festivals/community events —
                                                     -- still shows on the calendar, excluded from "Now
                                                     -- Showing" and "This Season's Shows"
@@ -59,6 +60,7 @@ create table if not exists public.cast_members (
   role          text not null,
   actor         text,
   is_lead       boolean not null default false,
+  is_group      boolean not null default false,   -- ensemble: role is a heading, actor a name list
   sort_order    int not null default 0
 );
 create index if not exists cast_production_idx on public.cast_members(production_id);

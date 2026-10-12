@@ -90,17 +90,27 @@ export default function EventHero({
           }
           cast={
             p.cast_members.length > 0 ? (
-              <div className="cast">
-                {p.cast_members.map((c) => (
-                  <div className="castrow" key={c.id}>
-                    <span className="role">{c.role}</span>
-                    <span className="actor">
-                      {c.is_lead && <span className="lead">Lead</span>}
-                      {c.actor}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="cast">
+                  {p.cast_members.map((c) =>
+                    c.is_group ? (
+                      <div className="castgroup" key={c.id}>
+                        <span className="role">{c.role}</span>
+                        <span className="actor">{c.actor}</span>
+                      </div>
+                    ) : (
+                      <div className="castrow" key={c.id}>
+                        <span className="role">{c.role}</span>
+                        <span className="actor">
+                          {c.is_lead && <span className="lead">Lead</span>}
+                          {c.actor}
+                        </span>
+                      </div>
+                    ),
+                  )}
+                </div>
+                {p.cast_footnote && <p className="cast-foot">{p.cast_footnote}</p>}
+              </>
             ) : null
           }
           chips={performanceChips}
