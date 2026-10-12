@@ -62,6 +62,7 @@ function showFieldsFrom(formData: FormData) {
     dates_tbd,
     date_range: dates_tbd ? str(formData.get("date_range")) : null,
     has_microsite: formData.get("has_microsite") === "on",
+    title_note: formData.get("title_note") === "on",
     cast_is_sample: formData.get("cast_is_sample") === "on",
     is_performance: formData.get("is_performance") === "on",
     sort_order: Number(formData.get("sort_order") || 0),

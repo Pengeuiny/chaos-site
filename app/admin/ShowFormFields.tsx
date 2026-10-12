@@ -173,6 +173,14 @@ export default function ShowFormFields({
       <label className={styles.check}>
         <input
           type="checkbox"
+          name="title_note"
+          defaultChecked={d?.title_note ?? false}
+        />{" "}
+        Title is a working title
+      </label>
+      <label className={styles.check}>
+        <input
+          type="checkbox"
           name="cast_is_sample"
           defaultChecked={d?.cast_is_sample ?? false}
         />{" "}
