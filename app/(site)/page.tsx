@@ -393,6 +393,9 @@ export default async function Home() {
                 <li>Concessions and front-of-house</li>
                 <li>Fundraising</li>
                 <li>Design - Playbills, T-shirts, Flyers and more</li>
+                <li>
+                  <Link href="/sponsor">Sponsor the season — playbill ads from $150 →</Link>
+                </li>
               </ul>
             </div>
           </div>
