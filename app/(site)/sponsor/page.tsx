@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import CopyEmail from "./CopyEmail";
+import { SPONSOR_EMAIL as EMAIL } from "@/lib/links";
 
 export const metadata: Metadata = {
   title: "Full Season Community Sponsorship · CHS CHAOS",
@@ -7,11 +9,7 @@ export const metadata: Metadata = {
     "Put your business in front of Waxhaw, Marvin, and Weddington families at every CHS Theatre & Chorus performance, October through May. Tax-deductible playbill ads from $150.",
 };
 
-const EMAIL = "info@chschaos.org";
 const PHONE = "312-404-9744";
-
-const mailto = (subject: string) =>
-  `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
 
 // The 26-27 season this campaign covers. `playbill: true` = the ad itself
 // runs in that show's printed playbill; the rest list sponsors in the
@@ -87,12 +85,7 @@ export default function SponsorPage() {
             <a className="btn btn-gold cta-glow" href="#tiers">
               See ad options
             </a>
-            <a
-              className="btn btn-ghost"
-              href={mailto("Full Season Sponsorship")}
-            >
-              Email us
-            </a>
+            <CopyEmail className="btn btn-ghost">Email us</CopyEmail>
           </div>
           <div className="pb-meta" style={{ marginTop: 44 }}>
             <div className="mi">
@@ -221,12 +214,9 @@ export default function SponsorPage() {
                     <li key={b}>{b}</li>
                   ))}
                 </ul>
-                <a
-                  className="btn btn-gold cta-glow"
-                  href={mailto(`${t.name} Season Sponsorship`)}
-                >
+                <CopyEmail className="btn btn-gold cta-glow">
                   Reserve a {t.name} ad
-                </a>
+                </CopyEmail>
               </div>
             ))}
           </div>
@@ -264,7 +254,7 @@ export default function SponsorPage() {
               </p>
               <ul className="bullets">
                 <li>
-                  <a href={mailto("Full Season Sponsorship")}>{EMAIL}</a>
+                  <CopyEmail>{EMAIL}</CopyEmail>
                 </li>
                 <li>
                   <a href={`tel:+1${PHONE.replaceAll("-", "")}`}>{PHONE}</a>
@@ -272,12 +262,9 @@ export default function SponsorPage() {
                 <li>Sonia Larsen, VP Theatre</li>
               </ul>
               <div className="pb-cta">
-                <a
-                  className="btn btn-primary cta-glow"
-                  href={mailto("Full Season Sponsorship")}
-                >
+                <CopyEmail className="btn btn-primary cta-glow">
                   Email to Sponsor
-                </a>
+                </CopyEmail>
                 <Link className="btn btn-ghost" href="/#season" style={{ color: "var(--ink)", borderColor: "var(--paper-line)" }}>
                   See the season
                 </Link>

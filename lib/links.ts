@@ -50,3 +50,6 @@ export const FLEX_PASS_TIERS = [
     url: "https://cuthbertsontheatre.ludus.com/flex.php?id=7387",
   },
 ] as const;
+
+// Where sponsorship inquiries go (the /sponsor page copies it to the clipboard).
+export const SPONSOR_EMAIL = "vptheatre@chschaos.org";

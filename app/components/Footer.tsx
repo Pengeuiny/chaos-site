@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  // Standalone microsites (see Header) don't advertise the admin login.
+  const microsite = usePathname() === "/sponsor";
   return (
     <footer>
       <div className="wrap frow">
@@ -24,11 +29,13 @@ export default function Footer() {
           </small>
         </div>
       </div>
-      <div className="wrap" style={{ textAlign: "center", marginTop: 26 }}>
-        <Link className="btn btn-ghost" href="/admin/login">
-          Admin Login
-        </Link>
-      </div>
+      {!microsite && (
+        <div className="wrap" style={{ textAlign: "center", marginTop: 26 }}>
+          <Link className="btn btn-ghost" href="/admin/login">
+            Admin Login
+          </Link>
+        </div>
+      )}
     </footer>
   );
 }

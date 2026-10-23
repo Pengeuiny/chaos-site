@@ -20,6 +20,8 @@ const NAV = [
 export default function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  // Standalone microsites keep just the logo (linking home), no nav or CTAs.
+  const logoOnly = pathname === "/sponsor";
 
   // Next's <Link> does nothing when the URL already ends in the same hash
   // (tap "Season", scroll away, tap "Season" again — or "Calendar" then
@@ -46,6 +48,7 @@ export default function Header() {
             <small>Cuthbertson Booster Club</small>
           </div>
         </Link>
+        {!logoOnly && (<>
         <button
           className="navtoggle"
           aria-label="Toggle navigation"
@@ -76,6 +79,7 @@ export default function Header() {
             Get a Flex Pass
           </Link>
         </div>
+        </>)}
       </div>
     </header>
   );
