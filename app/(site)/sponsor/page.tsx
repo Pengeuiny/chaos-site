@@ -1,15 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import CopyEmail from "./CopyEmail";
-import { SPONSOR_EMAIL as EMAIL } from "@/lib/links";
 
 export const metadata: Metadata = {
   title: "Full Season Community Sponsorship · CHS CHAOS",
   description:
     "Put your business in front of Waxhaw, Marvin, and Weddington families at every CHS Theatre & Chorus performance, October through May. Tax-deductible playbill ads from $150.",
 };
-
-const PHONE = "312-404-9744";
 
 // The 26-27 season this campaign covers. `playbill: true` = the ad itself
 // runs in that show's printed playbill; the rest list sponsors in the
@@ -253,12 +250,6 @@ export default function SponsorPage() {
                 deadline for the playbill is <b>November 1, 2026</b>.
               </p>
               <ul className="bullets">
-                <li>
-                  <CopyEmail>{EMAIL}</CopyEmail>
-                </li>
-                <li>
-                  <a href={`tel:+1${PHONE.replaceAll("-", "")}`}>{PHONE}</a>
-                </li>
                 <li>Sonia Larsen, VP Theatre</li>
               </ul>
               <div className="pb-cta">
