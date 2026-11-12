@@ -69,8 +69,8 @@ export default async function ShowDetail({ params }: Props) {
                 Flex Pass Presale
               </a>
               {p.has_microsite && (
-                <Link className="btn btn-ghost" href="/nemo">
-                  🌊 Open Microsite ↗
+                <Link className="btn btn-ghost" href={p.microsite_path ?? "/nemo"}>
+                  Open Microsite ↗
                 </Link>
               )}
             </div>

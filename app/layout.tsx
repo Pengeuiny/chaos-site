@@ -45,6 +45,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      // Mobile Chrome stamps an autofill token attribute onto <html>; not a real mismatch.
+      suppressHydrationWarning
       className={`${anton.variable} ${fraunces.variable} ${inter.variable} ${spaceMono.variable}`}
     >
       <body>{children}</body>

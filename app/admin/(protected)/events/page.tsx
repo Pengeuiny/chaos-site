@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { toEasternLocalInput } from "@/lib/format";
@@ -118,6 +119,11 @@ export default async function EventsTab({
               <li key={s.id} className={styles.showItem}>
                 <div className={styles.showHead}>
                   <strong>{s.title}</strong>
+                  {canEdit && (
+                    <Link className={styles.editLink} href={`/admin/shows/${s.id}`}>
+                      Edit event
+                    </Link>
+                  )}
                 </div>
                 {s.showtimes.length > 0 ? (
                   <ul className={styles.eventList}>
@@ -139,6 +145,7 @@ export default async function EventsTab({
                     No events yet.
                   </p>
                 )}
+                {canEdit && <AddEventToggle productionId={s.id} />}
               </li>
             ))}
           </ul>

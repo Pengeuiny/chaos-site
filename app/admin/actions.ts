@@ -62,6 +62,8 @@ function showFieldsFrom(formData: FormData) {
     dates_tbd,
     date_range: dates_tbd ? str(formData.get("date_range")) : null,
     has_microsite: formData.get("has_microsite") === "on",
+    microsite_path: str(formData.get("microsite_path")),
+    has_game: formData.get("has_game") === "on",
     title_note: formData.get("title_note") === "on",
     cast_is_sample: formData.get("cast_is_sample") === "on",
     is_performance: formData.get("is_performance") === "on",

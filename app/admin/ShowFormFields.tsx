@@ -170,6 +170,17 @@ export default function ShowFormFields({
         />{" "}
         Has a microsite
       </label>
+      <label className={styles.label}>
+        Microsite path <span className={styles.hint}>(e.g. /gatsby)</span>
+        <input className={styles.input} name="microsite_path" defaultValue={d?.microsite_path ?? ""} placeholder="/gatsby" />
+      </label>
+      <label className={styles.check}>
+        <input type="checkbox" name="has_game" defaultChecked={d?.has_game ?? false} />{" "}
+        Lobby game
+        <span className={styles.hint}>
+          {" "}(each performance opens a /play session 30 min before curtain, closes at curtain)
+        </span>
+      </label>
       <label className={styles.check}>
         <input
           type="checkbox"

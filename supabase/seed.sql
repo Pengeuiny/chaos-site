@@ -27,7 +27,7 @@ values
    '#2454a8',
    'Cuthbertson High School Auditorium', '1520 Cuthbertson Rd, Waxhaw, NC 28173',
    'The whole company takes the stage for the spring main event.',
-   'Our students close the season with the spring mainstage musical — months of rehearsal, a full pit, and a cast and crew that have poured everything into the show. Doors open 30 minutes before curtain. Reserved seating; CHAOS members get early access and discounted tickets.',
+   'Our students close the season with the spring mainstage musical — months of rehearsal and a cast and crew that have poured everything into the show. Doors open 30 minutes before curtain. Reserved seating; CHAOS members get early access and discounted tickets.',
    'https://cuthbertsontheatre.ludus.com/index.php?sections=events',
    '2026-04-16', '2026-04-18', false, null, false,
    true, 1),

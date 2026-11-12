@@ -31,6 +31,8 @@ create table if not exists public.productions (
   dates_tbd     boolean not null default false,    -- opt-in: no real dates yet
   date_range    text,                              -- free-text label, used only when dates_tbd
   has_microsite boolean not null default false,
+  microsite_path text,                             -- where "Open Microsite" links, e.g. /gatsby
+  has_game      boolean not null default false,    -- performances get a lobby game session (/play)
   cast_is_sample boolean not null default false,   -- show "sample cast" note
   cast_footnote text,                              -- explains asterisks in the cast list
   is_performance boolean not null default true,    -- false for fundraisers/festivals/community events —
@@ -61,6 +63,7 @@ create table if not exists public.cast_members (
   actor         text,
   is_lead       boolean not null default false,
   is_group      boolean not null default false,   -- ensemble: role is a heading, actor a name list
+  is_crew       boolean not null default false,   -- production crew (microsites list these separately)
   sort_order    int not null default 0
 );
 create index if not exists cast_production_idx on public.cast_members(production_id);
@@ -271,3 +274,94 @@ on conflict (id) do nothing;
 create policy "Public read people photos"
   on storage.objects for select
   using (bucket_id = 'people');
+
+-- ---------------------------------------------------------------------------
+-- Lobby game (/play) — see migrations/20261107120000_gatsby_microsite_and_lobby_game.sql
+-- ---------------------------------------------------------------------------
+create table if not exists public.game_sessions (
+  id            uuid primary key default gen_random_uuid(),
+  production_id uuid not null references public.productions(id) on delete cascade,
+  showtime_id   uuid unique references public.showtimes(id) on delete set null,
+  is_rehearsal  boolean not null default false,
+  label         text,
+  opens_at      timestamptz not null,
+  closes_at     timestamptz not null,
+  created_at    timestamptz not null default now()
+);
+create table if not exists public.game_players (
+  id            uuid primary key default gen_random_uuid(),
+  session_id    uuid not null references public.game_sessions(id) on delete cascade,
+  name          text not null check (char_length(name) between 1 and 30),
+  score         int not null default 0,
+  finished_at   timestamptz,
+  hidden        boolean not null default false,
+  created_at    timestamptz not null default now(),
+  unique (session_id, name)
+);
+create table if not exists public.game_player_tokens (
+  player_id   uuid primary key references public.game_players(id) on delete cascade,
+  token_hash  text not null unique
+);
+create table if not exists public.game_moves (
+  id          uuid primary key default gen_random_uuid(),
+  player_id   uuid not null references public.game_players(id) on delete cascade,
+  item_key    text not null,
+  answer      text,
+  points      int not null default 0,
+  created_at  timestamptz not null default now(),
+  unique (player_id, item_key)
+);
+alter table public.game_sessions      enable row level security;
+alter table public.game_players       enable row level security;
+alter table public.game_player_tokens enable row level security;
+alter table public.game_moves         enable row level security;
+create policy "Public read game sessions" on public.game_sessions for select using (true);
+create policy "Public read game players"  on public.game_players  for select using (not hidden);
+alter publication supabase_realtime add table public.game_players;
+
+-- Round 2: teams + shared boards — see migrations/20261108120000_lobby_game_teams.sql
+
+create table if not exists public.game_teams (
+  id          uuid primary key default gen_random_uuid(),
+  session_id  uuid not null references public.game_sessions(id) on delete cascade,
+  name        text not null check (char_length(name) between 1 and 20),
+  is_open     boolean not null default true,
+  started_at  timestamptz,
+  solved      int not null default 0,
+  play_ms     bigint not null default 0,
+  created_at  timestamptz not null default now(),
+  unique (session_id, name)
+);
+
+create table if not exists public.game_boards (
+  id          uuid primary key default gen_random_uuid(),
+  team_id     uuid not null references public.game_teams(id) on delete cascade,
+  puzzle_key  text not null,
+  bag         text not null,
+  placed      jsonb not null default '{}'::jsonb,
+  bonus       jsonb not null default '{}'::jsonb,
+  version     int not null default 0,
+  started_at  timestamptz not null default now(),
+  solved_at   timestamptz,
+  unique (team_id, puzzle_key)
+);
+
+alter table public.game_players
+  add column if not exists team_id uuid references public.game_teams(id) on delete set null,
+  add column if not exists rack    text not null default '';
+
+create index if not exists game_players_team_idx on public.game_players(team_id);
+create index if not exists game_boards_team_idx  on public.game_boards(team_id);
+
+alter table public.game_teams  enable row level security;
+alter table public.game_boards enable row level security;
+create policy "Public read game teams"  on public.game_teams  for select using (true);
+create policy "Public read game boards" on public.game_boards for select using (true);
+
+alter publication supabase_realtime add table public.game_teams;
+alter publication supabase_realtime add table public.game_boards;
+
+-- Turns — see migrations/20261108130000_lobby_game_turns.sql
+alter table public.game_boards
+  add column if not exists turn    uuid references public.game_players(id) on delete set null,
+  add column if not exists turn_at timestamptz;

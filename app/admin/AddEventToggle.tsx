@@ -5,31 +5,35 @@ import { addEvent } from "./actions";
 import EventDateField from "./EventDateField";
 import styles from "./admin.module.css";
 
+/** Add-event form. With `productionId`, it adds a showing to that one show (no show picker). */
 export default function AddEventToggle({
-  shows,
+  shows = [],
+  productionId,
 }: {
-  shows: { id: string; title: string }[];
+  shows?: { id: string; title: string }[];
+  productionId?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const toggle = (
+    <button type="button" className={styles.editLink} onClick={() => setOpen((o) => !o)}>
+      {open ? "Cancel" : productionId ? "+ Add showing" : "+ Add Event"}
+    </button>
+  );
 
   return (
     <>
-      <div className={styles.showHead} style={{ marginBottom: open ? 16 : 0 }}>
-        <h2 className={styles.h2} style={{ margin: 0 }}>
-          All Events
-        </h2>
-        {shows.length > 0 && (
-          <button
-            type="button"
-            className={styles.editLink}
-            onClick={() => setOpen((o) => !o)}
-          >
-            {open ? "Cancel" : "+ Add Event"}
-          </button>
-        )}
-      </div>
+      {productionId ? (
+        <div style={{ marginTop: 8 }}>{toggle}</div>
+      ) : (
+        <div className={styles.showHead} style={{ marginBottom: open ? 16 : 0 }}>
+          <h2 className={styles.h2} style={{ margin: 0 }}>
+            All Events
+          </h2>
+          {shows.length > 0 && toggle}
+        </div>
+      )}
 
-      {shows.length === 0 && (
+      {!productionId && shows.length === 0 && (
         <p className={styles.muted}>
           Create a show first — events attach to a show.
         </p>
@@ -37,19 +41,23 @@ export default function AddEventToggle({
 
       {open && (
         <form action={addEvent} className={styles.form} style={{ marginBottom: 24 }}>
-          <label className={styles.label}>
-            Show *
-            <select className={styles.input} name="production_id" required defaultValue="">
-              <option value="" disabled>
-                Select a show…
-              </option>
-              {shows.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.title}
+          {productionId ? (
+            <input type="hidden" name="production_id" value={productionId} />
+          ) : (
+            <label className={styles.label}>
+              Show *
+              <select className={styles.input} name="production_id" required defaultValue="">
+                <option value="" disabled>
+                  Select a show…
                 </option>
-              ))}
-            </select>
-          </label>
+                {shows.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <EventDateField />
           <label className={styles.label}>
             <span>Ticket URL <span className={styles.hint}>(optional)</span></span>

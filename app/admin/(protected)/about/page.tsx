@@ -271,6 +271,26 @@ export default async function AboutSitePage() {
         </p>
 
         <h3 style={{ color: "#e3d9c6", fontSize: 15, margin: "0 0 6px" }}>
+          Show microsites &amp; the lobby game
+        </h3>
+        <p className={styles.muted} style={{ marginBottom: 16 }}>
+          Some shows get their own themed microsite (e.g. <code>/gatsby</code>,{" "}
+          <code>/nemo</code>), set by a show&rsquo;s &ldquo;Microsite path&rdquo;.
+          Shows with &ldquo;Lobby game&rdquo; checked get a phone game at{" "}
+          <code>/play</code> (one permanent URL for every playbill&rsquo;s QR code):
+          each performance opens a session 1 hour before curtain and closes it
+          at curtain. Sessions are created on the fly from the showtimes (no
+          scheduled job). Players type a name only, then join a team of up to four
+          (create one for friends, join one by name, or get auto-placed) and fill a
+          show-themed crossword together from Scrabble-style tile racks, with side
+          bonus words for extra points. All rules and scoring run on the server; the
+          board, racks and leaderboard update through Supabase Realtime, which is
+          part of the same free Supabase plan. Puzzles live in{" "}
+          <code>lib/puzzles.ts</code> for now. The Lobby Game admin tab starts
+          30-minute rehearsals for testing and hides inappropriate names.
+        </p>
+
+        <h3 style={{ color: "#e3d9c6", fontSize: 15, margin: "0 0 6px" }}>
           Source code
         </h3>
         <p className={styles.muted} style={{ marginBottom: 16 }}>

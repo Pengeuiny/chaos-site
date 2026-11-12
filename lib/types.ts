@@ -21,6 +21,8 @@ export type Production = {
   dates_tbd: boolean;
   date_range: string | null;
   has_microsite: boolean;
+  microsite_path: string | null;
+  has_game: boolean;
   cast_is_sample: boolean;
   cast_footnote: string | null;
   is_performance: boolean;
@@ -46,6 +48,7 @@ export type CastMember = {
   actor: string | null;
   is_lead: boolean;
   is_group: boolean;
+  is_crew: boolean;
   sort_order: number;
 };
 
