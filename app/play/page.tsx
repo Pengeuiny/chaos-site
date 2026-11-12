@@ -14,7 +14,7 @@ import s from "./play.module.css";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Lobby Game · CHS CHAOS",
-  description: "Play the pre-show lobby game on your phone. Opens 1 hour before curtain.",
+  description: "Play the lobby game on your phone. Opens after each show and runs until the next curtain.",
 };
 
 const time = (iso: string) =>
@@ -106,7 +106,7 @@ export default async function PlayPage() {
             <div className={s.idle}>
               <h2 className={s.h2}>{current ? "Tonight's game is closed" : "The game isn't open yet"}</h2>
               <p>
-                The game opens 1 hour before every performance and closes at curtain.
+                The game opens after each show and runs until the next curtain.
                 {next && (
                   <>
                     {" "}Next: <b>{next.title}</b>, opening {time(next.opens_at)}.

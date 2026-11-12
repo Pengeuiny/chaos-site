@@ -2,12 +2,17 @@ import { createHash, randomUUID } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { teamRanking, type TeamRank } from "@/lib/game-teams";
 
-// Lobby game: one session per performance, open from 1 hour before curtain
-// until curtain. Sessions are created lazily from showtimes, so nothing has to
-// run on a schedule. All writes go through the service role; the public reads
-// sessions and the leaderboard directly (RLS hides admin-hidden names).
+// Lobby game: one session per performance, open from 90 minutes after the
+// previous performance's curtain (8:30pm after a 7pm show) until this one's
+// curtain; the first show of a run opens 1 hour before curtain. Sessions are
+// created lazily from showtimes, so nothing has to run on a schedule. All
+// writes go through the service role; the public reads sessions and the
+// leaderboard directly (RLS hides admin-hidden names).
 
 export const OPEN_BEFORE_MS = 60 * 60 * 1000;
+export const REOPEN_AFTER_MS = 90 * 60 * 1000;
+// A previous curtain further back than this (a new run) falls back to OPEN_BEFORE_MS.
+const MAX_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
 export const REHEARSAL_MS = 30 * 60 * 1000;
 
 export type GameSession = {
@@ -97,9 +102,25 @@ export async function getPlayState(now = Date.now()): Promise<PlayState> {
   let next: PlayState["next"] = null;
   let stopped: { session: GameSession; production: Prod } | null = null;
 
+  // Most recent curtain already passed, so tonight's window can start after it.
+  const { data: prev } = await db
+    .from("showtimes")
+    .select("starts_at, production:productions!inner(has_game)")
+    .eq("is_performance", true)
+    .eq("productions.has_game", true)
+    .lte("starts_at", new Date(now).toISOString())
+    .order("starts_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  let prevCurtain = prev ? Date.parse(prev.starts_at) : null;
+
   for (const st of upcoming) {
     const closes = Date.parse(st.starts_at);
-    const opens = closes - OPEN_BEFORE_MS;
+    const opens =
+      prevCurtain !== null && closes - prevCurtain <= MAX_WINDOW_MS
+        ? prevCurtain + REOPEN_AFTER_MS
+        : closes - OPEN_BEFORE_MS;
+    prevCurtain = closes;
     if (opens <= now && !live) {
       const s = await ensureSession(st.production.id, st.id, st.label, opens, closes);
       // An admin may have stopped tonight's game early: the row exists but is closed.

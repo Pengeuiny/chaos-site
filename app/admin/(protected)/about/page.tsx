@@ -278,7 +278,7 @@ export default async function AboutSitePage() {
           <code>/nemo</code>), set by a show&rsquo;s &ldquo;Microsite path&rdquo;.
           Shows with &ldquo;Lobby game&rdquo; checked get a phone game at{" "}
           <code>/play</code> (one permanent URL for every playbill&rsquo;s QR code):
-          each performance opens a session 1 hour before curtain and closes it
+          each performance opens a session 90 minutes after the previous curtain (1 hour before curtain for the first show) and closes it
           at curtain. Sessions are created on the fly from the showtimes (no
           scheduled job). Players type a name only, then join a team of up to four
           (create one for friends, join one by name, or get auto-placed) and fill a

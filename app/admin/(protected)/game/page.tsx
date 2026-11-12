@@ -62,7 +62,7 @@ export default async function GameAdmin({
       <section className={styles.card} style={{ maxWidth: 720 }}>
         <p className={styles.muted}>
           Every performance of a show with <b>Lobby game</b> checked opens a session on{" "}
-          <Link href="/play">/play</Link> 1 hour before curtain and closes it at curtain. Results
+          <Link href="/play">/play</Link> 90 minutes after the previous curtain (1 hour before curtain for the first show of a run) and closes it at curtain. Results
           are kept. Use a rehearsal to test with real phones; rehearsal results are never shown or kept.
         </p>
         {canEdit &&
