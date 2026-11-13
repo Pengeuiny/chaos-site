@@ -90,7 +90,7 @@ export default async function PlayPage() {
         <section id="game" className={s.game}>
           {current && production && (live || me) ? (
             <>
-              <h2 className={s.h2}>{current.is_rehearsal ? "Rehearsal round" : "Tonight's game"}</h2>
+              <h2 className={s.h2}>{current.is_rehearsal ? "Rehearsal round" : `${current.label ?? "Tonight"}'s game`}</h2>
               <Game
                 sessionId={current.id}
                 slug={production.slug}
@@ -104,7 +104,7 @@ export default async function PlayPage() {
             </>
           ) : (
             <div className={s.idle}>
-              <h2 className={s.h2}>{current ? "Tonight's game is closed" : "The game isn't open yet"}</h2>
+              <h2 className={s.h2}>{current ? `${current.label ?? "Tonight"}'s game is closed` : "The game isn't open yet"}</h2>
               <p>
                 The game opens after each show and runs until the next curtain.
                 {next && (
