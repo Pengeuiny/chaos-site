@@ -30,7 +30,7 @@ function TeamRows({ teams, myTeamId, live }: { teams: TeamRank[]; myTeamId: stri
               {t.name}
               <em className={`${s.night} ${s.subline}`}>{t.night ? `${t.night} · ` : ""}{t.members} player{t.members === 1 ? "" : "s"}</em>
             </span>
-            <span className={s.score}>{t.solved ? `${t.solved} grid${t.solved === 1 ? "" : "s"} · ${mmss(t.play_ms)}` : t.started ? "playing" : "waiting"}</span>
+            <span className={s.score}>{t.solved ? `${t.solved} grid${t.solved === 1 ? "" : "s"} · ${mmss(t.play_ms)}` : t.points ? `${t.points} pts` : t.started ? "playing" : "waiting"}</span>
           </li>
         ))}
       </ol>

@@ -60,6 +60,7 @@ export type TeamRank = {
   play_ms: number;
   members: number;
   started: boolean;
+  points: number; // members' summed score; ranks teams that solved the same number of grids
   night?: string;
 };
 
@@ -107,7 +108,7 @@ export async function openTeams(sessionId: string) {
     .eq("session_id", sessionId)
     .eq("is_open", false)
     .order("created_at", { ascending: false });
-  return ((data ?? []) as unknown as (Team & { game_players: { id: string }[] })[])
+  return ((data ?? []) as unknown as (Team & { game_players: { id: string; score: number }[] })[])
     .map((t) => ({ id: t.id, name: t.name, size: t.game_players.length, started: !!t.started_at }))
     .filter((t) => t.size < TEAM_SIZE);
 }
@@ -408,9 +409,9 @@ export async function teamRanking(sessionIds: string[]): Promise<(TeamRank & { s
   if (!sessionIds.length) return [];
   const { data } = await db()
     .from("game_teams")
-    .select("id, session_id, name, solved, play_ms, started_at, created_at, game_players(id)")
+    .select("id, session_id, name, solved, play_ms, started_at, created_at, game_players(id, score)")
     .in("session_id", sessionIds);
-  return ((data ?? []) as unknown as (Team & { game_players: { id: string }[] })[])
+  return ((data ?? []) as unknown as (Team & { game_players: { id: string; score: number }[] })[])
     .map((t) => ({
       id: t.id,
       session_id: t.session_id,
@@ -419,8 +420,9 @@ export async function teamRanking(sessionIds: string[]): Promise<(TeamRank & { s
       play_ms: t.play_ms,
       members: t.game_players.length,
       started: !!t.started_at,
+      points: t.game_players.reduce((n, p) => n + p.score, 0),
     }))
-    .sort((a, b) => b.solved - a.solved || (a.solved ? a.play_ms - b.play_ms : 0) || Number(b.started) - Number(a.started));
+    .sort((a, b) => b.solved - a.solved || (a.solved ? a.play_ms - b.play_ms : 0) || b.points - a.points || Number(b.started) - Number(a.started));
 }
 
 export async function teamState(teamId: string, slug: string, now = Date.now()): Promise<TeamState | null> {
