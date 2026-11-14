@@ -1,18 +1,20 @@
 import { createHash, randomUUID } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { teamRanking, type TeamRank } from "@/lib/game-teams";
+import { isLive } from "@/lib/game-window";
+import { easternWallToUtcIso } from "@/lib/format";
 
-// Lobby game: one session per performance, open from 90 minutes after the
-// previous performance's curtain (8:30pm after a 7pm show) until this one's
-// curtain; the first show of a run opens 1 hour before curtain. Sessions are
-// created lazily from showtimes, so nothing has to run on a schedule. All
-// writes go through the service role; the public reads sessions and the
-// leaderboard directly (RLS hides admin-hidden names).
+// Lobby game: one session per performance, open its whole Eastern show day
+// (midnight to 11:59pm), paused from curtain until 90 minutes after (see
+// lib/game-window.ts). Sessions are created lazily from showtimes, so nothing
+// has to run on a schedule. All writes go through the service role; the public
+// reads sessions and the leaderboard directly (RLS hides admin-hidden names).
 
-export const OPEN_BEFORE_MS = 60 * 60 * 1000;
-export const REOPEN_AFTER_MS = 90 * 60 * 1000;
-// A previous curtain further back than this (a new run) falls back to OPEN_BEFORE_MS.
-const MAX_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
+/** Midnight to 11:59pm Eastern on the curtain's Eastern date. */
+function showDay(curtainIso: string) {
+  const day = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date(curtainIso));
+  return { opens: Date.parse(easternWallToUtcIso(`${day}T00:00`)), closes: Date.parse(easternWallToUtcIso(`${day}T23:59`)) };
+}
 export const REHEARSAL_MS = 30 * 60 * 1000;
 
 export type GameSession = {
@@ -23,6 +25,7 @@ export type GameSession = {
   label: string | null;
   opens_at: string;
   closes_at: string;
+  curtain_at: string | null;
 };
 
 export type BoardPlayer = {
@@ -65,8 +68,6 @@ export type PlayState = {
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
-const isLive = (s: GameSession, now: number) =>
-  Date.parse(s.opens_at) <= now && now < Date.parse(s.closes_at);
 
 /**
  * Work out what /play should show right now, creating the performance session
@@ -85,9 +86,9 @@ export async function getPlayState(now = Date.now()): Promise<PlayState> {
     .eq("is_performance", true)
     .eq("productions.has_game", true)
     .not("starts_at", "is", null)
-    .gt("starts_at", new Date(now).toISOString())
+    .gt("starts_at", new Date(now - 24 * 60 * 60 * 1000).toISOString())
     .order("starts_at", { ascending: true })
-    .limit(2);
+    .limit(3);
 
   type Prod = NonNullable<PlayState["production"]>;
   const upcoming = (shows ?? []) as unknown as {
@@ -102,28 +103,12 @@ export async function getPlayState(now = Date.now()): Promise<PlayState> {
   let next: PlayState["next"] = null;
   let stopped: { session: GameSession; production: Prod } | null = null;
 
-  // Most recent curtain already passed, so tonight's window can start after it.
-  const { data: prev } = await db
-    .from("showtimes")
-    .select("starts_at, production:productions!inner(has_game)")
-    .eq("is_performance", true)
-    .eq("productions.has_game", true)
-    .lte("starts_at", new Date(now).toISOString())
-    .order("starts_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  let prevCurtain = prev ? Date.parse(prev.starts_at) : null;
-
   for (const st of upcoming) {
-    const closes = Date.parse(st.starts_at);
-    const opens =
-      prevCurtain !== null && closes - prevCurtain <= MAX_WINDOW_MS
-        ? prevCurtain + REOPEN_AFTER_MS
-        : closes - OPEN_BEFORE_MS;
-    prevCurtain = closes;
+    const { opens, closes } = showDay(st.starts_at);
+    if (closes <= now) continue; // that show day is over
     if (opens <= now && !live) {
-      const s = await ensureSession(st.production.id, st.id, st.label, opens, closes);
-      // An admin may have stopped tonight's game early: the row exists but is closed.
+      const s = await ensureSession(st.production.id, st.id, st.label, opens, closes, st.starts_at);
+      // Paused for the show, or an admin stopped it early: the row exists but isn't live.
       if (s && isLive(s, now)) {
         live = s;
         liveProd = st.production;
@@ -133,7 +118,7 @@ export async function getPlayState(now = Date.now()): Promise<PlayState> {
     } else if (opens > now && !next) {
       next = {
         opens_at: new Date(opens).toISOString(),
-        closes_at: st.starts_at,
+        closes_at: new Date(closes).toISOString(),
         title: st.production.title,
         label: st.label,
       };
@@ -185,6 +170,7 @@ async function ensureSession(
   label: string | null,
   opens: number,
   closes: number,
+  curtainIso: string,
 ): Promise<GameSession | null> {
   const db = createAdminClient()!;
   // Insert-or-keep on the unique showtime_id so two first visitors can't make
@@ -199,6 +185,7 @@ async function ensureSession(
         label,
         opens_at: new Date(opens).toISOString(),
         closes_at: new Date(closes).toISOString(),
+        curtain_at: curtainIso,
       },
       { onConflict: "showtime_id", ignoreDuplicates: true },
     );

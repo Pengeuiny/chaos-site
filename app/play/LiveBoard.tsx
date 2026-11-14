@@ -6,9 +6,10 @@ import { createClient } from "@/lib/supabase/client";
 import type { Board } from "@/lib/game";
 import type { TeamRank } from "@/lib/game-teams";
 import { fetchBoard } from "./actions";
+import { isLive, isPaused, nextBoundary, reopensAt } from "@/lib/game-window";
 import s from "./play.module.css";
 
-type Win = { id: string; opens_at: string; closes_at: string; is_rehearsal: boolean; label: string | null };
+type Win = { id: string; opens_at: string; closes_at: string; curtain_at: string | null; is_rehearsal: boolean; label: string | null };
 
 const mmss = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.floor((ms % 60000) / 1000)).padStart(2, "0")}`;
 
@@ -92,12 +93,13 @@ export default function LiveBoard({
     setBoard(initial);
   }
 
-  const closes = session ? Date.parse(session.closes_at) : 0;
-  const live = !!session && Date.parse(session.opens_at) <= now && now < closes;
+  const live = !!session && isLive(session, now);
+  const paused = !!session && isPaused(session, now);
   const opens = nextOpensAt ? Date.parse(nextOpensAt) : null;
+  const beforeCurtain = !!session?.curtain_at && now < Date.parse(session.curtain_at);
 
   // Tick, and re-render from the server when a window boundary passes.
-  const boundary = live ? closes : opens;
+  const boundary = live || paused ? nextBoundary(session!, now) : opens;
   useEffect(() => {
     const t = setInterval(() => {
       const n = Date.now();
@@ -162,7 +164,13 @@ export default function LiveBoard({
           <h2 className={s.h2}>Leaderboard</h2>
           <p className={s.sub}>
             {live
-              ? `${session?.is_rehearsal ? "Rehearsal, open" : "Live"} until ${session?.is_rehearsal ? "" : "curtain · "}${time(session!.closes_at)}`
+              ? session!.is_rehearsal
+                ? `Rehearsal, open until ${time(session!.closes_at)}`
+                : beforeCurtain
+                  ? `Live until curtain · ${time(session!.curtain_at!)}`
+                  : `Live until ${time(session!.closes_at)}`
+              : paused
+                ? `Paused for the show · back ${time(new Date(reopensAt(session!)!).toISOString())}`
               : session
                 ? `Final results · ${session.label ?? time(session.opens_at)}`
                 : opens
@@ -173,7 +181,7 @@ export default function LiveBoard({
 
         <div className={s.tabs} role="tablist">
           <button role="tab" aria-selected={tab === "tonight"} className={tab === "tonight" ? s.tabOn : s.tab} onClick={() => setTab("tonight")}>
-            {live ? "Tonight" : "Latest night"}
+            {live || paused ? "Tonight" : "Latest night"}
           </button>
           <button role="tab" aria-selected={tab === "all"} className={tab === "all" ? s.tabOn : s.tab} onClick={() => setTab("all")}>
             All of {title}

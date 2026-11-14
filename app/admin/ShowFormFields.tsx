@@ -178,7 +178,7 @@ export default function ShowFormFields({
         <input type="checkbox" name="has_game" defaultChecked={d?.has_game ?? false} />{" "}
         Lobby game
         <span className={styles.hint}>
-          {" "}(each performance opens a /play session 90 min after the previous curtain, or 1 hour before the first one, and closes at curtain)
+          {" "}(each performance gets a /play game for its whole show day, paused from curtain until 90 min after)
         </span>
       </label>
       <label className={styles.check}>

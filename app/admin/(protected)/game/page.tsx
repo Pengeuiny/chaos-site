@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import AdminTabs from "@/app/admin/AdminTabs";
 import { endRehearsalAction, setHiddenAction, startRehearsalAction } from "@/app/admin/game-actions";
 import styles from "../../admin.module.css";
+import { isLive } from "@/lib/game-window";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Lobby Game · CHS CHAOS Admin" };
@@ -24,7 +25,7 @@ const when = (iso: string) =>
 
 type Player = { id: string; name: string; score: number; hidden: boolean };
 type Session = {
-  id: string; label: string | null; is_rehearsal: boolean; opens_at: string; closes_at: string;
+  id: string; label: string | null; is_rehearsal: boolean; opens_at: string; closes_at: string; curtain_at: string | null;
   production: { title: string }; game_players: Player[];
 };
 
@@ -44,7 +45,7 @@ export default async function GameAdmin({
   const { data: sess } = db
     ? await db
         .from("game_sessions")
-        .select("id, label, is_rehearsal, opens_at, closes_at, production:productions(title), game_players(id, name, score, hidden)")
+        .select("id, label, is_rehearsal, opens_at, closes_at, curtain_at, production:productions(title), game_players(id, name, score, hidden)")
         .order("opens_at", { ascending: false })
         .limit(8)
     : { data: [] };
@@ -62,7 +63,7 @@ export default async function GameAdmin({
       <section className={styles.card} style={{ maxWidth: 720 }}>
         <p className={styles.muted}>
           Every performance of a show with <b>Lobby game</b> checked opens a session on{" "}
-          <Link href="/play">/play</Link> 90 minutes after the previous curtain (1 hour before curtain for the first show of a run) and closes it at curtain. Results
+          <Link href="/play">/play</Link> all day on the show day (midnight to 11:59pm Eastern), paused from curtain until 90 minutes after. Results
           are kept. Use a rehearsal to test with real phones; rehearsal results are never shown or kept.
         </p>
         {canEdit &&
@@ -75,7 +76,7 @@ export default async function GameAdmin({
       </section>
 
       {sessions.map((s) => {
-        const live = Date.parse(s.opens_at) <= now && now < Date.parse(s.closes_at);
+        const live = isLive(s, now);
         const players = [...s.game_players].sort((a, b) => b.score - a.score);
         return (
           <section key={s.id} className={styles.card} style={{ maxWidth: 720, marginTop: 16 }}>

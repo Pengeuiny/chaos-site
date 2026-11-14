@@ -286,6 +286,7 @@ create table if not exists public.game_sessions (
   label         text,
   opens_at      timestamptz not null,
   closes_at     timestamptz not null,
+  curtain_at    timestamptz,                -- performance curtain; play pauses until +90 min
   created_at    timestamptz not null default now()
 );
 create table if not exists public.game_players (

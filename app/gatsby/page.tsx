@@ -99,7 +99,7 @@ export default async function GatsbyPage() {
                 </li>
               ))}
             </ul>
-            <p className={s.note}>The lobby game opens after each show and runs until the next curtain.</p>
+            <p className={s.note}>The lobby game is open all day on show days, paused during the show.</p>
           </section>
         )}
 
@@ -155,8 +155,8 @@ export default async function GatsbyPage() {
         <section id="game" className={s.section}>
           <h2 className={s.h2}><span>The Lobby Game</span></h2>
           <p className={s.note}>
-            Play on your phone any time between shows. The game opens after each performance, and the board
-            closes when the lights go down. Tonight&rsquo;s crowd vs. every other night of the run.
+            Play on your phone any time on a show day. The game pauses when the lights go down and
+            comes back at 8:30pm until midnight. Tonight&rsquo;s crowd vs. every other night of the run.
           </p>
           <LiveBoard
             productionId={p.id}

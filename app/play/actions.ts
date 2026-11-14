@@ -15,6 +15,7 @@ import {
   teamState,
 } from "@/lib/game-teams";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isLive } from "@/lib/game-window";
 
 const setToken = async (sessionId: string, token: string) =>
   // httpOnly so a refresh or a locked phone resumes the same player.
@@ -50,7 +51,7 @@ export async function joinGame(sessionId: string, name: string, forceNew = false
 /** Resolve the calling phone to a live session + player + production slug. */
 async function who(sessionId: string) {
   const session = await getSession(sessionId);
-  if (!session || Date.parse(session.closes_at) <= Date.now()) return { error: "Time's up. The game closed at curtain." } as const;
+  if (!session || !isLive(session, Date.now())) return { error: "Time's up. The game is closed for now." } as const;
   const token = (await cookies()).get(tokenCookie(sessionId))?.value;
   const player = await playerForToken(sessionId, token);
   if (!player) return { error: "Join with your name first." } as const;

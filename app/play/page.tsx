@@ -9,12 +9,13 @@ import LiveBoard from "./LiveBoard";
 import Game from "./Game";
 import DaedaCredit from "./DaedaCredit";
 import { decoFonts } from "./fonts";
+import { isPaused, reopensAt } from "@/lib/game-window";
 import s from "./play.module.css";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Lobby Game · CHS CHAOS",
-  description: "Play the lobby game on your phone. Opens after each show and runs until the next curtain.",
+  description: "Play the lobby game on your phone, all day on show days (paused during the show).",
 };
 
 const time = (iso: string) =>
@@ -104,10 +105,18 @@ export default async function PlayPage() {
             </>
           ) : (
             <div className={s.idle}>
-              <h2 className={s.h2}>{current ? `${current.label ?? "Tonight"}'s game is closed` : "The game isn't open yet"}</h2>
+              <h2 className={s.h2}>
+                {current
+                  ? `${current.label ?? "Tonight"}'s game is ${isPaused(current, serverNow) ? "paused for the show" : "closed"}`
+                  : "The game isn't open yet"}
+              </h2>
               <p>
-                The game opens after each show and runs until the next curtain.
-                {next && (
+                {current && isPaused(current, serverNow) ? (
+                  <>Back at <b>{time(new Date(reopensAt(current)!).toISOString())}</b> until midnight.</>
+                ) : (
+                  "The game is open all day on show days, pauses during the show, and comes back at 8:30pm until midnight."
+                )}
+                {next && !(current && isPaused(current, serverNow)) && (
                   <>
                     {" "}Next: <b>{next.title}</b>, opening {time(next.opens_at)}.
                   </>
